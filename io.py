@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pylab as _pl
+import glob as _glob
 from error import _stringOrException
 
 #==========
@@ -33,7 +34,7 @@ def setDefaultSigFigs(sigFigs):
 	_defaultSigFigs = sigFigs
 
 def strSci(x, unit = '', sigFigs = _defaultSigFigs):
-	# If d
+	# Limit to at least 3 significant figures
 	if sigFigs < 3:
 		_stringOrException('Minimum allowable value for significant figures is 3.')
 		sigFigs = 3
@@ -82,13 +83,22 @@ printSci.__doc__ = _docSci(True)
 # Read data
 #===========
 
+EXT_GNUCAP     = 1
+EXT_ARCHIMEDES = 2
+
+# TODO: Privatize sub functions
+def readData(fmt, path):
+	if (fmt == EXT_GNUCAP    ): return readGnucap(path)
+	if (fmt == EXT_ARCHIMEDES): return readArchimedes(path)
+	raise Exception("Invalid format")
+
 # TODO: Bug for empty data set
-def readGnucap(filename):
+def readGnucap(path):
 	'''
 	Reads a gnucap file and returns a dictionary with its contents.
 	
 	Args:
-		filename (str): Path to file to read.
+		path (str): Path to file to read.
 	
 	Returns:
 		dict. Dictionary containing numpy.ndarrays of the read data 
@@ -96,10 +106,10 @@ def readGnucap(filename):
 	
 	# Read data
 	names=[]
-	with open(filename, 'r') as f:
+	with open(path, 'r') as f:
 		names = f.readline().split()
 		names[0] = names[0][1:] # Remove initial '#'
-	data = _pl.genfromtxt(filename)
+	data = _pl.genfromtxt(path)
 	
 	# Put data in dictionary
 	retDict = {}
@@ -111,6 +121,30 @@ def readGnucap(filename):
 			retDict[names[i]] = _pl.np.array([data[i]])
 	
 	return retDict
+
+def readArchimedes(path):
+	# Get relevant paths
+	files =_glob.glob(path + "/*.xyz")
+	
+	dictOuter = {}
+	for f in files:
+		data = _pl.genfromtxt(f)
+		
+		newShape = data.shape
+		newShape = (newShape[1], newShape[0])
+		data = data.reshape((1, newShape[0] * newShape[1]), order = 'C')
+		data = data.reshape(newShape, order = 'F')
+		
+		dictInner = {}
+		dictInner['x']   = data[0]
+		dictInner['y']   = data[1]
+		dictInner['mag'] = data[2]
+		
+		propertyName = f[4 : -4] # TODO: Do properly
+		dictOuter[propertyName] = dictInner
+	
+	return dictOuter
+	
 
 #============
 # Annotation

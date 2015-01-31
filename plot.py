@@ -52,3 +52,27 @@ def bode(freq, mag, phase, power = False, titleText = ''):
 	
 	# x-label
 	_pl.xlabel('Frequency [Hz]')
+
+def heatmap(data, titleText = 'Heatmap', axesUnit = 'um', quantityStr = 'Magnitude [1]'):
+	# Data
+	x   = data['x']
+	y   = data['y']
+	mag = data['mag']
+	
+	# Plot heatmap
+	_pl.hist2d(
+		x, y,
+		weights = mag,
+		bins = (len(_pl.unique(x)), len(_pl.unique(y))),
+	) 
+	
+	# Plot colorbar
+	cb = _pl.colorbar()
+	cb.set_label(quantityStr)
+	
+	# Title text
+	_pl.title(titleText)
+	
+	# Axis labels
+	_pl.xlabel('x-position [%s]' % axesUnit)
+	_pl.ylabel('y-position [%s]' % axesUnit)
