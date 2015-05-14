@@ -1,4 +1,4 @@
-# Copyright 2014 Joakim Nilsson
+# Copyright 2014-2015 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Document errors.
-# TODO: Array lenght error checks.
+# TODO: Array length error checks.
 
 import pylab as _pl
 from error import _stringOrException

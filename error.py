@@ -1,4 +1,4 @@
-# Copyright 2014 Joakim Nilsson
+# Copyright 2014-2015 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ def _docExceptions(onOffStr):
 	return '''
 		Turns exceptions %s for this module. When exceptions are on, functions in this module are able to raise exceptions. When they are off, exceptions are suppressed when they occur and instead a warning message is printed.
 	''' % onOffStr
-exceptionsOn.__doc__  = _docExceptions("on")
-exceptionsOff.__doc__ = _docExceptions("off")
+exceptionsOn.__doc__  = _docExceptions('on')
+exceptionsOff.__doc__ = _docExceptions('off')
 
 def _stringOrException(msg):
 	global _supressExceptions
 	if _supressExceptions:
-		return "Warning: "+ msg
+		return 'Warning: '+ msg
 	else:
 		raise Exception(msg)

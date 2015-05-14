@@ -1,4 +1,4 @@
-# Copyright 2014 Joakim Nilsson
+# Copyright 2014-2015 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ import calc  as _calc
 import error as _error
 import io    as _io
 import plot  as _plot
+import util  as _util
 
 # Function to do this
 def _formatDocStrings(modules, width, indent):
@@ -66,7 +67,7 @@ def _formatDocStrings(modules, width, indent):
 				doc = attr.__doc__
 				doc = doc.expandtabs(indent)
 				lines = doc.split('\n')
-				lines.reverse() # Going in reverse improves list efficiency from O(n) to O(1)
+				lines.reverse() # Reverse iteration improves list efficiency from O(n) to O(1)
 				doc = ''
 				new = True
 				while len(lines) > 0:
