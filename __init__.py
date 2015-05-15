@@ -49,6 +49,7 @@ import types as _t
 # Referencable private imports
 import calc  as _calc
 import error as _error
+import log   as _log
 import io    as _io
 import plot  as _plot
 import util  as _util

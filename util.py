@@ -74,70 +74,71 @@ def _getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000):
 	
 	return availVals
 
-# def findResitorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], maxError = 0.01):
+def findResistorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], maxRelError = 0.01):
+	relError = float('inf')
+	numComps = 1
+	expr = None
+	while abs(relError) > maxRelError:
+		print('Trying with %i components...' % numComps) # TODO: Log with log.py (level 1)
+		expr  = bestResistorNetwork(target, numComps = numComps, availVals = availVals, availOps = availOps)
+		value = _polishEval(expr)[0]
+		relError = (target - value) / target
+		print('Best relative error so far: %f %%' % (100*relError)) # TODO: Log with log.py (level 2) $ TODO: standard significant digits
+		numComps += 1
+	return expr
+		
 
 def bestResistorNetwork(target, numComps, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes]):
 	bestError = float('inf')
-	bestCombination = None
+	bestExpr  = None
 	
 	
-	# Get all valid relevant combinations of polish expressions (currently gets some invalid expressions also)
-	# combinations = _it.product(availVals + availOps, repeat = 2*numComps - 1)
-	valsCombinations = _it.product(availVals, repeat = numComps    )
-	opsCombinations  = _it.product(availOps,  repeat = numComps - 1)
-	combinations     = _it.permutations(valsCombinations)
-	
-	
-	
-	print( list(
-	# combinations = list(
-		# map(
-		# 	lambda elems:
-		# 		(el for el in elems)
-		# 	,
-			_it.product(
-				_it.product(availVals, repeat = numComps),
-				_it.product(availOps, repeat = numComps - 1)
-			)
-		# )
+	# Get all valid relevant combinations of polish expressions (order irrelevant)
+	combinations = _it.product(
+		_it.product(availVals, repeat = numComps),
+		_it.product(availOps, repeat = numComps - 1)
 	)
-	)
-	# print( list(_it.product(availVals, repeat = numComps)) )
-	print( (valsCombinations) )
-	# return
 	
+	# For every combination
 	for combination in combinations:
-		try:
-			combination = list(combination)  # Listify
-			evald = _polishEval(combination) # Evaluate expression polishly
-			
-			# Check that expression is completely evaluated
-			if len(evald) != 1:
-				raise Exception('Expression is not completely evaluated.')
-			
-			value = evald[0]            # Get value from evaluated expression
-			error = abs(target - value) # Calculate error
-			
-			# Remember result if best so far
-			if error < bestError:
-				bestError = error
-				bestCombination = combination
+		# Convert combination to base expression
+		exprBase = []
+		for el in combination:
+			exprBase.extend(list(el))
 		
-		# Throw away all exceptions
-		except:
-			pass
-		
+		# Generate all permutations of base expressions (currently also generates invalid expressions)
+		# TODO: The valid expressions are those which end in two numbers... Do this!
+		for expr in _it.permutations(exprBase):
+			try:
+				expr = list(expr)         # Listify
+				evald = _polishEval(expr) # Evaluate expression polishly
+				
+				# Check that expression is completely evaluated
+				if len(evald) != 1:
+					raise Exception('Expression is not completely evaluated.')
+				
+				value = evald[0]            # Get value from evaluated expression
+				error = abs(target - value) # Calculate error
+				
+				# Remember result if best so far
+				if error < bestError:
+					bestError = error
+					bestCombination = expr
+			
+			# Throw away all exceptions
+			except:
+				pass
+	
+	# TODO: Logging
+	
 	return bestCombination
 
 # TODO: Remove
 # Test
-
-bc = bestResistorNetwork(126, 2, availVals = [1, 2, 3])
+import time
+t = time.time()
+# bc = bestResistorNetwork(860000, 2, availVals = _getAvailVals('E6', minVal = 100000))
+bc = findResistorNetwork(860000, availVals = _getAvailVals('E6', minVal = 100000))
+_dbg.printVar(time.time() - t, 'time')
 print bc
-# print _polishEval(bc)
-
-# print _polishEval([4])
-# print _polishEval([_parallelRes, 4, 4])
-# print
-# print _polishEval([_seriesRes, 4, _parallelRes, 4, 8])
-
+print _polishEval(bc)
