@@ -13,6 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import debug as _dbg
+import itertools as _it
+
 def _polishEval(expr, stack = None):
 	# Do not modify original expression
 	expr = list(expr)
@@ -71,17 +74,38 @@ def _getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000):
 	
 	return availVals
 
-import itertools as _it
-
 # def findResitorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], maxError = 0.01):
 
 def bestResistorNetwork(target, numComps, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes]):
 	bestError = float('inf')
 	bestCombination = None
 	
-	# TODO: Comment
-	# TODO: This can probably be done without almost exclusively producing invalid expressions
-	combinations = _it.product(availVals + availOps, repeat = 2*numComps - 1)
+	
+	# Get all valid relevant combinations of polish expressions (currently gets some invalid expressions also)
+	# combinations = _it.product(availVals + availOps, repeat = 2*numComps - 1)
+	valsCombinations = _it.product(availVals, repeat = numComps    )
+	opsCombinations  = _it.product(availOps,  repeat = numComps - 1)
+	combinations     = _it.permutations(valsCombinations)
+	
+	
+	
+	print( list(
+	# combinations = list(
+		# map(
+		# 	lambda elems:
+		# 		(el for el in elems)
+		# 	,
+			_it.product(
+				_it.product(availVals, repeat = numComps),
+				_it.product(availOps, repeat = numComps - 1)
+			)
+		# )
+	)
+	)
+	# print( list(_it.product(availVals, repeat = numComps)) )
+	print( (valsCombinations) )
+	# return
+	
 	for combination in combinations:
 		try:
 			combination = list(combination)  # Listify
@@ -108,9 +132,9 @@ def bestResistorNetwork(target, numComps, availVals = _getAvailVals('E6'), avail
 # TODO: Remove
 # Test
 
-bc = bestResistorNetwork(68812, 2)
+bc = bestResistorNetwork(126, 2, availVals = [1, 2, 3])
 print bc
-print _polishEval(bc)
+# print _polishEval(bc)
 
 # print _polishEval([4])
 # print _polishEval([_parallelRes, 4, 4])
