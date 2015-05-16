@@ -16,6 +16,8 @@
 import debug as _dbg
 import itertools as _it
 
+printVar = _dbg.printVar
+
 def _polishEval(expr, stack = None):
 	# Do not modify original expression
 	expr = list(expr)
@@ -46,7 +48,10 @@ def _polishEval(expr, stack = None):
 def _parallelRes(res1, res2):
 	res1 = float(res1)
 	res2 = float(res2)
-	return res1 * res2 / (res1 + res2)
+	if res1 == 0 and res2 == 0:
+		return 0
+	else:
+		return res1 * res2 / (res1 + res2)
 
 def _seriesRes(res1, res2):
 	res1 = float(res1)
@@ -92,42 +97,36 @@ def bestResistorNetwork(target, numComps, availVals = _getAvailVals('E6'), avail
 	bestError = float('inf')
 	bestExpr  = None
 	
-	
-	# Get all valid relevant combinations of polish expressions (order irrelevant)
-	combinations = _it.product(
-		_it.product(availVals, repeat = numComps),
-		_it.product(availOps, repeat = numComps - 1)
-	)
-	
 	# For every combination
-	for combination in combinations:
-		# Convert combination to base expression
-		exprBase = []
-		for el in combination:
-			exprBase.extend(list(el))
-		
-		# Generate all permutations of base expressions (currently also generates invalid expressions)
-		# TODO: The valid expressions are those which end in two numbers... Do this!
-		for expr in _it.permutations(exprBase):
-			try:
-				expr = list(expr)         # Listify
-				evald = _polishEval(expr) # Evaluate expression polishly
+	for values in _it.combinations_with_replacement(availVals, numComps):
+		for ops in _it.product(availOps, repeat = numComps - 1):
+			for insertions in _it.product([0, 1], repeat = numComps - 1):
+				expr = list(values)
+				insertPos = 0
 				
-				# Check that expression is completely evaluated
-				if len(evald) != 1:
-					raise Exception('Expression is not completely evaluated.')
+				for insertion in insertions:
+					opList = list(ops)
+					expr.insert(insertPos, opList.pop())
+					insertPos += insertion + 1
 				
-				value = evald[0]            # Get value from evaluated expression
-				error = abs(target - value) # Calculate error
+				try:
+					evald = _polishEval(expr) # Evaluate expression polishly
+					
+					# Check that expression is completely evaluated
+					if len(evald) != 1:
+						raise Exception('Expression is not completely evaluated.')
+					
+					value = evald[0]            # Get value from evaluated expression
+					error = abs(target - value) # Calculate error
+					
+					# Remember result if best so far
+					if error < bestError:
+						bestError = error
+						bestCombination = expr
 				
-				# Remember result if best so far
-				if error < bestError:
-					bestError = error
-					bestCombination = expr
-			
-			# Throw away all exceptions
-			except:
-				pass
+				# Throw away all exceptions
+				except:
+					pass
 	
 	# TODO: Logging
 	
@@ -137,8 +136,8 @@ def bestResistorNetwork(target, numComps, availVals = _getAvailVals('E6'), avail
 # Test
 import time
 t = time.time()
-# bc = bestResistorNetwork(860000, 2, availVals = _getAvailVals('E6', minVal = 100000))
-bc = findResistorNetwork(860000, availVals = _getAvailVals('E6', minVal = 100000))
+bc = bestResistorNetwork(860000, 6, availVals = _getAvailVals('E6', minVal = 100000))
+# bc = findResistorNetwork(88123, availVals = _getAvailVals('E6', minVal = 100000), maxRelError = 0.0003)
 _dbg.printVar(time.time() - t, 'time')
 print bc
 print _polishEval(bc)
