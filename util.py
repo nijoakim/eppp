@@ -127,16 +127,36 @@ def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), av
 		if not bestExpr is None:
 			bestError = abs(target - _polishEval(bestExpr)[0])
 	
-	# For every combination
+	# For every combination of non-equivalent connections
+	DEBUG_count = 0
 	for values in _it.combinations_with_replacement(availVals, maxNumComps):
 		for ops in _it.product(availOps, repeat = maxNumComps - 1):
-			for insertions in _it.product([0, 1], repeat = maxNumComps - 1):
+			# insertionsList = _it.product([0, 1], repeat = maxNumComps - 1)
+			# TODO: The below code is less redundant than the above commented line. It is crappy code though, and should probably be rewritten as a generator. (It is actually slower for low 'maxNumComps' and also wastes huge amounts of memory.)
+			insertionsList = [[]]
+			lastOp = None
+			for op in list(ops):
+				if op == lastOp or op == None:
+					map(lambda(x): x.append(1), insertionsList)
+				else:
+					import copy
+					oldInsertionsList1 = copy.deepcopy(insertionsList)
+					oldInsertionsList2 = copy.deepcopy(insertionsList)
+					for insertions in oldInsertionsList1:
+						insertions.append(0)
+					for insertions in oldInsertionsList2:
+						insertions.append(1)
+					insertionsList = oldInsertionsList1 + oldInsertionsList2
+
+				# Remember last operation
+				lastOp = op
+			
+			for insertions in insertionsList:
 				# Initilize expression and insert position
 				expr = list(values)
 				insertPos = 0
 				
-				# TODO: This method produces redundant expressions... Can it be improved?
-				# Insert functions in expression in every valid way
+				# Insert functions in expression in every valid way except in redundant ways
 				for insertion in insertions:
 					opList = list(ops)
 					expr.insert(insertPos, opList.pop())
@@ -149,6 +169,10 @@ def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), av
 				if error <= bestError:
 					bestError = error
 					bestExpr = expr
+				
+				DEBUG_count += 1
+	
+	printVar(DEBUG_count)
 	
 	# TODO: Logging
 	
@@ -158,8 +182,8 @@ def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), av
 # Test
 import time
 t = time.time()
-# bc = bestResistorNetwork(13, 3, availVals = _getAvailVals('E6', minVal = 10))
-bc = findResistorNetwork(88123, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.001005)
+# bc = bestResistorNetwork(12345, 4, availVals = _getAvailVals('E6', minVal = 10))
+bc = findResistorNetwork(860000, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.001)
 _dbg.printVar(time.time() - t, 'time')
 print bc
 print _polishEval(bc)
