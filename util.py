@@ -111,6 +111,7 @@ def findResistorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_pa
 		numComps += 1
 	return expr
 
+# TODO: Combine this and the above function into one function
 def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], recurse = True):
 	bestError = float('inf')
 	bestExpr  = None
@@ -131,27 +132,26 @@ def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), av
 	DEBUG_count = 0
 	for values in _it.combinations_with_replacement(availVals, maxNumComps):
 		for ops in _it.product(availOps, repeat = maxNumComps - 1):
-			# insertionsList = _it.product([0, 1], repeat = maxNumComps - 1)
-			# TODO: The below code is less redundant than the above commented line. It is crappy code though, and should probably be rewritten as a generator. (It is actually slower for low 'maxNumComps' and also wastes huge amounts of memory.)
-			insertionsList = [[]]
-			lastOp = None
-			for op in list(ops):
-				if op == lastOp or op == None:
-					map(lambda(x): x.append(1), insertionsList)
+			# Insertions generator
+			def insertionsGen(ops, lastOp = None):
+				# Base case
+				if len(ops) == 0:
+					yield []
+				
+				# Recurse
 				else:
-					import copy
-					oldInsertionsList1 = copy.deepcopy(insertionsList)
-					oldInsertionsList2 = copy.deepcopy(insertionsList)
-					for insertions in oldInsertionsList1:
-						insertions.append(0)
-					for insertions in oldInsertionsList2:
-						insertions.append(1)
-					insertionsList = oldInsertionsList1 + oldInsertionsList2
-
-				# Remember last operation
-				lastOp = op
+					curOp = ops[0]
+					for insertions in insertionsGen(ops[1:], lastOp = curOp):
+						# Avoid redundant insertion variations by not varying operator order in case of two consecutive equal operations
+						if curOp == lastOp or curOp == None:
+							yield [1] + insertions
+						
+						# Non-redundant case
+						else:
+							yield [0] + insertions
+							yield [1] + insertions
 			
-			for insertions in insertionsList:
+			for insertions in insertionsGen(ops):
 				# Initilize expression and insert position
 				expr = list(values)
 				insertPos = 0
@@ -183,7 +183,7 @@ def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), av
 import time
 t = time.time()
 # bc = bestResistorNetwork(12345, 4, availVals = _getAvailVals('E6', minVal = 10))
-bc = findResistorNetwork(860000, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.001)
+bc = findResistorNetwork(88123, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.01)
 _dbg.printVar(time.time() - t, 'time')
 print bc
 print _polishEval(bc)
