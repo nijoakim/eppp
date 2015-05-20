@@ -20,17 +20,3 @@ _logLevel = 0
 def setLogLevel(logLevel):
 	_logLevel = logLevel
 
-# Dynamic docstring generation
-def _docExceptions(onOffStr):
-	return '''
-		Turns exceptions %s for this module. When exceptions are on, functions in this module are able to raise exceptions. When they are off, exceptions are suppressed when they occur and instead a warning message is printed.
-	''' % onOffStr
-exceptionsOn.__doc__  = _docExceptions('on')
-exceptionsOff.__doc__ = _docExceptions('off')
-
-def _stringOrException(msg):
-	global _supressExceptions
-	if _doLogging:
-		return 'Warning: '+ msg
-	else:
-		raise Exception(msg)

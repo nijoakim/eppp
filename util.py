@@ -36,7 +36,7 @@ def _polishEval(expr, stack = None):
 		el = expr.pop()
 		
 		# If operator (function)
-		if hasattr(el, '__call__'):
+		if callable(el):
 			expr.append(el(stack.pop(), stack.pop()))
 			return (_polishEval(expr, stack))
 			
@@ -96,7 +96,7 @@ def _getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000):
 	availVals = filter(lambda x: x <= maxVal, availVals)
 	availVals = filter(lambda x: x >= minVal, availVals)
 	
-	return availVals
+	return list(availVals)
 
 def findResistorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], maxRelError = 0.01):
 	relError = float('inf')
@@ -105,6 +105,11 @@ def findResistorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_pa
 	while abs(relError) > maxRelError:
 		print('Trying with %i components...' % numComps) # TODO: Log with log.py (level 1)
 		expr  = bestResistorNetwork(target, maxNumComps = numComps, availVals = availVals, availOps = availOps, recurse = False)
+		if expr is None:
+			printVar(target)
+			printVar(numComps)
+			printVar(availOps)
+			raise Exception()
 		value = _polishEval(expr)[0]
 		relError = (target - value) / target
 		print('Best relative error so far: %f %%' % (100*relError)) # TODO: Log with log.py (level 2) $ TODO: Print with standard significant digits
@@ -185,5 +190,5 @@ t = time.time()
 # bc = bestResistorNetwork(12345, 4, availVals = _getAvailVals('E6', minVal = 10))
 bc = findResistorNetwork(88123, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.01)
 _dbg.printVar(time.time() - t, 'time')
-print bc
-print _polishEval(bc)
+print(bc)
+print(_polishEval(bc))

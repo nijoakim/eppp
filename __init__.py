@@ -33,12 +33,6 @@ from error import *
 from io    import *
 from plot  import *
 
-# Delete sub-imports (put all functions in the same namespace)
-del calc
-del error
-del io
-del plot
-
 #===================================================
 # Linebreak long lines in all functions' docstrings
 #===================================================
@@ -62,7 +56,7 @@ def _formatDocStrings(modules, width, indent):
 			attr = getattr(module, attrStr)
 			if isinstance(attr, _t.FunctionType) \
 			and hasattr(attr, '__doc__') \
-			and not isinstance(attr.__doc__, _t.NoneType) \
+			and not attr.__doc__ is None \
 			and not attr in completed:
 				completed.append(attr)
 				doc = attr.__doc__
