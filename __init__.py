@@ -17,6 +17,9 @@
 # Documentation
 #===============
 
+# Version
+__version__ = '0.1a1'
+
 # Docstring
 """
 Electronics in python.
@@ -43,8 +46,8 @@ import types as _t
 # Referencable private imports
 import calc  as _calc
 import error as _error
-import log   as _log
 import io    as _io
+import log   as _log
 import plot  as _plot
 import util  as _util
 
@@ -88,4 +91,4 @@ def _formatDocStrings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_formatDocStrings([_calc, _error, _io, _plot], 79, 4)
+_formatDocStrings([_calc, _error, _io, _log, _plot], 79, 4)

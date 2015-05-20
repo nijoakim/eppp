@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO: Rename this module! It conflicts with the standard library.
+
 import pylab as _pl
 import glob as _glob
 from error import _stringOrException

@@ -13,10 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Finish this module
-
 _logLevel = 0
 
 def setLogLevel(logLevel):
 	_logLevel = logLevel
 
+def _log(msg, level):
+	if level < 1:
+		raise Exception("Log level must be at least 1.")
+	if _logLevel >= level:
+		print(msg)

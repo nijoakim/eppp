@@ -13,7 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# import eppp
+# from eppp import *
 from __init__ import *
 
 # TODO: Tests! (oh no! Boring...)
+
+from io import *
+# print(io.strSci)
