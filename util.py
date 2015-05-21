@@ -117,78 +117,71 @@ def findResistorNetwork(target, availVals = _getAvailVals('E6'), availOps = [_pa
 	return expr
 
 # TODO: Combine this and the above function into one function
-def bestResistorNetwork(target, maxNumComps, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes], recurse = True):
+def findNetwork(target, maxNumComps = float('inf'), maxError = 0, availVals = _getAvailVals('E6'), availOps = [_parallelRes, _seriesRes]):
 	bestError = float('inf')
 	bestExpr  = None
 	
-	# Base case
-	if maxNumComps == 0:
-		return None
-	
-	# Find expressions of lower number of components if recursion is enabled
-	elif recurse:
-		bestExpr = bestResistorNetwork(target, maxNumComps - 1, availVals, availOps)
-		
-		# Update best error
-		if not bestExpr is None:
-			bestError = abs(target - _polishEval(bestExpr)[0])
-	
-	# For every combination of non-equivalent connections
-	DEBUG_count = 0
-	for values in _it.combinations_with_replacement(availVals, maxNumComps):
-		for ops in _it.product(availOps, repeat = maxNumComps - 1):
-			# Insertions generator
-			def insertionsGen(ops, lastOp = None):
-				# Base case
-				if len(ops) == 0:
-					yield []
+	# For all numbers of components, starting from one up to 'maxNumComps'
+	for numComps in _it.count(1):
+		printVar(numComps)
+		# For every combination of non-equivalent connections
+		DEBUG_count = 0
+		for values in _it.combinations_with_replacement(availVals, numComps):
+			for ops in _it.product(availOps, repeat = numComps - 1):
+				# Insertions generator
+				def insertionsGen(ops, lastOp = None):
+					# Base case
+					if len(ops) == 0:
+						yield []
+					
+					# Recurse
+					else:
+						curOp = ops[0]
+						for insertions in insertionsGen(ops[1:], lastOp = curOp):
+							# Avoid redundant insertion variations by not varying operator order in case of two consecutive equal operations
+							if curOp == lastOp or curOp == None:
+								yield [1] + insertions
+							
+							# Non-redundant case
+							else:
+								yield [0] + insertions
+								yield [1] + insertions
 				
-				# Recurse
-				else:
-					curOp = ops[0]
-					for insertions in insertionsGen(ops[1:], lastOp = curOp):
-						# Avoid redundant insertion variations by not varying operator order in case of two consecutive equal operations
-						if curOp == lastOp or curOp == None:
-							yield [1] + insertions
-						
-						# Non-redundant case
-						else:
-							yield [0] + insertions
-							yield [1] + insertions
-			
-			for insertions in insertionsGen(ops):
-				# Initilize expression and insert position
-				expr = list(values)
-				insertPos = 0
-				
-				# Insert functions in expression in every valid way except in redundant ways
-				for insertion in insertions:
-					opList = list(ops)
-					expr.insert(insertPos, opList.pop())
-					insertPos += insertion + 1
-				
-				value = _polishEval(expr)[0] # Get value from evaluated expression
-				error = abs(target - value)  # Calculate error
-				
-				# Remember result if best so far
-				if error <= bestError:
-					bestError = error
-					bestExpr = expr
-				
-				DEBUG_count += 1
+				for insertions in insertionsGen(ops):
+					# Initilize expression and insert position
+					expr = list(values)
+					insertPos = 0
+					
+					# Insert functions in expression in every valid way except in redundant ways
+					for insertion in insertions:
+						opList = list(ops)
+						expr.insert(insertPos, opList.pop())
+						insertPos += insertion + 1
+					
+					value = _polishEval(expr)[0] # Get value from evaluated expression
+					error = abs(target - value)  # Calculate error
+					
+					# Remember result if best so far
+					if error <= bestError:
+						bestError = error
+						bestExpr = expr
+					
+					DEBUG_count += 1
 	
-	printVar(DEBUG_count)
-	
-	# TODO: Logging
-	
-	return bestExpr
+		# TODO: Logging
+		if bestError <= maxError or numComps == maxNumComps:
+			printVar(DEBUG_count)
+			return bestExpr
+
+
 
 # TODO: Remove
 # Test
 import time
 t = time.time()
 # bc = bestResistorNetwork(12345, 4, availVals = _getAvailVals('E6', minVal = 10))
-bc = findResistorNetwork(88123, availVals = _getAvailVals('E6', minVal = 10), maxRelError = 0.01)
+bc = findNetwork(88123, availVals = _getAvailVals('E6', minVal = 10), maxError = 100)
+# bc = findResistorNetwork(525, availVals = [1000, 500, 50], maxRelError = 0)
 _dbg.printVar(time.time() - t, 'time')
 print(bc)
 print(_polishEval(bc))
