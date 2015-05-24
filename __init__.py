@@ -33,8 +33,10 @@ TODO: Document properlier!
 # Imports
 from calc  import *
 from error import *
-from io    import *
+from inout import *
+from log   import *
 from plot  import *
+from util  import *
 
 #===================================================
 # Linebreak long lines in all functions' docstrings
@@ -46,7 +48,7 @@ import types as _t
 # Referencable private imports
 import calc  as _calc
 import error as _error
-import io    as _io
+import inout as _inout
 import log   as _log
 import plot  as _plot
 import util  as _util
@@ -91,4 +93,4 @@ def _formatDocStrings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_formatDocStrings([_calc, _error, _io, _log, _plot], 79, 4)
+_formatDocStrings([_calc, _error, _inout, _log, _plot], 79, 4)

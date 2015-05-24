@@ -15,10 +15,15 @@
 
 _logLevel = 0
 
+# TODO: Document
 def setLogLevel(logLevel):
+	global _logLevel
 	_logLevel = logLevel
 
-def _log(msg, level):
+def getLogLevel():
+	return _logLevel
+
+def _log(level, msg):
 	if level < 1:
 		raise Exception("Log level must be at least 1.")
 	if _logLevel >= level:

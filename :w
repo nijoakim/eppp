@@ -13,13 +13,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pylab     as _pl
+import debug as _dbg
 import itertools as _it
-import inout     as _inout
-import operator  as _op
-from error import _stringOrException
+import inout as _inout
+from inout import *
 from log import _log
-from debug import *
+
+
+_inout.printDefaultSigFigs()
+_inout.setDefaultSigFigs(6)
+printDefaultSigFigs()
+
+printVar = _dbg.printVar
 
 def _polishEval(expr, stack = None):
 	# Do not modify original expression
@@ -48,24 +53,20 @@ def _polishEval(expr, stack = None):
 			stack.append(el)
 			return _polishEval(expr, stack)
 
-def parallelRes(*vals):
-	ret = vals[0]
-	for val in vals[1:]:
-		if val == 0:
-			return 0
-		elif val == float('inf'):
-			ret = val
-		else:
-			ret *= val / (val + ret)
-	return ret
+def _parallelRes(res1, res2):
+	res1 = float(res1)
+	res2 = float(res2)
+	if res1 == 0 and res2 == 0:
+		return 0
+	else:
+		return res1 * res2 / (res1 + res2)
 
-def getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000, compType = 'resistor', freq = None):
-	# Component type setting
-	if not compType in ['resistor', 'capacitor', 'inductor']:
-		raise Exception("'compType' must be either 'resistor', 'capacitor' or 'inductor'.")
-	if compType in ['capacitor', 'inductor'] and freq == None:
-		raise Exception("'freq' must be specified if '%s' is chosen as component type." % compType)
-	
+def _seriesRes(res1, res2):
+	res1 = float(res1)
+	res2 = float(res2)
+	return res1 + res2
+
+def _getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000):
 	# Dictionry with common series
 	# TODO: Add more
 	# TODO: Calculate these?
@@ -103,15 +104,6 @@ def getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000, compType = 'resi
 	availVals = filter(lambda x: x <= maxVal, availVals)
 	availVals = filter(lambda x: x >= minVal, availVals)
 	
-	# Transform values according to the type of component type
-	if compType == 'resistor':
-		compSpecificFunc = lambda x: x
-	elif compType == 'capacitor':
-		compSpecificFunc = lambda x: 1/(1j * x * freq)
-	elif compType == 'inductor':
-		compSpecificFunc = lambda x: 1j * x * freq
-	availVals = map(compSpecificFunc, availVals)
-	
 	return list(availVals)
 
 def lumpedNetwork(
@@ -119,13 +111,13 @@ def lumpedNetwork(
 		maxNumComps = float('inf'),
 		maxAbsError = None,
 		maxRelError = None,
-		availVals = getAvailVals('E6'),
-		availOps = [parallelRes, _op.add]
+		availVals = _getAvailVals('E6'),
+		availOps = [_parallelRes, _seriesRes]
 	):
 	
 	# Check so that target is non-zero
-	if target == 0:
-		return _stringOrException("Target resistance must be non-zero.")
+	if not target > 0:
+		return _stringOrException("Target resistance must be larger than 0.")
 	
 	# Figure out error mode
 	if maxAbsError is None and maxRelError is None:
@@ -176,8 +168,8 @@ def lumpedNetwork(
 					insertPos = 0
 					
 					# Insert functions in expression in every valid way except in redundant ways
-					opList = list(ops)
 					for insertion in insertions:
+						opList = list(ops)
 						expr.insert(insertPos, opList.pop())
 						insertPos += insertion + 1
 					
@@ -185,25 +177,24 @@ def lumpedNetwork(
 					
 					# Calculate error
 					if useRelError:
-						error = abs((value - target) / target) # Division-by-zero safe because target can not be 0
+						error = abs((target - value) / target) # Division-by-zero safe because target can not be 0
 					else:
-						error = abs(value - target)
+						error = abs(target - value)
 					
 					# Remember result if best so far
 					if error <= bestError:
 						bestError = error
-						bestExpr  = expr
+						bestExpr = expr
 					
 					DEBUG_count += 1
-		
-		# Log best error so far
-		signedBestError = bestError * _pl.sign(value - target)
+				
+		# TODO: Include sign in this
 		if useRelError:
-			_log(2, 'Best relative error so far: %s' % (_inout.strSci(signedBestError*100, '%')))
+			_log(2, 'Best error so far: %s %%' % (_inout.strSci(100*error)))
 		else:
-			_log(2, 'Best absolute error so far: %s' % (_inout.strSci(signedBestError)))
+			_log(2, 'Best error so far: %s' % (_inout.strSci(error)))
 		
-		# Return if sufficiently good or maximum number of components have been used
+		# TODO: Logging
 		if bestError <= maxError or numComps == maxNumComps:
 			printVar(DEBUG_count)
 			return bestExpr

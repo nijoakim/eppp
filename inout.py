@@ -16,7 +16,7 @@
 # TODO: Rename this module! It conflicts with the standard library.
 
 import pylab as _pl
-import glob as _glob
+import glob  as _glob
 from error import _stringOrException
 
 #==========
@@ -35,10 +35,14 @@ def setDefaultSigFigs(sigFigs):
 	global _defaultSigFigs
 	_defaultSigFigs = sigFigs
 
-def strSci(x, unit = '', sigFigs = _defaultSigFigs):
+def strSci(x, unit = '', sigFigs = None):
+	# Default number of significant figures
+	if sigFigs is None:
+		sigFigs = _defaultSigFigs
+	
 	# Limit to at least 3 significant figures
 	if sigFigs < 3:
-		_stringOrException('Minimum allowable value for significant figures is 3.')
+		print(_stringOrException('Minimum allowable value for significant figures is 3.'))
 		sigFigs = 3
 	
 	# Consider only positive numbers
@@ -50,10 +54,10 @@ def strSci(x, unit = '', sigFigs = _defaultSigFigs):
 	x *= 1.e24                                                                                      # Largest prefix multiplier
 	
 	# Adjust 'x' and find prefix
-	i = min( int(_pl.log10(x)), (len(PREFIXES) - 1)*3 )
-	prefix = PREFIXES[i/3]
-	x = round(x, -i - 1 + sigFigs)
-	x /= 1e3**(i/3)
+	i       = min( int(_pl.log10(x)), (len(PREFIXES) - 1)*3 )
+	prefix  = PREFIXES[i//3]
+	x       = round(x, -(i + 1) + sigFigs)
+	x      /= 1e3**(i//3)
 	
 	return ('%.'+ str(sigFigs - 1 - i%3) +'f') % (x*signX) +' '+ prefix + unit
 

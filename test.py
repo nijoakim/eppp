@@ -15,8 +15,20 @@
 
 # from eppp import *
 from __init__ import *
+import debug as _dbg
+import inout as _inout
 
-# TODO: Tests! (oh no! Boring...)
+setLogLevel(2)
 
-from io import *
-# print(io.strSci)
+# Tests
+import time
+t = time.time()
+# print(getAvailVals('E6', compType = 'capacitor', freq = 1))
+bc = lumpedNetwork(1/88123j, maxRelError = 0.01, availVals = getAvailVals('E6', compType = 'capacitor', freq = 1))
+# bc = lumpedNetwork(88123, maxRelError = 0.01)
+# bc = lumpedNetwork(1025, maxNumComps = 3, availVals = [50, 1000], maxAbsError = 0)
+_dbg.printVar(time.time() - t, 'time')
+print(bc)
+from util import _polishEval
+print(_polishEval(bc))
+

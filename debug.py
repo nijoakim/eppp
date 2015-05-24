@@ -36,4 +36,4 @@ def printVar(var, customName = None):
 		print(customName)
 	
 	# Print value
-	print('\t= %s' % var)
+	print('\t= %s' % str(var))
