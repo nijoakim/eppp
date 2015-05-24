@@ -42,11 +42,23 @@ def _polishEval(expr, stack = None):
 		if callable(el):
 			expr.append(el(stack.pop(), stack.pop()))
 			return (_polishEval(expr, stack))
-			
+		
 		# If value
 		else:
 			stack.append(el)
 			return _polishEval(expr, stack)
+
+
+# TODO: Not nearly done
+def polishToString(expr, outFormat = 'infix'):
+	# Do not modify original expression
+	expr = list(expr)
+	
+	stack = []
+	ret = ''
+	while expr:
+		el = expr.pop()
+		# if callable(el)
 
 def parallelRes(*vals):
 	ret = vals[0]
@@ -117,11 +129,26 @@ def getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000, compType = 'resi
 def lumpedNetwork(
 		target,
 		maxNumComps = float('inf'),
-		maxAbsError = None,
 		maxRelError = None,
+		maxAbsError = None,
 		availVals = getAvailVals('E6'),
 		availOps = [parallelRes, _op.add]
 	):
+	'''
+	Finds a network of passive components matching a specified (possible complex) value.
+	
+	Args:
+		target (number):       Target impedance for the network
+	
+	Kwargs:
+		maxNumComps (int):    Maximum number of components in the network. The function will return a network with no more components than this value.
+		maxRelError (number): Maximum tolerable relative error. The function will return a network with at most this value as relative error if possible with the given 'maxNumComps'.
+		maxAbsError (number): Maximum tolerable absolute error. The function will return a network with at most this value as absolute error if possible with the given 'maxNumComps'. This argument should not be given if 'maxRelError' is given.
+		availVals ([number]): List of available values of the impedances used in the network
+	
+	Returns:
+		[...]. Polish expression of the resulting network. (Use TODO functions to get something useful)
+	'''
 	
 	# Check so that target is non-zero
 	if target == 0:
@@ -161,7 +188,7 @@ def lumpedNetwork(
 					else:
 						curOp = ops[0]
 						for insertions in insertionsGen(ops[1:], lastOp = curOp):
-							# Avoid redundant insertion variations by not varying operator order in case of two consecutive equal operations
+							# Avoid redundant insertion variations by not varying operator order in case of consecutive equal operations
 							if curOp == lastOp or curOp == None:
 								yield [1] + insertions
 							
@@ -181,7 +208,8 @@ def lumpedNetwork(
 						expr.insert(insertPos, opList.pop())
 						insertPos += insertion + 1
 					
-					value = _polishEval(expr)[0] # Get value from evaluated expression
+					# Get value from evaluated expression
+					value = _polishEval(expr)[0]
 					
 					# Calculate error
 					if useRelError:
@@ -193,6 +221,10 @@ def lumpedNetwork(
 					if error <= bestError:
 						bestError = error
 						bestExpr  = expr
+						
+						# Return if an optimal solution has been found
+						if bestError == 0:
+							return bestExpr
 					
 					DEBUG_count += 1
 		
