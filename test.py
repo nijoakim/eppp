@@ -20,15 +20,19 @@ import inout as _inout
 
 setLogLevel(2)
 
-# Tests
+# Lumped find tests
 import time
 t = time.time()
 # print(getAvailVals('E6', compType = 'capacitor', freq = 1))
 # bc = lumpedNetwork(1/88123j, maxRelError = 0.01, availVals = getAvailVals('E6', compType = 'capacitor', freq = 1))
 bc = lumpedNetwork(88123, maxRelError = 0.0001)
-# bc = lumpedNetwork(1025, maxNumComps = 3, availVals = [50, 1000], maxAbsError = 0)
 _dbg.printVar(time.time() - t, 'time')
-print(bc)
+print(exprTree(bc))
 from util import _polishEval
 print(_polishEval(bc))
 
+# NSHSFHOH
+from operator import *
+et = exprTree([add, 1, add, parallelRes, 1, 2, add, 1, 3])
+et.simplify()
+print(et)

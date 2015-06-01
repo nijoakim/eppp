@@ -21,6 +21,78 @@ from error import _stringOrException
 from log import _log
 from debug import *
 
+class exprTree:
+	# TODO: Simplification: def isLeaf()
+	def __str__(self):
+		if self._isLeaf():
+			return str(self.data)
+		else:
+			operator = self.data[0]
+			operands = self.data[1]
+			
+			# Use symbols for some functions
+			symbolDict = {
+				_op.add:     '+' ,
+				parallelRes: '||',
+			}
+			opSym = symbolDict[operator] if operator in symbolDict else str(operator)
+			
+			# Form expression
+			ret = ''
+			for operand in operands[:-1]:
+				ret += str(operand) +' '+ opSym +' '
+			ret += str(operands[-1])
+			
+			return '('+ ret +')'
+	
+	def __init__(self, expr, preserveExpr = True, fmt = 'polish'):
+		# Do not modify expression unless explicitly stated
+		if preserveExpr:
+			expr = list(expr)
+		
+		# Check so that a valid expressino format has been given
+		if fmt == 'polish':
+			expr.reverse()
+		elif fmt == 'reverse-polish':
+			pass
+		else:
+			raise Exception('Invalid format.')
+		
+		# Consume polishly
+		el = expr.pop()
+		if callable(el): # If not leaf
+			self.data = (el, [])
+			for i in range(2): # Do twice
+				self.data[1].append(exprTree(expr, preserveExpr = False, fmt = 'reverse-polish'))
+		else: # If leaf
+			self.data = el
+	
+	def _isLeaf(self):
+		return not isinstance(self.data, tuple)
+	
+	def simplify(self):
+		# TODO: Sort by expression length?
+		if not self._isLeaf():
+			operator = self.data[0]
+			operands = self.data[1]
+			
+			# Build new operands
+			newOperands = []
+			for operand in operands:
+				# Simplify child
+				operand.simplify()
+				
+				# Steal child's operands if it is of the same type of operand as this one
+				if not operand._isLeaf() and operand.data[0] is operator:
+					newOperands.extend(operand.data[1])
+				
+				# Add unmodified operand otherwise
+				else:
+					newOperands.append(operand)
+			
+			# Update data
+			self.data = (operator, newOperands)
+
 def _polishEval(expr, stack = None):
 	# Do not modify original expression
 	expr = list(expr)
