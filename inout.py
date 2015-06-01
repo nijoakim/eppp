@@ -59,7 +59,12 @@ def strSci(x, unit = '', sigFigs = None):
 	x       = round(x, -(i + 1) + sigFigs)
 	x      /= 1e3**(i//3)
 	
-	return ('%.'+ str(sigFigs - 1 - i%3) +'f') % (x*signX) +' '+ prefix + unit
+	# Add prefix and unit
+	ret = ('%.'+ str(sigFigs - 1 - i%3) +'f') % (x*signX)
+	if prefix + unit:
+		ret += ' '+ prefix + unit
+	
+	return ret
 
 def printSci(x, unit = '', sigFigs = _defaultSigFigs):
 	print(strSci(x, unit = unit, sigFigs = sigFigs))

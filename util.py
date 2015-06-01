@@ -22,10 +22,9 @@ from log import _log
 from debug import *
 
 class exprTree:
-	# TODO: Simplification: def isLeaf()
 	def __str__(self):
 		if self._isLeaf():
-			return str(self.data)
+			return _inout.strSci(self.data)
 		else:
 			operator = self.data[0]
 			operands = self.data[1]
