@@ -303,15 +303,16 @@ def lumpedNetwork(
 					if error <= bestError:
 						bestError = error
 						bestExpr  = expr
+						signedBestError = bestError * _pl.sign(value - target)
 						
 						# Return if an optimal solution has been found
+						# TODO: Logging should not be bypassed
 						if bestError == 0:
 							return bestExpr
 					
 					DEBUG_count += 1
 		
 		# Log best error so far
-		signedBestError = bestError * _pl.sign(value - target)
 		if useRelError:
 			_log(2, 'Best relative error so far: %s' % (_inout.strSci(signedBestError*100, '%')))
 		else:
