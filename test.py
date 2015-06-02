@@ -25,14 +25,15 @@ import time
 t = time.time()
 # print(getAvailVals('E6', compType = 'capacitor', freq = 1))
 # bc = lumpedNetwork(1/88123j, maxRelError = 0.01, availVals = getAvailVals('E6', compType = 'capacitor', freq = 1))
-bc = lumpedNetwork(88123, maxRelError = 0.0001)
-_dbg.printVar(time.time() - t, 'time')
-print(exprTree(bc))
-from util import _polishEval
-print(_polishEval(bc))
+# bc = lumpedNetwork(88123, maxRelError = 0.0001)
+# _dbg.printVar(time.time() - t, 'time')
+# print(ExprTree(bc))
+# from util import _polishEval
+# print(_polishEval(bc))
 
 # NSHSFHOH
 from operator import *
-et = exprTree([add, 1, add, parallelRes, 1, 2, add, 1, 3])
+et = ExprTree([add, 1, add, parallelRes, 1, 2, add, 1, 3])
 et.simplify()
 print(et)
+print(et._getSize())

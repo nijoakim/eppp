@@ -21,7 +21,7 @@ from error import _stringOrException
 from log import _log
 from debug import *
 
-class exprTree:
+class ExprTree:
 	def __str__(self):
 		if self._isLeaf():
 			return _inout.strSci(self.data)
@@ -62,15 +62,23 @@ class exprTree:
 		if callable(el): # If not leaf
 			self.data = (el, [])
 			for i in range(2): # Do twice
-				self.data[1].append(exprTree(expr, preserveExpr = False, fmt = 'reverse-polish'))
+				self.data[1].append(ExprTree(expr, preserveExpr = False, fmt = 'reverse-polish'))
 		else: # If leaf
 			self.data = el
 	
 	def _isLeaf(self):
 		return not isinstance(self.data, tuple)
 	
+	def _getSize(self):
+		if self._isLeaf():
+			return 1
+		else:
+			ret = 0
+			for operand in self.data[1]:
+				ret += operand._getSize()
+			return ret
+	
 	def simplify(self):
-		# TODO: Sort by expression length?
 		if not self._isLeaf():
 			operator = self.data[0]
 			operands = self.data[1]
@@ -88,6 +96,9 @@ class exprTree:
 				# Add unmodified operand otherwise
 				else:
 					newOperands.append(operand)
+			
+			# Sort operands by size
+			newOperands.sort(key = lambda x: x._getSize())
 			
 			# Update data
 			self.data = (operator, newOperands)
