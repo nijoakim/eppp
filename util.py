@@ -17,7 +17,6 @@ import pylab           as _pl
 import itertools       as _it
 import inout           as _inout
 import operator        as _op
-import multiprocessing as _mp
 from error import _stringOrException
 from log import _log
 from debug import *
@@ -209,61 +208,6 @@ def getAvailVals(series = 'E6', minVal = 10, maxVal = 10000000, compType = 'resi
 	
 	return list(availVals)
 
-def _bestWithOps(values, bestError, bestExpr, numComps, availOps, useRelError, target):
-	# Insertions generator
-	def insertionsGen(ops, lastOp = None):
-		# Base case
-		if len(ops) == 0:
-			yield []
-		
-		# Recurse
-		else:
-			curOp = ops[0]
-			for insertions in insertionsGen(ops[1:], lastOp = curOp):
-				# Avoid redundant insertion variations by not varying operator order in case of consecutive equal operations
-				if curOp == lastOp or curOp == None:
-					yield [1] + insertions
-				
-				# Non-redundant case
-				else:
-					yield [0] + insertions
-					yield [1] + insertions
-	
-	bestSignedError = None
-	for ops in _it.product(availOps, repeat = numComps - 1):
-		for insertions in insertionsGen(ops):
-			# Initilize expression and insert position
-			expr = list(values)
-			insertPos = 0
-			
-			# Insert functions in expression in every valid way except in redundant ways
-			opList = list(ops)
-			for insertion in insertions:
-				expr.insert(insertPos, opList.pop())
-				insertPos += insertion + 1
-			
-			# Get value from evaluated expression
-			value = _polishEval(expr)[0]
-			
-			# Calculate error
-			if useRelError:
-				error = abs((value - target) / target) # Division-by-zero safe because target can not be 0
-			else:
-				error = abs(value - target)
-			
-			# Remember result if best so far
-			if error <= bestError:
-				bestError = error
-				bestExpr  = expr
-				bestSignedError = bestError * _pl.sign(value - target)
-				
-				# TODO: Remove? (Not effective for parallelism)
-				# Return if an optimal solution has been found
-				# if bestError == 0:
-				# 	return bestExpr
-	
-	return (bestError, bestExpr, bestSignedError)
-
 def lumpedNetwork(
 		target,
 		maxNumComps = float('inf'),
@@ -273,7 +217,7 @@ def lumpedNetwork(
 		availOps = [parallelRes, _op.add]
 	):
 	'''
-	Finds a network of passive components matching a specified (possible complex) value.
+	Finds a network of passive components matching a specified (possibly complex) value.
 	
 	Args:
 		target (number):       Target impedance for the network
@@ -290,7 +234,7 @@ def lumpedNetwork(
 	
 	# Check so that target is non-zero
 	if target == 0:
-		return _stringOrException("Target resistance must be non-zero.")
+		return _stringOrException("Target impedance must be non-zero.")
 	
 	# Figure out error mode
 	if maxAbsError is None and maxRelError is None:
@@ -311,27 +255,59 @@ def lumpedNetwork(
 	
 	# For all numbers of components, starting from one up to 'maxNumComps'
 	for numComps in _it.count(1):
-		_log(1, 'Trying with %i components...' % numComps)
+		_log(1, 'Finding lumped network for %i component%s...' % (numComps, '' if numComps == 1 else 's'))
 		
+		# Insertions generator
+		def insertionsGen(ops, lastOp = None):
+			# Base case
+			if len(ops) == 0:
+				yield []
+			
+			# Recurse
+			else:
+				curOp = ops[0]
+				for insertions in insertionsGen(ops[1:], lastOp = curOp):
+					# Avoid redundant insertion variations by not varying operator order in case of consecutive equal operations
+					if curOp == lastOp or curOp == None:
+						yield [1] + insertions
+					
+					# Non-redundant case
+					else:
+						yield [0] + insertions
+						yield [1] + insertions
 		
-		pool = _mp.Pool()
-		
-		bests = [
-			pool.apply(
-				_bestWithOps,
-				args = (values, bestError, bestExpr, numComps, availOps, useRelError, target)
-			)
-			for values in _it.combinations_with_replacement(availVals, numComps)
-		]
-		# newBests = min([best.get() for best in bests])
-		# if newBests[0] < bestError:
-			# (bestError, bestExpr, bestSignedError) = newBests
-		
-		# For every combination of non-equivalent connections
+		bestSignedError = None
 		for values in _it.combinations_with_replacement(availVals, numComps):
-			newBests = _bestWithOps(values, bestError, bestExpr, numComps, availOps, useRelError, target)
-			if newBests[0] < bestError:
-				(bestError, bestExpr, bestSignedError) = newBests
+			for ops in _it.product(availOps, repeat = numComps - 1):
+				for insertions in insertionsGen(ops):
+					# Initilize expression and insert position
+					expr = list(values)
+					insertPos = 0
+					
+					# Insert functions in expression in every valid way except in redundant ways
+					opList = list(ops)
+					for insertion in insertions:
+						expr.insert(insertPos, opList.pop())
+						insertPos += insertion + 1
+					
+					# Get value from evaluated expression
+					value = _polishEval(expr)[0]
+					
+					# Calculate error
+					if useRelError:
+						error = abs((value - target) / target) # Division-by-zero safe since target can not be 0
+					else:
+						error = abs(value - target)
+					
+					# Remember result if best so far
+					if error <= bestError:
+						bestError = error
+						bestExpr  = expr
+						bestSignedError = bestError * _pl.sign(value - target)
+						
+						# Return if an optimal solution has been found
+						if bestError == 0:
+							return bestExpr
 		
 		# Log best error so far
 		if useRelError:
