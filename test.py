@@ -18,15 +18,16 @@ from __init__ import *
 import debug as _dbg
 import inout as _inout
 
-setLogLevel(2)
+setLogLevel(0)
 
 # Lumped find tests
 import time
 import cProfile
 
-t = time.time()
+# t = time.time()
 bc = lumpedNetwork(88123, maxNumComps = 3)
-# cProfile.run('lumpedNetwork(88123, maxNumComps = 3)')
-_dbg.printVar(time.time() - t, 'time')
+cProfile.run('lumpedNetwork(88123, maxNumComps = 3)')
+# _dbg.printVar(time.time() - t, 'time')
 from util import _polishEval
-print(_polishEval(bc))
+# print(_polishEval(bc))
+print(bc)

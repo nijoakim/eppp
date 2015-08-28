@@ -44,12 +44,12 @@ class ExprTree:
 			
 			return '('+ ret +')'
 	
-	def __init__(self, expr, preserveExpr = True, fmt = 'polish'):
+	def __init__(self, expr, preserveExpr = True, fmt = 'polish', doSimplify = True):
 		# Do not modify expression unless explicitly stated
 		if preserveExpr:
 			expr = list(expr)
 		
-		# Check so that a valid expressino format has been given
+		# Check so that a valid expression format has been given
 		if fmt == 'polish':
 			expr.reverse()
 		elif fmt == 'reverse-polish':
@@ -65,6 +65,10 @@ class ExprTree:
 				self.data[1].append(ExprTree(expr, preserveExpr = False, fmt = 'reverse-polish'))
 		else: # If leaf
 			self.data = el
+		
+		# Simplify
+		if doSimplify:
+			self.simplify()
 	
 	def _isLeaf(self):
 		return not isinstance(self.data, tuple)
@@ -129,18 +133,6 @@ def _polishEval(expr, stack = None):
 		else:
 			stack.append(el)
 			return _polishEval(expr, stack)
-
-
-# TODO: Not nearly done
-def polishToString(expr, outFormat = 'infix'):
-	# Do not modify original expression
-	expr = list(expr)
-	
-	stack = []
-	ret = ''
-	while expr:
-		el = expr.pop()
-		# if callable(el)
 
 def parallelRes(*vals):
 	ret = vals[0]
@@ -307,7 +299,7 @@ def lumpedNetwork(
 						
 						# Return if an optimal solution has been found
 						if bestError == 0:
-							return bestExpr
+							return ExprTree(bestExpr)
 		
 		# Log best error so far
 		if useRelError:
@@ -315,6 +307,9 @@ def lumpedNetwork(
 		else:
 			_log(2, 'Best absolute error so far: %s' % (_inout.strSci(bestSignedError)))
 		
+		# Log best network
+		_log(3, 'Best network so far: '+ str(ExprTree(bestExpr)))
+		
 		# Return if sufficiently good or maximum number of components have been used
 		if bestError <= maxError or numComps == maxNumComps:
-			return bestExpr
+			return ExprTree(bestExpr)
