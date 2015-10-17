@@ -302,10 +302,11 @@ def lumpedNetwork(
 							return ExprTree(bestExpr)
 		
 		# Log best error so far
-		if useRelError:
-			_log(2, 'Best relative error so far: %s' % (_inout.strSci(bestSignedError*100, '%')))
-		else:
-			_log(2, 'Best absolute error so far: %s' % (_inout.strSci(bestSignedError)))
+		if bestSignedError is not None:
+			if useRelError:
+				_log(2, 'Best relative error so far: %s' % (_inout.strSci(bestSignedError*100, '%')))
+			else:
+				_log(2, 'Best absolute error so far: %s' % (_inout.strSci(bestSignedError)))
 		
 		# Log best network
 		_log(3, 'Best network so far: '+ str(ExprTree(bestExpr)))
