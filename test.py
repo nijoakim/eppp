@@ -28,6 +28,6 @@ import cProfile
 bc = lumpedNetwork(88123, maxNumComps = 3)
 cProfile.run('lumpedNetwork(88123, maxNumComps = 3)')
 # _dbg.printVar(time.time() - t, 'time')
-from util import _polishEval
+from calc_lumpedNetwork import _polishEval
 # print(_polishEval(bc))
 print(bc)

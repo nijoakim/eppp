@@ -36,7 +36,7 @@ from error import *
 from inout import *
 from log   import *
 from plot  import *
-from util  import *
+# from util  import *
 
 #===================================================
 # Linebreak long lines in all functions' docstrings
@@ -51,7 +51,7 @@ import error as _error
 import inout as _inout
 import log   as _log
 import plot  as _plot
-import util  as _util
+# import util  as _util
 
 # Function to do this
 def _formatDocStrings(modules, width, indent):
