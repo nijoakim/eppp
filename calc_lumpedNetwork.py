@@ -221,7 +221,7 @@ def lumpedNetwork(
 	Finds a network of passive components matching a specified (possibly complex) value.
 	
 	Args:
-		target (number):       Target impedance for the network
+		target (number):      Target impedance for the network
 	
 	Kwargs:
 		maxNumComps (int):    Maximum number of components in the network. The function will return a network with no more components than this value.
