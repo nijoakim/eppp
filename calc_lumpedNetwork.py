@@ -135,6 +135,15 @@ def _polishEval(expr, stack = None):
 			return _polishEval(expr, stack)
 
 def parallelRes(*vals):
+	'''
+	Calculates the equivalent impedance of a set of parallel connected components.
+	
+	Args:
+		*vals (number): Parallel impedances.
+	
+	Returns:
+		The equivalent impedance for all '*vals' impedances connected in parallel.
+	'''
 	ret = vals[0]
 	for val in vals[1:]:
 		if val == 0:
