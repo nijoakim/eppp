@@ -25,36 +25,36 @@ CMDS = [
 	'pskabb',
 ]
 
-def _makeCmdsStr(cmds):
-	cmdsStr = ''
+def _make_cmds_str(cmds):
+	cmds_str = ''
 	for cmd in cmds:
-		cmdsStr += '\t%s\n' % cmd
-	return cmdsStr
+		cmds_str += '\t%s\n' % cmd
+	return cmds_str
 
-descriptionStr = 'Executes a command provided by the eppp. Avaliable commands are:\n%s' % _makeCmdsStr(CMDS)
+descriptionStr = 'Executes a command provided by the eppp. Avaliable commands are:\n%s' % _make_cmds_str(CMDS)
 
 # Parse input command
 parser = argparse.ArgumentParser(description=descriptionStr)
 parser.add_argument('command')
 parser.add_argument('command-arguments', nargs='*')
-cmdIn = parser.parse_args().command
+cmd_in = parser.parse_args().command
 
 # Match input command with available command
-pred = re.compile(cmdIn +'.*')
+pred = re.compile(cmd_in +'.*')
 matches = []
 for matchcmd in CMDS:
 	if pred.match(matchcmd) is not None:
 		matches.append(matchcmd)
 		cmd = matchcmd
-numMatches = len(matches)
+num_matches = len(matches)
 	
 # Check for mismatches and ambiguities
-if numMatches == 0:
-	sys.stderr.write("'%s' does not match any command.\n" % cmdIn)
+if num_matches == 0:
+	sys.stderr.write("'%s' does not match any command.\n" % cmd_in)
 	exit(1)
-elif numMatches == 2:
-	cmdsStr = makeCmdsStr(matches)
-	sys.stderr.write('%s is ambiguous.\n\nDid you mean any of these commands?\n%s\n' % (cmdIn, cmdsStr))
+elif num_matches == 2:
+	cmds_str = make_cmds_str(matches)
+	sys.stderr.write('%s is ambiguous.\n\nDid you mean any of these commands?\n%s\n' % (cmd_in, cmds_str))
 	exit(1)
 
 # Remove command argument from argv
@@ -73,7 +73,7 @@ if cmd == 'parallel':
 	vals = parser.parse_args().values
 	
 	# Do the calculation
-	res = eppp.parallelRes(*vals)
+	res = eppp.parallel_imp(*vals)
 	
 	# Convert to weakest type for nicer printing
 	if res.imag == 0:
@@ -84,3 +84,4 @@ if cmd == 'parallel':
 	# Print the result
 	print(res)
 
+# TODO: Command to calculate impedance of inductor or capacitor at a given frequency

@@ -21,10 +21,10 @@
 __version__ = '0.1a1'
 
 # Docstring
-'''
+"""
 Electronics in python.
 TODO: Document properlier!
-'''
+"""
 
 #=========
 # Imports
@@ -36,7 +36,6 @@ from error import *
 from inout import *
 from log   import *
 from plot  import *
-# from util  import *
 
 #===================================================
 # Linebreak long lines in all functions' docstrings
@@ -51,14 +50,13 @@ import error as _error
 import inout as _inout
 import log   as _log
 import plot  as _plot
-# import util  as _util
 
 # Function to do this
-def _formatDocStrings(modules, width, indent):
+def _format_doc_strings(modules, width, indent):
 	completed = []
 	for module in modules:
-		for attrStr in dir(module):
-			attr = getattr(module, attrStr)
+		for attr_str in dir(module):
+			attr = getattr(module, attr_str)
 			if isinstance(attr, _t.FunctionType) \
 			and hasattr(attr, '__doc__') \
 			and not attr.__doc__ is None \
@@ -73,19 +71,19 @@ def _formatDocStrings(modules, width, indent):
 				while len(lines) > 0:
 					# Indent
 					if new:
-						curIndent = lines[-1].find(':') + 1
-						curIndent += len(lines[-1][curIndent:]) - len(lines[-1][curIndent:].lstrip(' ')) + indent
+						cur_indent = lines[-1].find(':') + 1
+						cur_indent += len(lines[-1][cur_indent:]) - len(lines[-1][cur_indent:].lstrip(' ')) + indent
 						new = False
-						newWidth = width
+						new_width = width
 					else:
-						doc += ' '*curIndent
-						newWidth = width - curIndent
+						doc += ' '*cur_indent
+						new_width = width - cur_indent
 					
 					# Word wrap
-					if len(lines[-1]) > newWidth:
-						breakIndex = lines[-1].rfind(' ', 0, newWidth)
-						doc += lines[-1][0 : breakIndex]
-						lines[-1] = lines[-1][breakIndex + 1 :]
+					if len(lines[-1]) > new_width:
+						break_index = lines[-1].rfind(' ', 0, new_width)
+						doc += lines[-1][0 : break_index]
+						lines[-1] = lines[-1][break_index + 1 :]
 					else:
 						doc += lines.pop(-1)
 						new = True
@@ -93,4 +91,4 @@ def _formatDocStrings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_formatDocStrings([_calc, _error, _inout, _log, _plot], 79, 4)
+_format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)

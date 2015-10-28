@@ -13,18 +13,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-_logLevel = 0
+_log_level = 0
 
 # TODO: Document
-def setLogLevel(logLevel):
-	global _logLevel
-	_logLevel = logLevel
+def set_log_level(log_level):
+	global _log_level
+	_log_level = log_level
 
-def getLogLevel():
-	return _logLevel
+def get_log_level():
+	return _log_level
 
 def _log(level, msg):
 	if level < 1:
-		raise Exception("Log level must be at least 1.")
-	if _logLevel >= level:
+		raise Exception('Log level must be at least 1.')
+	if _log_level >= level:
 		print(msg)

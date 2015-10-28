@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Can local contexts be automated by getting caller's locals()?
-def printVar(var, customName = None):
+def print_var(var, customName = None):
 	import inspect
 	
 	# Get global and caller's local variables (the latter overrides the former)

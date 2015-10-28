@@ -13,28 +13,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-_supressExceptions = False
+_supress_exceptions = False
 
-def exceptionsOn():
-	global _supressExceptions
-	_supressExceptions = False
+def exceptions_on():
+	global _supress_exceptions
+	_supress_exceptions = False
 
 
-def exceptionsOff():
-	global _supressExceptions
-	_supressExceptions = True
+def exceptions_off():
+	global _supress_exceptions
+	_supress_exceptions = True
 
 # Dynamic docstring generation
-def _docExceptions(onOffStr):
-	return '''
+def _doc_exceptions(on_off_str):
+	return """
 		Turns exceptions %s for this module. When exceptions are on, functions in this module are able to raise exceptions. When they are off, exceptions are suppressed when they occur and instead a warning message is printed.
-	''' % onOffStr
-exceptionsOn.__doc__  = _docExceptions('on')
-exceptionsOff.__doc__ = _docExceptions('off')
+	""" % on_off_str
+exceptions_on.__doc__  = _doc_exceptions('on')
+exceptions_off.__doc__ = _doc_exceptions('off')
 
-def _stringOrException(msg):
-	global _supressExceptions
-	if _supressExceptions:
+def _string_or_exception(msg):
+	global _supress_exceptions
+	if _supress_exceptions:
 		return 'Warning: '+ msg
 	else:
 		raise Exception(msg)

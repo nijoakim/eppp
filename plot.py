@@ -15,9 +15,9 @@
 
 import pylab as _pl
 from calc import *
-from error import _stringOrException
+from error import _string_or_exception
 
-def bode(freq, mag, phase, power = False, titleText = ''):
+def bode(freq, mag, phase, power = False, title_text = ''):
 	"""
 	Plot a bode plot from magnitude and phase data, both as functions of frequency.
 	
@@ -27,22 +27,22 @@ def bode(freq, mag, phase, power = False, titleText = ''):
 		phase (numpy.ndArray): Phase data
 	
 	Kwargs:
-		power (bool):    Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
-		titleText (str): Title text
+		power (bool):     Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		title_text (str): Title text
 	"""
 	
 	# Size check
 	if freq.size != mag.size != phase.size:
-		return _stringOrException("'freq' and 'mag' and 'phase' must be of the same size.")
+		return _string_or_exception("'freq' and 'mag' and 'phase' must be of the same size.")
 	
 	# Magnitude plot
 	_pl.subplot(211)
-	_pl.plot(freq, dB(mag, power = power))
+	_pl.plot(freq, db(mag, power = power))
 	_pl.xscale('log')
-	_pl.ylabel('Magnitude [dB]')
+	_pl.ylabel('Magnitude [db]')
 	
 	# Title text
-	_pl.title(titleText)
+	_pl.title(title_text)
 	
 	# Phase plot
 	_pl.subplot(212)
@@ -53,7 +53,7 @@ def bode(freq, mag, phase, power = False, titleText = ''):
 	# x-label
 	_pl.xlabel('Frequency [Hz]')
 
-def heatmap(data, titleText = 'Heatmap', axesUnit = 'um', quantityStr = 'Magnitude [1]'):
+def heatmap(data, title_text = 'Heatmap', axes_unit = 'um', quantity_str = 'Magnitude [1]'):
 	# Data
 	x   = data['x']
 	y   = data['y']
@@ -68,11 +68,11 @@ def heatmap(data, titleText = 'Heatmap', axesUnit = 'um', quantityStr = 'Magnitu
 	
 	# Plot colorbar
 	cb = _pl.colorbar()
-	cb.set_label(quantityStr)
+	cb.set_label(quantity_str)
 	
 	# Title text
-	_pl.title(titleText)
+	_pl.title(title_text)
 	
 	# Axis labels
-	_pl.xlabel('x-position [%s]' % axesUnit)
-	_pl.ylabel('y-position [%s]' % axesUnit)
+	_pl.xlabel('x-position [%s]' % axes_unit)
+	_pl.ylabel('y-position [%s]' % axes_unit)

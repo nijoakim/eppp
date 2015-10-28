@@ -17,14 +17,17 @@
 # TODO: Array length error checks.
 
 import pylab as _pl
-from error import _stringOrException
+from error import _string_or_exception
 
 #=====================
 # Decibel conversions
 #=====================
 
-def dB(x, power = False, inv = False):
-	'''
+# TODO: power -> use_power_db
+# TODO: inv -> convertFromDb
+# TODO: Should db be a data type?
+def db(x, power = False, inv = False):
+	"""
 	Converts a number to and from its decibel form.
 	
 	Args:
@@ -36,7 +39,7 @@ def dB(x, power = False, inv = False):
 	
 	Returns:
 		The converted form of 'x'.
-	'''
+	"""
 	
 	# Power decibels or not
 	if power:
@@ -54,23 +57,24 @@ def dB(x, power = False, inv = False):
 # Bandwidth
 #===========
 
-def _breakFreq(freq, mag, di, decibel = 3, bandstop = False):
+# TODO: mag = mag_data och så...?
+def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	# Size check
 	if freq.size != mag.size:
-		return _stringOrException("'freq' and 'mag' must be of the same size.")
+		return _string_or_exception("'freq' and 'mag' must be of the same size.")
 	
-	# Return negated if bandstop filter
-	if bandstop:
-		return _breakFreq(freq, -mag, di, decibel = decibel, bandstop = False)
+	# Return negated if stop filter
+	if is_stop_filter:
+		return _breakFreq(freq, -mag, di, decibel = decibel, is_stop_filter = False)
 	
 	# Find out peak and break magnitude
-	peakIndex = mag.argmax()
-	breakMag = mag[peakIndex]*dB(-decibel, inv = True)
+	peak_index = mag.argmax()
+	break_mag  = mag[peak_index]*db(-decibel, inv = True)
 	
 	# Search
-	i = peakIndex
+	i = peak_index
 	while 0 <= i < mag.size:
-		if mag[i] < breakMag:
+		if mag[i] < break_mag:
 			return freq[i]
 		i += di
 	
@@ -78,20 +82,20 @@ def _breakFreq(freq, mag, di, decibel = 3, bandstop = False):
 	if i < 0:
 		return 0.
 	elif i >= mag.size:
-		return _stringOrException("High break frequency is not in interval") # TODO: Only high?
+		return _string_or_exception("High break frequency is not in interval") # TODO: Only high?
 
-def loBreakFreq(freq, mag, decibel = 3, bandstop = False):
-	return _breakFreq(freq, mag, -1, decibel, bandstop)
+def lo_break_freq(freq, mag, decibel = 3, is_stop_filter = False):
+	return _breakFreq(freq, mag, -1, decibel, is_stop_filter)
 
-def hiBreakFreq(freq, mag, decibel = 3, bandstop = False):
-	return _breakFreq(freq, mag, 1, decibel, bandstop)
+def hi_break_freq(freq, mag, decibel = 3, is_stop_filter = False):
+	return _breakFreq(freq, mag, 1, decibel, is_stop_filter)
 
-def bandwidth(freq, mag, decibel = 3, bandstop = False):
-	return hiBreakFreq(freq, mag, decibel, bandstop) - loBreakFreq(freq, mag, decibel, bandstop)
+def bandwidth(freq, mag, decibel = 3, is_stop_filter = False):
+	return hi_break_freq(freq, mag, decibel, is_stop_filter) - lo_break_freq(freq, mag, decibel, is_stop_filter)
 
 # Dynamic docstring generation
-def _docBandwidth(whatStr):
-	return '''
+def _doc_bandwidth(what_str):
+	return """
 		Calculates the %s of a filter.
 		
 		Args:
@@ -100,21 +104,21 @@ def _docBandwidth(whatStr):
 		
 		Kwargs:
 			decibel (number): Deviation from min/max value required to qualify as break frequency, given in amplitude decibels
-			bandstop (bool):  Whether to treat data as a stop filter. If False, data is treated as a pass filter
+			is_stop_filter (bool):  Whether to treat data as a stop filter. If False, data is treated as a pass filter
 		
 		Returns:
 			float. %s
-	''' % (whatStr, whatStr[0].upper() + whatStr[1:])
-loBreakFreq.__doc__ = _docBandwidth("low break frequency")
-hiBreakFreq.__doc__ = _docBandwidth("high break frequency")
-bandwidth.__doc__   = _docBandwidth("bandwidth")
+	""" % (what_str, what_str[0].upper() + what_str[1:])
+lo_break_freq.__doc__ = _doc_bandwidth("low break frequency")
+hi_break_freq.__doc__ = _doc_bandwidth("high break frequency")
+bandwidth.__doc__     = _doc_bandwidth("bandwidth")
 
 #=========
 # Margins
 #=========
 
 def intersects(x, y, target):
-	'''
+	"""
 	Calculates where y = f(x) intersecsts target.
 	
 	Args:
@@ -125,7 +129,7 @@ def intersects(x, y, target):
 	Returns:
 		float. x value for where y intersects target
 	
-	'''
+	"""
 	
 	# Offset to zero for simplicity
 	if target != 0:
@@ -149,10 +153,10 @@ def intersects(x, y, target):
 		i += 1
 	
 	# Never reached target
-	return _stringOrException("Data never intersects target.")
+	return _string_or_exception("Data never intersects target.")
 
-def unityGainFreq(freq, mag):
-	'''
+def unity_gain_freq(freq, mag):
+	"""
 	Calculates unity gain frequency from magnitude data as function of frequency.
 	
 	Args:
@@ -161,11 +165,11 @@ def unityGainFreq(freq, mag):
 	
 	Returns:
 		float. Unity gain frequency
-	'''
+	"""
 	return intersects(freq, mag, 1)
 
-def phase180Freq(freq, phase):
-	'''
+def phase_180_freq(freq, phase):
+	"""
 	Calculates frequency of 180 degree phase shift from magnitude data as function of frequency.
 	
 	Args:
@@ -174,15 +178,15 @@ def phase180Freq(freq, phase):
 	
 	Returns:
 		float. Frequency of 180 degrees phase shift
-	'''
+	"""
 	
 	freqs = []
 	
 	# Loop through all necessary phase 360-offsets
-	for phaseOffset in range( (int(_pl.floor(min(phase))) / 360) * 360, (int(_pl.ceil(max(phase))) / 360) * 360, 360):
+	for phase_offset in range( (int(_pl.floor(min(phase))) / 360) * 360, (int(_pl.ceil(max(phase))) / 360) * 360, 360): # TODO: Don't think int(...) is necessary
 		# Error means no intersection for given phase and can therefore be ignored
 		try:
-			freqs.append(intersects(freq, phase - phaseOffset, 180))
+			freqs.append(intersects(freq, phase - phase_offset, 180))
 		except:
 			pass
 	
@@ -193,8 +197,8 @@ def phase180Freq(freq, phase):
 		# There were no 180 frequency
 		return Exception("Phase never intersects 180 + 360*n.")
 
-def gainMargin(freq, mag, phase, power = False):
-	'''
+def gain_margin(freq, mag, phase, power = False):
+	"""
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 	
 	Args:
@@ -205,11 +209,11 @@ def gainMargin(freq, mag, phase, power = False):
 	
 	Returns:
 		float. Gain margin in decibel
-	'''
-	return -dB(mag[abs(freq - phase180Freq(freq, phase)).argmin()], power = power)
+	"""
+	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], power = power)
 
-def phaseMargin(freq, mag, phase):
-	'''
+def g(freq, mag, phase):
+	"""
 	Calculates phase margin from magnitude and phase data, both as functions of frequency.
 	
 	Args:
@@ -219,5 +223,5 @@ def phaseMargin(freq, mag, phase):
 	
 	Returns:
 		float. Phase margin
-	'''
-	return 180 + phase[abs(freq - unityGainFreq(freq, mag)).argmin()]
+	"""
+	return 180 + phase[abs(freq - unity_gain_freq(freq, mag)).argmin()]

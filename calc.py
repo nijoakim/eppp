@@ -14,4 +14,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from calc_misc import *
-from calc_lumpedNetwork import *
+from calc_lumped_network import *
