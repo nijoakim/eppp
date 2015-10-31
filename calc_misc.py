@@ -23,10 +23,8 @@ from error import _string_or_exception
 # Decibel conversions
 #=====================
 
-# TODO: power -> use_power_db
-# TODO: inv -> convertFromDb
-# TODO: Should db be a data type?
-def db(x, power = False, inv = False):
+# TODO: from_db -> convertFromDb
+def convert_db(x, use_power_db = False, from_db = False):
 	"""
 	Converts a number to and from its decibel form.
 	
@@ -34,21 +32,21 @@ def db(x, power = False, inv = False):
 		x: number to be converted
 	
 	Kwargs:
-		power (bool): Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
-		inv (bool):   Whether to convert from decibels instead of to. If False, the conversion is done to decibels, otherwise from.
+		use_power_db (bool): Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		from_db (bool):   Whether to convert from decibels instead of to. If False, the conversion is done to decibels, otherwise from.
 	
 	Returns:
 		The converted form of 'x'.
 	"""
 	
 	# Power decibels or not
-	if power:
+	if use_power_db:
 		factor = 10.
 	else:
 		factor = 20.
 	
 	# Convert
-	if inv:
+	if from_db:
 		return 10 ** (x/factor)
 	else:
 		return factor*_pl.log10(x)
@@ -69,7 +67,7 @@ def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	
 	# Find out peak and break magnitude
 	peak_index = mag.argmax()
-	break_mag  = mag[peak_index]*db(-decibel, inv = True)
+	break_mag  = mag[peak_index]*db(-decibel, from_db = True)
 	
 	# Search
 	i = peak_index
@@ -197,7 +195,7 @@ def phase_180_freq(freq, phase):
 		# There were no 180 frequency
 		return Exception("Phase never intersects 180 + 360*n.")
 
-def gain_margin(freq, mag, phase, power = False):
+def gain_margin(freq, mag, phase, use_power_db = False):
 	"""
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 	
@@ -205,12 +203,12 @@ def gain_margin(freq, mag, phase, power = False):
 		freq (numpy.ndarray):  Frequency data
 		mag (numpy.ndarray):   Magnitude data
 		phase (numpy.ndarray): Phase data
-		power (bool):          Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		use_power_db (bool):   Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
 	
 	Returns:
 		float. Gain margin in decibel
 	"""
-	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], power = power)
+	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db = use_power_db)
 
 def g(freq, mag, phase):
 	"""

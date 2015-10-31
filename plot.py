@@ -37,9 +37,9 @@ def bode(freq, mag, phase, power = False, title_text = ''):
 	
 	# Magnitude plot
 	_pl.subplot(211)
-	_pl.plot(freq, db(mag, power = power))
+	_pl.plot(freq, convert_db(mag, power = power))
 	_pl.xscale('log')
-	_pl.ylabel('Magnitude [db]')
+	_pl.ylabel('Magnitude [convert_db]')
 	
 	# Title text
 	_pl.title(title_text)

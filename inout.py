@@ -25,7 +25,7 @@ from error import _string_or_exception
 
 _default_sig_figs = 4
 
-def setdefault_sig_figs(sig_figs):
+def set_default_sig_figs(sig_figs):
 	"""
 	Sets the default value for the number of significant figures to use during conversion to scientific notation with 'str_sci' and 'print_sci'.
 	
