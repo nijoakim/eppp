@@ -66,7 +66,6 @@ def str_sci(x, quantity=None, unit = '', sig_figs = None):
 
 	# Add quantity
 	if not quantity is None:
-		print(123123)
 		ret = '%s =\n\t%s' % (quantity, ret)
 	
 	return ret
