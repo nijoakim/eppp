@@ -35,7 +35,7 @@ def set_default_sig_figs(sig_figs):
 	global _default_sig_figs
 	_default_sig_figs = sig_figs
 
-def str_sci(x, unit = '', sig_figs = None):
+def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	# Default number of significant figures
 	if sig_figs is None:
 		sig_figs = _default_sig_figs
@@ -63,14 +63,19 @@ def str_sci(x, unit = '', sig_figs = None):
 	ret = ('%.'+ str(sig_figs - 1 - i%3) +'f') % (x*sign_x)
 	if prefix + unit:
 		ret += ' '+ prefix + unit
+
+	# Add quantity
+	if not quantity is None:
+		print(123123)
+		ret = '%s =\n\t%s' % (quantity, ret)
 	
 	return ret
 
-def print_sci(x, unit = '', sig_figs = _default_sig_figs):
-	print(str_sci(x, unit = unit, sig_figs = sig_figs))
+def print_sci(x, quantity = None, unit = '', sig_figs = _default_sig_figs):
+	print(str_sci(x, quantity = quantity, unit = unit, sig_figs = sig_figs))
 
 # Dynamic docstring generation
-def _docSci(printAlso):
+def _doc_sci(printAlso):
 	return """
 		Convert a number to scientific notation%s.
 		
@@ -78,7 +83,8 @@ def _docSci(printAlso):
 			x (number): Number to convert
 		
 		Kwargs:
-			unit (str): Unit of number to be converted%s
+			quantity (str): Quantity to add to string
+			unit (str):     Unit of number to be converted%s
 	""" % (
 		' and print it' if printAlso else '',
 		"""
@@ -87,8 +93,8 @@ def _docSci(printAlso):
 			str. String representation of the converted number.
 		""" if not printAlso else ''
 	)
-str_sci.__doc__   = _docSci(False)
-print_sci.__doc__ = _docSci(True)
+str_sci.__doc__   = _doc_sci(False)
+print_sci.__doc__ = _doc_sci(True)
 
 #===========
 # Read data
