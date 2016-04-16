@@ -1,4 +1,4 @@
-# Copyright 2015 Joakim Nilsson
+# Copyright 2015-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,18 +13,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pylab           as _pl
-import itertools       as _it
-import inout           as _inout
-import operator        as _op
-from error import _string_or_exception
-from log import _log
-from debug import *
+#=========
+# Imports
+#=========
+
+# External
+import pylab     as _pl
+import itertools as _it
+import operator  as _op
+
+# Internal
+from ..error import _string_or_exception
+from ..log import _log
+from ..debug import *
+from ..inout import str_sci as _str_sci
+
+#=======
+# Other
+#=======
 
 class ExprTree:
 	def __str__(self):
 		if self._is_leaf():
-			return _inout.str_sci(self.data)
+			return _str_sci(self.data)
 		else:
 			operator = self.data[0]
 			operands = self.data[1]
@@ -319,9 +330,9 @@ def lumped_network(
 		# Log best error so far
 		if best_signed_error is not None:
 			if use_rel_error:
-				_log(2, 'Best relative error so far: %s' % (_inout.str_sci(best_signed_error*100, '%')))
+				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error*100, '%')))
 			else:
-				_log(2, 'Best absolute error so far: %s' % (_inout.str_sci(best_signed_error)))
+				_log(2, 'Best absolute error so far: %s' % (_str_sci(best_signed_error)))
 		
 		# Log best network
 		_log(3, 'Best network so far: '+ str(ExprTree(best_expr)))

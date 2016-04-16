@@ -1,4 +1,6 @@
-# Copyright 2014-2015 Joakim Nilsson
+#!/usr/bin/env python3
+
+# Copyright 2014-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,5 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from calc_misc import *
-from calc_lumped_network import *
+from distutils.core import setup
+
+setup(
+	name         = 'eppp',
+	version      = '0.1.0',
+	author       = 'Joakim Nilsson',
+	author_email = 'nijoakim@gmail.com',
+	packages     = [
+		'eppp',
+		'eppp.calc',
+	],
+)

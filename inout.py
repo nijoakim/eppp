@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Joakim Nilsson
+# Copyright 2014-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,16 @@
 
 # TODO: Rename this module! It conflicts with the standard library.
 
+#=========
+# Imports
+#=========
+
+# External
 import pylab as _pl
 import glob  as _glob
-from error import _string_or_exception
+
+# Internal
+from .error import _string_or_exception
 
 #==========
 # Notation

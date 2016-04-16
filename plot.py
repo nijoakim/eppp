@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Joakim Nilsson
+# Copyright 2014-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pylab as _pl
-from calc import *
-from error import _string_or_exception
+from .calc import *
+from .error import _string_or_exception
 
 def bode(freq, mag, phase, power = False, title_text = ''):
 	"""

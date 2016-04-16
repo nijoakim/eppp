@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Joakim Nilsson
+# Copyright 2014-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #===============
 
 # Version
-__version__ = '0.1a1'
+__version__ = '0.1.0'
 
 # Docstring
 """
@@ -31,12 +31,13 @@ TODO: Document properlier!
 #=========
 
 # Imports
-from calc  import *
-from error import *
-from inout import *
-from log   import *
-from plot  import *
+from .calc  import *
+from .error import *
+from .inout import *
+from .log   import *
+from .plot  import *
 
+# TODO: Remove this magnificent hack
 #===================================================
 # Linebreak long lines in all functions' docstrings
 #===================================================
@@ -45,11 +46,11 @@ from plot  import *
 import types as _t
 
 # Referencable private imports
-import calc  as _calc
-import error as _error
-import inout as _inout
-import log   as _log
-import plot  as _plot
+# import calc  as _calc
+# import error as _error
+# import inout as _inout
+# import log   as _log
+# import plot  as _plot
 
 # Function to do this
 def _format_doc_strings(modules, width, indent):
@@ -91,4 +92,4 @@ def _format_doc_strings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)
+# _format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)
