@@ -30,27 +30,28 @@ TODO: Document properlier!
 # Imports
 #=========
 
-# Imports
+# Internal
 from .calc  import *
 from .error import *
 from .inout import *
 from .log   import *
 from .plot  import *
 
-# TODO: Remove this magnificent hack
+# Private external
+import types as _t
+
+# Private internal
+from . import calc  as _calc
+from . import error as _error
+from . import inout as _inout
+from . import log   as _log
+from . import plot  as _plot
+
 #===================================================
 # Linebreak long lines in all functions' docstrings
 #===================================================
 
 # Private imports
-import types as _t
-
-# Referencable private imports
-# import calc  as _calc
-# import error as _error
-# import inout as _inout
-# import log   as _log
-# import plot  as _plot
 
 # Function to do this
 def _format_doc_strings(modules, width, indent):
@@ -92,4 +93,4 @@ def _format_doc_strings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-# _format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)
+_format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)

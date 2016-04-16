@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Copyright 2014-2015 Joakim Nilsson
+# Copyright 2014-2016 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import __init__ as eppp
+# import .__init__ as eppp
+import eppp
 import argparse
 import re
 import sys
@@ -62,9 +63,9 @@ del sys.argv[1]
 
 # TODO: Add descriptions for commands
 
-# ================
-# parallel command
-# ================
+#====================
+# 'parallel' command
+#====================
 
 if cmd == 'parallel':
 	# Parse
