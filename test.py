@@ -18,54 +18,84 @@
 #=========
 
 # External
+import time
 import unittest as ut
 
 # Internal
-from .__init__ import *
+import eppp
+import eppp.calc
 
 #=========
 # Logging
 #=========
 
-# Log everything
-set_log_level(3)
+# Do not log anything
+eppp.set_log_level(0)
 
-#=======
-# Tests
-#=======
+#============
+# Unit tests
+#============
 
 class TestStringMethods(ut.TestCase):
 	# TODO: Finish this
-	# def test_lumped_network(self):
-	# 	self.assertEqual(lumped_network(88123, max_num_comps = 3), bc)
+	def test_lumped_network(self):
+		self.assertEqual(
+			str(eppp.calc.lumped_network(88123, max_num_comps = 3)),
+			'(220.0 k || (47.00 k + 100.0 k))'
+		)
 
 	def test_parallel_imp(self):
-		self.assertEqual(parallel_imp(3, 3, 3), 1)          # Three elements
-		self.assertEqual(parallel_imp(1), 1)                # One element
-		self.assertEqual(parallel_imp(1, 1j), (0.5 + 0.5j)) # Complex numbers
-		self.assertEqual(parallel_imp(1, 2), 2/3)           # Floating point
+		self.assertEqual(eppp.calc.parallel_imp(3, 3, 3), 1)        # Three elements
+		self.assertEqual(eppp.calc.parallel_imp(1), 1)              # One element
+		self.assertEqual(eppp.calc.parallel_imp(1, 1j), 0.5 + 0.5j) # Complex numbers
+		self.assertEqual(eppp.calc.parallel_imp(1, 2), 2/3)         # Floating point
 
 	def test_decibel(self):
 		# Amplitude
-		self.assertEqual(convert_db(100),                 40)
-		self.assertEqual(convert_db(40, from_db = True), 100)
+		self.assertEqual(eppp.calc.convert_db(100),                 40)
+		self.assertEqual(eppp.calc.convert_db(40, from_db = True), 100)
 		
 		# Power
-		self.assertEqual(convert_db(100, use_power_db = True),                  20)
-		self.assertEqual(convert_db(20,  use_power_db = True, from_db = True), 100)
+		self.assertEqual(eppp.calc.convert_db(100, use_power_db = True),                  20)
+		self.assertEqual(eppp.calc.convert_db(20,  use_power_db = True, from_db = True), 100)
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
-		set_default_sig_figs(3)
-		self.assertEqual(str_sci(1e6), '1.00 M')
-		self.assertEqual(str_sci(1e6, sig_figs = 5), '1.0000 M')
-		self.assertEqual(str_sci(111.111e6), '111 M')
-		self.assertEqual(str_sci( 11.1111e6), '11.1 M')
+		eppp.set_default_sig_figs(3)
+		self.assertEqual(eppp.str_sci(1e6), '1.00 M')
+		self.assertEqual(eppp.str_sci(1e6, sig_figs = 5), '1.0000 M')
+		self.assertEqual(eppp.str_sci(111.111e6), '111 M')
+		self.assertEqual(eppp.str_sci( 11.1111e6), '11.1 M')
 
 		# Rounding
-		self.assertEqual(str_sci(1005), '1.01 k')
+		self.assertEqual(eppp.str_sci(1005), '1.01 k')
 
 		# Unit naming
-		self.assertEqual(str_sci(1000, unit = 'm'), '1.00 km')
+		self.assertEqual(eppp.str_sci(1000, unit = 'm'), '1.00 km')
 
-ut.main()
+		# Complex numbers TODO
+		# self.assertEqual(eppp.str_sci(1000, unit = 'm'), '1.00 km')
+
+ut.main(exit = False)
+
+#=============
+# Speed tests
+#=============
+
+# Lumped network
+
+t = time.time()
+eppp.calc.lumped_network(88123, max_num_comps = 3, max_rel_error = 0)
+eppp.print_sci(
+	time.time() - t,
+	quantity='lumped_network, 3 components, time',
+	unit='s'
+)
+
+t = time.time()
+eppp.calc.lumped_network(88123, max_num_comps = 4, max_rel_error = 0)
+eppp.print_sci(
+	time.time() - t,
+	quantity='lumped_network, 4 components, time',
+	unit='s'
+)

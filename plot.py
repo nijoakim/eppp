@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pylab as _pl
-from .calc import *
 from .error import _string_or_exception
 
 def bode(freq, mag, phase, power = False, title_text = ''):

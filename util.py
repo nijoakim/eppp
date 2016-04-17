@@ -16,6 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Parser should understand prefixes?
+# TODO: Possibility to switch off print_sci
+# TODO: Possibility to omit unit
+# TODO: --plain for plainer output text
+# TODO: --color for colored parentheses?
+# TODO: --precision for print_sci precision
 
 #=========
 # Imports
@@ -96,12 +101,15 @@ if cmd == 'parallel':
 			res = int(res)
 	
 	# Print the result
-	print(res)
+	eppp.print_sci(res, unit = 'Ω')
 
 #===================
 # 'network' command
 #===================
-# TODO: Add frequency and support for inductors and capacitors
+# TODO: Add frequency and support for inductors and capacitors?
+# TODO: Switches for what to print
+# TODO: Switch for error
+# TODO: Switch for series (E6, E12, e.t.c.)
 
 if cmd == 'network':
 	# Parse
@@ -110,6 +118,12 @@ if cmd == 'network':
 	target = parser.parse_args().target[0]
 
 	# Get the expression
-	print(eppp.calc.lumped_network(target))
+	expr = eppp.calc.lumped_network(target)
+	res = expr.evaluate()
+	print(str(expr) +' = '+ eppp.str_sci(res))
+	# eppp.print_sci(100*(res - target) / target, quantity = 'relative error', unit = '%')
 
-# TODO: Command to calculate impedance of inductor or capacitor at a given frequency
+#=====================
+# 'impedance' command
+#=====================
+# Command to calculate impedance of inductor or capacitor for a given frequency

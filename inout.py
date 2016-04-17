@@ -42,31 +42,32 @@ def set_default_sig_figs(sig_figs):
 	global _default_sig_figs
 	_default_sig_figs = sig_figs
 
-# TODO: Support complex numbers better?
+# TODO: Support complex numbers!
+# TODO: Smart thing to print percent if in a good range but not otherwise
 def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	# Default number of significant figures
 	if sig_figs is None:
 		sig_figs = _default_sig_figs
-	
+
 	# Limit to at least 3 significant figures
 	if sig_figs < 3:
 		print(_string_or_exception('Minimum allowable value for significant figures is 3.'))
 		sig_figs = 3
-	
+
 	# Consider only positive numbers
 	sign_x = _pl.sign(x)
 	x *= sign_x
-	
+
 	# Prefixes
 	PREFIXES = ['y', 'z', 'a', 'f', 'p', 'n', 'u', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] # Metric prefixes
 	x *= 1.e24                                                                                      # Largest prefix multiplier
-	
+
 	# Adjust 'x' and find prefix
 	i       = min(int(_pl.log10(_pl.real(x))), (len(PREFIXES) - 1)*3)
 	prefix  = PREFIXES[i//3]
 	x       = round(x, -(i + 1) + sig_figs)
 	x      /= 1e3**(i//3)
-	
+
 	# Add prefix and unit
 	ret = ('%.'+ str(sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
 	if prefix + unit:
@@ -75,7 +76,7 @@ def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	# Add quantity
 	if not quantity is None:
 		ret = '%s =\n\t%s' % (quantity, ret)
-	
+
 	return ret
 
 def print_sci(x, quantity = None, unit = '', sig_figs = _default_sig_figs):
@@ -85,17 +86,17 @@ def print_sci(x, quantity = None, unit = '', sig_figs = _default_sig_figs):
 def _doc_sci(printAlso):
 	return """
 		Convert a number to scientific notation%s.
-		
+
 		Args:
 			x (number): Number to convert
-		
+
 		Kwargs:
 			quantity (str): Quantity to add to string
 			unit (str):     Unit of number to be converted%s
 	""" % (
 		' and print it' if printAlso else '',
 		"""
-		
+
 		Returns:
 			str. String representation of the converted number.
 		""" if not printAlso else ''
@@ -120,21 +121,21 @@ def read_data(fmt, path):
 def read_gnucap(path):
 	"""
 	Reads a gnucap file and returns a dictionary with its contents.
-	
+
 	Args:
 		path (str): Path to file to read.
-	
+
 	Returns:
 		dict. Dictionary containing numpy.ndarrays of the read data 
 	"""
-	
+
 	# Read data
 	names=[]
 	with open(path, 'r') as f:
 		names    = f.readline().split()
 		names[0] = names[0][1:] # Remove initial '#'
 	data = _pl.genfromtxt(path)
-	
+
 	# Put data in dictionary
 	ret_dict = {}
 	try:
@@ -143,31 +144,31 @@ def read_gnucap(path):
 	except IndexError: # Catch array shape error when data is of length 1
 		for i in range(data.shape[0]):
 			ret_dict[names[i]] = _pl.np.array([data[i]])
-	
+
 	return ret_dict
 
 def read_archimedes(path):
 	# Get relevant paths
 	files = _glob.glob(path + "/*.xyz")
-	
+
 	# TODO: Comment, idiot!
 	dict_outer = {}
 	for f in files:
 		data = _pl.genfromtxt(f)
-		
+
 		new_shape = data.shape
 		new_shape = (new_shape[1], new_shape[0])
 		data = data.reshape((1, new_shape[0] * new_shape[1]), order = 'C')
 		data = data.reshape(new_shape, order = 'F')
-		
+
 		dict_inner = {}
 		dict_inner['x']   = data[0]
 		dict_inner['y']   = data[1]
 		dict_inner['mag'] = data[2]
-		
+
 		propertyName = f[4 : -4] # TODO: Do properly
 		dict_outer[propertyName] = dict_inner
-	
+
 	return dict_outer
 	
 
@@ -197,16 +198,16 @@ class _TextFields:
 	COLOR_NET_JUNCTION       = 16
 	COLOR_MESH_GRID_MINOR    = 17
 	COLOR_MESH_GRID_MAJOR    = 18
-	
+
 	# 'visibility constants'
 	VISIBILITY_INVISIBLE = 0
 	VISIBILITY_VISIBLE   = 1
-	
+
 	# 'show_name_value' constants
 	SHOW_NAME_VALUE = 0
 	SHOW_VALUE      = 1
 	SHOW_NAME       = 2
-	
+
 	# 'alignment' constants
 	ALIGNMENT_HOR_LEFT   = -1
 	ALIGNMENT_HOR_CENTER =  0
@@ -214,7 +215,7 @@ class _TextFields:
 	ALIGNMENT_VER_BOTTOM = -1
 	ALIGNMENT_VER_MIDDLE =  0
 	ALIGNMENT_VER_TOP    =  1
-	
+
 	def __init__(self, tLine):
 		fields = tLine.split()
 		self.x               = int(fields[1])
@@ -227,7 +228,7 @@ class _TextFields:
 		self.alignment_hor   = int(fields[8]) / 3 - 1
 		self.alignment_ver   = int(fields[8]) % 3 - 1
 		self.numLines        = int(fields[9])
-	
+
 	def __str__(self):
 		return 'T '+ str.join(' ', map(str, [
 			self.x,
@@ -240,13 +241,13 @@ class _TextFields:
 			(self.alignment_hor + 1)*3 + self.alignment_ver + 1,
 			self.numLines,
 		]))
-	
+
 	# TODO: angle
 	# TODO: What to do for center / middle alignment???? raise exception?
 	def move_along_orientation(self, dx, dy):
 		self.x += dx * self.alignment_hor
 		self.y += dy * self.alignment_ver
-	
+
 	def move_along_orientation_scaled(self, dx, dy):
 		factor = 20 * self.size
 		self.move_along_orientation(factor*dx, factor*dy)
@@ -266,29 +267,28 @@ def annotate_gschem(fn_in, fnd_out, data, index = 0):
 			for line in fIn.readlines():
 				# Copy line from input file
 				f_out.write(line)
-				
+
 				# Match non-'}'
 				if cur_match == 'none':
 					# Match text field
 					cur_match_str = 'T'
 					if line.startswith(cur_match_str):
 						cur_text_fields = _TextFields(line) # Get cur_text_fields
-				
-					
+
 					# Match net name
 					cur_match_str = 'netname'
 					if line.startswith(cur_match_str):
 						cur_id = line[len(cur_match_str) + 1 : -1] # Get net name
 						if 'v('+ cur_id +')' in data:
 							cur_match = cur_match_str
-					
+
 					# Match reference designator
 					cur_match_str = 'refdes'
 					if line.startswith(cur_match_str):
 						cur_id = line[len(cur_match_str) + 1 : -1] # Get net name
 						if 'i('+ cur_id +')' in data:
 							cur_match = cur_match_str
-				
+
 				# Match '}'
 				else:
 					cur_match_str = '}'
@@ -303,16 +303,16 @@ def annotate_gschem(fn_in, fnd_out, data, index = 0):
 							# Write new text
 							f_out.write(str(cur_text_fields) +'\n')
 							f_out.write(str_sci(data['v('+ cur_id +')'][index], 'V') + '\n')
-						
+
 						if cur_match == 'refdes':
 							# Modify text fields
 							cur_text_fields.move_along_orientation_scaled(0, -1)         # Position
 							cur_text_fields.size -= 2	                                 # Font size
 							cur_text_fields.color = _TextFields.COLOR_DETACHED_ATTRIBUTE # Color
-							
+
 							# Write new text
 							f_out.write(str(cur_text_fields) +'\n')
 							f_out.write(str_sci(data['i('+ cur_id +')'][index], 'A') + '\n')
-						
+
 						# Reset current match
 						cur_match = 'none'

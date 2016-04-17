@@ -30,8 +30,8 @@ TODO: Document properlier!
 # Imports
 #=========
 
+# TODO: Make sub-modules out of these?
 # Internal
-from .calc  import *
 from .error import *
 from .inout import *
 from .log   import *
@@ -80,7 +80,7 @@ def _format_doc_strings(modules, width, indent):
 					else:
 						doc += ' '*cur_indent
 						new_width = width - cur_indent
-					
+
 					# Word wrap
 					if len(lines[-1]) > new_width:
 						break_index = lines[-1].rfind(' ', 0, new_width)

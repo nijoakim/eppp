@@ -1,7 +1,12 @@
 PREFIX=/usr/local/bin
 
+all: test
+
 interpreter:
 	cd ../; python3
+
+profile:
+	cd ../; python3 -m eppp.profiler
 
 test:
 	cd ../; python3 -m eppp.test
