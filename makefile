@@ -1,3 +1,5 @@
+# TODO Possiblity to switch off installing epppu and bash completions
+
 PREFIX=/usr/local/bin
 
 all: test

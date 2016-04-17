@@ -266,8 +266,8 @@ def lumped_network(
 		avail_vals ([number]):  List of available values of the impedances used in the network
 
 	Returns:
-		[...]. Polish expression of the resulting network. (Use <slafs> functions to get something useful)
-	""" # TODO:  Replace slafs
+		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
+	"""
 
 	# Don't display a unit (may change later)
 	# unit = 'Ω'
