@@ -218,32 +218,28 @@ def get_avail_vals(series = 'E6', min_val = 10, max_val = 10000000, comp_type = 
 
 # Optimised way to evaluate polish expressions (faster than going through ExprTree)
 # TODO: C-version of this function
-def _polish_eval(expr, stack = None):
+def _polish_eval(expr):
 	# Do not modify original expression
 	expr = list(expr)
 
-	# Default empty stack
-	if stack == None:
-		stack = []
+	# Start with an empty stack
+	stack = []
 
-	# If empty expression
-	if not expr:
-		stack.reverse()
-		return stack
-
-	# If not empty expression
-	else:
+	# While there are elements left in the expression
+	while expr:
 		el = expr.pop()
 
-		# If operator (function)
+		# If operator
 		if callable(el):
 			expr.append(el(stack.pop(), stack.pop()))
-			return (_polish_eval(expr, stack))
 
 		# If value
 		else:
 			stack.append(el)
-			return _polish_eval(expr, stack)
+
+	# Return the stack in the correct order
+	stack.reverse()
+	return stack
 
 def lumped_network(
 		target,
