@@ -15,15 +15,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# import .__init__ as eppp
-import eppp
+#=========
+# Imports
+#=========
+
+# External
 import argparse
 import re
 import sys
 
+# Internal
+import eppp
+import eppp.calc
+
+#========
+# Parser
+#========
+
 CMDS = [
 	'parallel',
-	'pskabb',
+	'network',
 ]
 
 def _make_cmds_str(cmds):
@@ -84,5 +95,19 @@ if cmd == 'parallel':
 	
 	# Print the result
 	print(res)
+
+#===================
+# 'network' command
+#===================
+# TODO: Add frequency and support for inductors and capacitors
+
+if cmd == 'network':
+	# Parse
+	parser = argparse.ArgumentParser()
+	parser.add_argument('target', type=complex, nargs=1)
+	target = parser.parse_args().target[0]
+
+	# Get the expression
+	print(eppp.calc.lumped_network(target))
 
 # TODO: Command to calculate impedance of inductor or capacitor at a given frequency

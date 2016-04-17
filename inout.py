@@ -42,6 +42,7 @@ def set_default_sig_figs(sig_figs):
 	global _default_sig_figs
 	_default_sig_figs = sig_figs
 
+# TODO: Support complex numbers better?
 def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	# Default number of significant figures
 	if sig_figs is None:
@@ -61,13 +62,13 @@ def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	x *= 1.e24                                                                                      # Largest prefix multiplier
 	
 	# Adjust 'x' and find prefix
-	i       = min(int(_pl.log10(x)), (len(PREFIXES) - 1)*3)
+	i       = min(int(_pl.log10(_pl.real(x))), (len(PREFIXES) - 1)*3)
 	prefix  = PREFIXES[i//3]
 	x       = round(x, -(i + 1) + sig_figs)
 	x      /= 1e3**(i//3)
 	
 	# Add prefix and unit
-	ret = ('%.'+ str(sig_figs - 1 - i%3) +'f') % (x*sign_x)
+	ret = ('%.'+ str(sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
 	if prefix + unit:
 		ret += ' '+ prefix + unit
 
@@ -295,8 +296,8 @@ def annotate_gschem(fn_in, fnd_out, data, index = 0):
 						# If last match was 'netname'
 						if cur_match == 'netname':
 							# Modify text fields
-							cur_text_fields.move_along_orientation_scaled(0, 1)             # Position
-							cur_text_fields.size -= 2	                                   # Font size
+							cur_text_fields.move_along_orientation_scaled(0, 1)          # Position
+							cur_text_fields.size -= 2	                                 # Font size
 							cur_text_fields.color = _TextFields.COLOR_DETACHED_ATTRIBUTE # Color
 							
 							# Write new text
@@ -305,8 +306,8 @@ def annotate_gschem(fn_in, fnd_out, data, index = 0):
 						
 						if cur_match == 'refdes':
 							# Modify text fields
-							cur_text_fields.move_along_orientation_scaled(0, -1)            # Position
-							cur_text_fields.size -= 2	                                   # Font size
+							cur_text_fields.move_along_orientation_scaled(0, -1)         # Position
+							cur_text_fields.size -= 2	                                 # Font size
 							cur_text_fields.color = _TextFields.COLOR_DETACHED_ATTRIBUTE # Color
 							
 							# Write new text

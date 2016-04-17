@@ -60,7 +60,7 @@ class ExprTree:
 			expr,
 			preserve_expr = True,
 			fmt           = 'polish',
-			do_simplify   = True
+			do_simplify   = True,
 		):
 		# Do not modify expression unless explicitly stated
 		if preserve_expr:
@@ -123,6 +123,39 @@ class ExprTree:
 			
 			# Update data
 			self.data = (operator, new_operands)
+
+	def eval(self, stack = None):
+		# TODO: Not finished
+		if self.fmt == 'reverse-polish':
+			# TODO: Reverse
+			pass
+
+		# Do not modify original expression
+		expr = list(expr)
+		
+		# Default empty stack
+		if stack == None:
+			stack = []
+		
+		# If empty expression
+		if not expr:
+			stack.reverse()
+			return stack
+		
+		# If not empty expression
+		else:
+			el = expr.pop()
+			
+			# If operator (function)
+			if callable(el):
+				expr.append(el(stack.pop(), stack.pop()))
+				return (_polish_eval(expr, stack))
+			
+			# If value
+			else:
+				stack.append(el)
+				return _polish_eval(expr, stack)
+
 
 def _polish_eval(expr, stack = None):
 	# Do not modify original expression
@@ -242,8 +275,8 @@ def lumped_network(
 	
 	Kwargs:
 		max_num_comps (int):    Maximum number of components in the network. The function will return a network with no more components than this value.
-		max_rel_error (number): Maximum tolerable relative error. The function will return a network with at most this value as relative error if possible with the given 'max_num_comps'.
-		max_abs_error (number): Maximum tolerable absolute error. The function will return a network with at most this value as absolute error if possible with the given 'max_num_comps'. This argument should not be given if 'max_rel_error' is given.
+		max_rel_error (number): (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
+		max_abs_error (number): Maximum tolerable absolute error. The absolute error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		avail_vals ([number]):  List of available values of the impedances used in the network
 	
 	Returns:
@@ -256,7 +289,7 @@ def lumped_network(
 	
 	# Figure out error mode
 	if max_abs_error is None and max_rel_error is None:
-		max_error = 0
+		max_error = 0.01
 		use_rel_error = True
 	elif not max_abs_error is None and not max_rel_error is None:
 		return _string_or_exception("Can not specify both 'max_abs_error' and 'max_rel_error'.")
@@ -330,7 +363,7 @@ def lumped_network(
 		# Log best error so far
 		if best_signed_error is not None:
 			if use_rel_error:
-				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error*100, '%')))
+				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error*100, unit='%')))
 			else:
 				_log(2, 'Best absolute error so far: %s' % (_str_sci(best_signed_error)))
 		

@@ -28,7 +28,7 @@ from .__init__ import *
 #=========
 
 # Log everything
-set_log_level(0)
+set_log_level(3)
 
 #=======
 # Tests
