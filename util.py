@@ -92,7 +92,7 @@ if cmd == 'parallel':
 	vals = parser.parse_args().values
 	
 	# Do the calculation
-	res = eppp.parallel_imp(*vals)
+	res = eppp.calc.parallel_imp(*vals)
 	
 	# Convert to weakest type for nicer printing
 	if res.imag == 0:
