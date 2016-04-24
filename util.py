@@ -55,7 +55,7 @@ descriptionStr = 'Executes a command provided by the eppp. Avaliable commands ar
 # Parse input command
 parser = argparse.ArgumentParser(description=descriptionStr)
 parser.add_argument('command')
-parser.add_argument('command-arguments', nargs='*')
+parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
 cmd_in = parser.parse_args().command
 
 # Match input command with available command
@@ -90,7 +90,7 @@ if cmd == 'parallel':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('values', type=complex, nargs='+')
 	vals = parser.parse_args().values
-	
+
 	# Do the calculation
 	res = eppp.calc.parallel_imp(*vals)
 	
@@ -99,7 +99,7 @@ if cmd == 'parallel':
 		res = res.real
 		if res == int(res):
 			res = int(res)
-	
+
 	# Print the result
 	eppp.print_sci(res, unit = 'Ω')
 
@@ -115,13 +115,46 @@ if cmd == 'network':
 	# Parse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('target', type=complex, nargs=1)
-	target = parser.parse_args().target[0]
+	parser.add_argument(
+		'-e',
+		'--error',
+		type    = float,
+		nargs   = '?',
+		default = 0.01,
+		help    = 'Maximum relative error for the resulting network.',
+	)
+	parser.add_argument(
+		'-c',
+		'--components',
+		type    = float,
+		nargs   = '?',
+		default = None,
+		help    = 'Maximum number of components for the resulting network.',
+	)
+	parser.add_argument(
+		'-pe',
+		'--print-error',
+		action = 'store_true',
+		help   = 'Prints the relative error by which the resulting network deviates from the target.'
+	)
+	parser.add_argument(
+		'-or',
+		'--omit-result',
+		action = 'store_false',
+		help   = 'Omits printing the value of the network',
+	)
+	args = parser.parse_args()
 
 	# Get the expression
-	expr = eppp.calc.lumped_network(target)
+	expr = eppp.calc.lumped_network(
+		args.target[0],
+		max_rel_error = args.error,
+		max_num_comps = args.components,
+	)
 	res = expr.evaluate()
-	print(str(expr) +' = '+ eppp.str_sci(res))
-	# eppp.print_sci(100*(res - target) / target, quantity = 'relative error', unit = '%')
+	print(str(expr) + (' = '+ eppp.str_sci(res) if args.omit_result else ''))
+	if args.print_error:
+		eppp.print_sci(100*(res - args.target[0]) / args.target[0], quantity = 'relative error', unit = '%')
 
 #=====================
 # 'impedance' command
