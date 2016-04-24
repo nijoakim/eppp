@@ -20,7 +20,6 @@
 # TODO: Possibility to omit unit
 # TODO: --plain for plainer output text
 # TODO: --color for colored parentheses?
-# TODO: --precision for print_sci precision
 
 #=========
 # Imports
@@ -50,15 +49,27 @@ def _make_cmds_str(cmds):
 		cmds_str += '\t%s\n' % cmd
 	return cmds_str
 
-descriptionStr = 'Executes a command provided by the eppp. Avaliable commands are:\n%s' % _make_cmds_str(CMDS)
+descriptionStr = 'Executes a command based on the functionality provided by the eppp library. Avaliable commands are:\n%s' % _make_cmds_str(CMDS)
 
-# Parse input command
+# Parse global arguments
 parser = argparse.ArgumentParser(description=descriptionStr)
 parser.add_argument('command')
+parser.add_argument(
+	'-sf',
+	'--significant-figures',
+	type=int,
+	default = 4,
+	nargs   = '?',
+	help    = 'Number of significant figures to print with.',
+)
 parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
-cmd_in = parser.parse_args().command
+global_args = parser.parse_args()
+
+# Set default significant figures
+eppp.set_default_sig_figs(global_args.significant_figures)
 
 # Match input command with available command
+cmd_in = global_args.command
 pred = re.compile(cmd_in +'.*')
 matches = []
 for matchcmd in CMDS:
@@ -76,8 +87,8 @@ elif num_matches == 2:
 	sys.stderr.write('%s is ambiguous.\n\nDid you mean any of these commands?\n%s\n' % (cmd_in, cmds_str))
 	exit(1)
 
-# Remove command argument from argv
-del sys.argv[1]
+# Remove global arguments for argv
+sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 
 # TODO: Add descriptions for commands
 
@@ -101,7 +112,7 @@ if cmd == 'parallel':
 			res = int(res)
 
 	# Print the result
-	eppp.print_sci(res, unit = 'Ω')
+	eppp.print_sci(res, unit='Ω')
 
 #===================
 # 'network' command
@@ -109,12 +120,12 @@ if cmd == 'parallel':
 # TODO: Add frequency and support for inductors and capacitors?
 # TODO: Switches for what to print
 # TODO: Switch for error
-# TODO: Switch for series (E6, E12, e.t.c.)
+# TODO: Switch for component series (E6, E12, e.t.c.)
 
 if cmd == 'network':
 	# Parse
 	parser = argparse.ArgumentParser()
-	parser.add_argument('target', type=complex, nargs=1)
+	parser.add_argument('target', type=complex)
 	parser.add_argument(
 		'-e',
 		'--error',
@@ -147,14 +158,19 @@ if cmd == 'network':
 
 	# Get the expression
 	expr = eppp.calc.lumped_network(
-		args.target[0],
+		args.target,
 		max_rel_error = args.error,
 		max_num_comps = args.components,
 	)
 	res = expr.evaluate()
+
 	print(str(expr) + (' = '+ eppp.str_sci(res) if args.omit_result else ''))
 	if args.print_error:
-		eppp.print_sci(100*(res - args.target[0]) / args.target[0], quantity = 'relative error', unit = '%')
+		eppp.print_sci(
+			100*(res - args.target) / args.target,
+			quantity = 'relative error',
+			unit     = '%',
+		)
 
 #=====================
 # 'impedance' command
