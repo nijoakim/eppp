@@ -253,13 +253,14 @@ def lumped_network(
 	Finds a network of passive components matching a specified (possibly complex) value.
 
 	Args:
-		target (number):        Target impedance for the network
+		target (number):        Target impedance for the network.
 
 	Kwargs:
 		max_num_comps (int):    Maximum number of components in the network. The function will return a network with no more components than this value.
 		max_rel_error (number): (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		max_abs_error (number): Maximum tolerable absolute error. The absolute error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
-		avail_vals ([number]):  List of available values of the impedances used in the network
+		avail_vals ([number]):  List of available values of the impedances used in the network.
+		avail_ops ([operator]): (Default: [eppp.calc.parallel_imp, operator.add]) List of operators used for calculating the resulting impedance. The operators are represented by a function that takes to arguments. The operators must be associative and commutative.
 
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
