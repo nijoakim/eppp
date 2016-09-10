@@ -62,7 +62,7 @@ def convert_db(x, use_power_db = False, from_db = False):
 # Bandwidth
 #===========
 
-# TODO: mag = mag_data och så...?
+# TODO: mag -> mag_data and the like?
 def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	# Size check
 	if freq.size != mag.size:
@@ -188,7 +188,7 @@ def phase_180_freq(freq, phase):
 	freqs = []
 
 	# Loop through all necessary phase 360-offsets
-	for phase_offset in range( (int(_pl.floor(min(phase))) / 360) * 360, (int(_pl.ceil(max(phase))) / 360) * 360, 360): # TODO: Don't think int(...) is necessary
+	for phase_offset in range( (int(_pl.floor(min(phase))) / 360) * 360, (int(_pl.ceil(max(phase))) / 360) * 360, 360): # TODO: Is int(...) necessary?
 		# Error means no intersection for given phase and can therefore be ignored
 		try:
 			freqs.append(intersects(freq, phase - phase_offset, 180))
@@ -218,7 +218,7 @@ def gain_margin(freq, mag, phase, use_power_db = False):
 
 	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db = use_power_db)
 
-def g(freq, mag, phase):
+def phase_margin(freq, mag, phase):
 	"""
 	Calculates phase margin from magnitude and phase data, both as functions of frequency.
 
