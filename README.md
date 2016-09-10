@@ -2,9 +2,9 @@
 
 EPPP is a Python 3 package for processing and analysing electronic simulation data.
 
-It is very much work in progress and the currently documentation is lacking in many areas. Also, in this early stage of development, everything is subject to change. It is even somewhat likely that some of the current functionality will be stripped away or moved to another project.
+It is very much work in progress and the documentation is currently lacking in many areas. Also, in this early stage of development, everything is subject to change. It is even somewhat likely that some of the current functionality will be stripped away or moved to another project.
 
-EPPP comes as a python module but also defines a program `epppu`, "EPPP utilities" that uses the module to provide a convenient command line interface some of the EPPP functionality. For example:
+EPPP comes as a python module but also defines a program, `epppu`, "EPPP utilities" that uses the module to provide a convenient command line interface some of the EPPP functionality. For example:
 
 	$ epppu network 88123
 	(220.0 k || (47.00 k + 100.0 k)) = 88.12 k
