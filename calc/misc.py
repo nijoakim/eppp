@@ -30,9 +30,17 @@ from ..error import _string_or_exception
 # Decibel conversions
 #=====================
 
-# TODO: from_db -> convertFromDb
-def convert_db(x, use_power_db = False, from_db = False):
-	"""
+def convert_to_db(x, use_power_db = False):
+	factor = 10 if use_power_db else 20 # Power decibels or not
+	return factor*_pl.log10(x)          # Return converted value
+
+def convert_from_db(x, use_power_db = False):
+	factor = 10 if use_power_db else 20 # Power decibels or not
+	return 10 ** (x/factor)             # Return converted value
+
+# Dynamic docstring generation
+def _doc_convert_db(convert_str):
+	return """
 	Converts a number to and from its decibel form.
 
 	Args:
@@ -40,23 +48,12 @@ def convert_db(x, use_power_db = False, from_db = False):
 
 	Kwargs:
 		use_power_db (bool): Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
-		from_db (bool):   Whether to convert from decibels instead of to. If False, the conversion is done to decibels, otherwise from.
 	
 	Returns:
-		The converted form of 'x'.
-	"""
-
-	# Power decibels or not
-	if use_power_db:
-		factor = 10.
-	else:
-		factor = 20.
-	
-	# Convert
-	if from_db:
-		return 10 ** (x/factor)
-	else:
-		return factor*_pl.log10(x)
+		'x' %s decibels.
+	""" % convert_str
+convert_to_db.__doc__   = _doc_convert_db("in")
+convert_from_db.__doc__ = _doc_convert_db("converted from")
 
 #===========
 # Bandwidth

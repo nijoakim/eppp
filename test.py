@@ -52,12 +52,12 @@ class TestStringMethods(ut.TestCase):
 
 	def test_decibel(self):
 		# Amplitude
-		self.assertEqual(eppp.calc.convert_db(100),                 40)
-		self.assertEqual(eppp.calc.convert_db(40, from_db = True), 100)
+		self.assertEqual(eppp.calc.convert_to_db(100), 40)   # To dB
+		self.assertEqual(eppp.calc.convert_from_db(40), 100) # From dB
 		
 		# Power
-		self.assertEqual(eppp.calc.convert_db(100, use_power_db = True),                  20)
-		self.assertEqual(eppp.calc.convert_db(20,  use_power_db = True, from_db = True), 100)
+		self.assertEqual(eppp.calc.convert_to_db(100, use_power_db = True), 20)   # To dB
+		self.assertEqual(eppp.calc.convert_from_db(20, use_power_db = True), 100) # From dB
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
@@ -84,18 +84,18 @@ ut.main(exit = False)
 
 # Lumped network
 
-t = time.time()
-eppp.calc.lumped_network(88123, max_num_comps = 3, max_rel_error = 0)
-eppp.print_sci(
-	time.time() - t,
-	quantity='lumped_network, 3 components, time',
-	unit='s'
-)
+# t = time.time()
+# eppp.calc.lumped_network(88123, max_num_comps = 3, max_rel_error = 0)
+# eppp.print_sci(
+# 	time.time() - t,
+# 	quantity='lumped_network, 3 components, time',
+# 	unit='s'
+# )
 
-t = time.time()
-eppp.calc.lumped_network(88123, max_num_comps = 4, max_rel_error = 0)
-eppp.print_sci(
-	time.time() - t,
-	quantity='lumped_network, 4 components, time',
-	unit='s'
-)
+# t = time.time()
+# eppp.calc.lumped_network(88123, max_num_comps = 4, max_rel_error = 0)
+# eppp.print_sci(
+# 	time.time() - t,
+# 	quantity='lumped_network, 4 components, time',
+# 	unit='s'
+# )
