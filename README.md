@@ -39,16 +39,16 @@ For doumentation on the different commands use
 - python3-scipy
 - python3-matplotlib
 
-On Debian,
+On Debian-based systems,
 
-	sudo aptitude install python3 python3-numpy python3-scipy python3-matplotlib
+	$ sudo aptitude install python3 python3-numpy python3-scipy python3-matplotlib
 
 should install all the dependencies.
 
 ### Installing EPPP
 To install run:
 
-	sudo make install
+	$ sudo make install
 
 To change the install prefix add `PREFIX=<prefix>`. If you don't want to install the EPPP utilities, add `INSTALL_EPPPU=0` and if you don't want bash completion for the EPPP utilities, add `INSTALL_EPPPU_COMPLETION=0`.
 
@@ -58,8 +58,8 @@ The logging verbosity can be set with the function `eppp.set_log_level()`.
 
 To run unit and performance test, run:
 
-	make test
+	$ make test
 
 For code profiling, run:
 
-	make profile
+	$ make profile
