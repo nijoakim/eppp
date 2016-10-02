@@ -4,17 +4,18 @@ EPPP is a Python 3 package for processing and analysing electronic simulation da
 
 It is very much work in progress and the documentation is currently lacking in many areas. Also, in this early stage of development, everything is subject to change. It is even somewhat likely that some of the current functionality will be stripped away or moved to another project.
 
-EPPP comes as a python module but also defines a program, `epppu`, "EPPP utilities" that uses the module to provide a convenient command line interface some of the EPPP functionality. For example:
+EPPP comes as a python module but also defines a program, `epppu`, "EPPP utilities", that uses the module to provide a convenient command-line interface to some of the EPPP functionality. For example:
 
 	$ epppu network 88123
 	(220.0 k || (47.00 k + 100.0 k)) = 88.12 k
 
 uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.123 kΩ.
 
-The library provides, among many other things, functions for plotting bode diagrams and extracting break frequencies from frequency response data.
+The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
 ## Library
-- TODO: Expand this section when it is more clear what does what
+TODO: Expand this section when it is more clear what does what
+
 - error.py
 - inout.py
 - log.py
@@ -56,7 +57,7 @@ To change the install prefix add `PREFIX=<prefix>`. If you don't want to install
 
 The logging verbosity can be set with the function `eppp.set_log_level()`.
 
-To run unit and performance test, run:
+To run unit and performance tests, run:
 
 	$ make test
 
