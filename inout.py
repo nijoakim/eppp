@@ -111,7 +111,6 @@ print_sci.__doc__ = _doc_sci(True)
 EXT_GNUCAP     = 1
 EXT_ARCHIMEDES = 2
 
-# TODO: Privatize sub functions
 def read_data(fmt, path):
 	if (fmt == EXT_GNUCAP    ): return _read_gnucap(path)
 	if (fmt == EXT_ARCHIMEDES): return _read_archimedes(path)
