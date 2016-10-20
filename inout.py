@@ -151,26 +151,34 @@ def read_archimedes(path):
 	# Get relevant paths
 	files = _glob.glob(path + "/*.xyz")
 
-	# TODO: Comment, idiot!
+	# Generate dictionary of dictionaries
+	# Outer dictionary key is filename.
+	# Inner dictionary keys are 'x', 'y' and 'mag'
 	dict_outer = {}
 	for f in files:
+		# Get the data
 		data = _pl.genfromtxt(f)
 
+		# Reshape the data so it can be extracted more easily
 		new_shape = data.shape
 		new_shape = (new_shape[1], new_shape[0])
 		data = data.reshape((1, new_shape[0] * new_shape[1]), order = 'C')
 		data = data.reshape(new_shape, order = 'F')
 
+		# Get data
 		dict_inner = {}
 		dict_inner['x']   = data[0]
 		dict_inner['y']   = data[1]
 		dict_inner['mag'] = data[2]
 
-		propertyName = f[4 : -4] # TODO: Do properly
-		dict_outer[propertyName] = dict_inner
+		# Cut directory part of path and file extension
+		property_name = f[f.rfind('/') + 1 : f.rfind('.')]
 
+		# Assign inner dictionary to outer one
+		dict_outer[property_name] = dict_inner
+
+	# Return dictionary of dictionaries
 	return dict_outer
-	
 
 #============
 # Annotation
