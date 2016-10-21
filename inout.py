@@ -111,14 +111,13 @@ print_sci.__doc__ = _doc_sci(True)
 EXT_GNUCAP     = 1
 EXT_ARCHIMEDES = 2
 
-# TODO: Privatize sub functions
 def read_data(fmt, path):
-	if (fmt == EXT_GNUCAP    ): return read_gnucap(path)
-	if (fmt == EXT_ARCHIMEDES): return read_archimedes(path)
+	if (fmt == EXT_GNUCAP    ): return _read_gnucap(path)
+	if (fmt == EXT_ARCHIMEDES): return _read_archimedes(path)
 	raise Exception("Invalid format")
 
 # TODO: Bug for empty data set
-def read_gnucap(path):
+def _read_gnucap(path):
 	"""
 	Reads a gnucap file and returns a dictionary with its contents.
 
@@ -147,7 +146,7 @@ def read_gnucap(path):
 
 	return ret_dict
 
-def read_archimedes(path):
+def _read_archimedes(path):
 	# Get relevant paths
 	files = _glob.glob(path + "/*.xyz")
 

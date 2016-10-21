@@ -105,8 +105,8 @@ def _doc_bandwidth(what_str):
 			mag (numpy.ndarray):  Magnitude data
 
 		Kwargs:
-			decibel (number): Deviation from min/max value required to qualify as break frequency, given in amplitude decibels
-			is_stop_filter (bool):  Whether to treat data as a stop filter. If False, data is treated as a pass filter
+			decibel (number):      Deviation from min/max value required to qualify as break frequency, given in amplitude decibels
+			is_stop_filter (bool): Whether to treat data as a stop filter. If False, data is treated as a pass filter
 
 		Returns:
 			float. %s
