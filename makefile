@@ -1,5 +1,3 @@
-# TODO Possiblity to switch off installing epppu and bash completions
-
 PREFIX=/usr/local/bin
 INSTALL_EPPPU=1
 INSTALL_EPPPU_COMPLETION=1
