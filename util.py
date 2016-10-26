@@ -38,7 +38,7 @@ import eppp.calc
 # Parser
 #========
 
-CMDS = [
+_CMDS = [
 	'parallel',
 	'network',
 ]
@@ -49,10 +49,10 @@ def _make_cmds_str(cmds):
 		cmds_str += '\t%s\n' % cmd
 	return cmds_str
 
-descriptionStr = 'Executes a command based on the functionality provided by the eppp library. Avaliable commands are:\n%s' % _make_cmds_str(CMDS)
+desc_str = 'Executes a command based on the functionality provided by the eppp library. Avaliable commands are:\n%s' % _make_cmds_str(_CMDS)
 
 # Parse global arguments
-parser = argparse.ArgumentParser(description=descriptionStr)
+parser = argparse.ArgumentParser(description=desc_str)
 parser.add_argument('command')
 parser.add_argument(
 	'-sf',
@@ -72,7 +72,7 @@ eppp.set_default_sig_figs(global_args.significant_figures)
 cmd_in = global_args.command
 pred = re.compile(cmd_in +'.*')
 matches = []
-for matchcmd in CMDS:
+for matchcmd in _CMDS:
 	if pred.match(matchcmd) is not None:
 		matches.append(matchcmd)
 		cmd = matchcmd
