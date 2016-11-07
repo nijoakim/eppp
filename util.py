@@ -34,6 +34,15 @@ import sys
 import eppp
 import eppp.calc
 
+#=========
+# Printer
+#=========
+
+_print_prefix = True
+
+def _util_print():
+	pass
+
 #========
 # Parser
 #========

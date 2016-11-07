@@ -32,6 +32,7 @@ def _doc_exceptions(on_off_str):
 exceptions_on.__doc__  = _doc_exceptions('on')
 exceptions_off.__doc__ = _doc_exceptions('off')
 
+# TODO: Better to include print in this?
 def _string_or_exception(msg):
 	global _supress_exceptions
 	if _supress_exceptions:

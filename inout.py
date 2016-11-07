@@ -30,33 +30,77 @@ from .error import _string_or_exception
 # Notation
 #==========
 
-_default_sig_figs = 4
+_default_num_sig_figs = 4
 
-def set_default_sig_figs(sig_figs):
+def set_default_num_sig_figs(sig_figs):
 	"""
 	Sets the default value for the number of significant figures to use during conversion to scientific notation with 'str_sci' and 'print_sci'.
 	
 	Args:
+		TODO: Add some args
 		sig_figs: New default value for number of significant figures.
 	"""
-	global _default_sig_figs
-	_default_sig_figs = sig_figs
+	global _default_num_sig_figs
+	_default_num_sig_figs = sig_figs
+
+def _convert_sig_figs(x, sig_figs):
+	# Minimum amount of significant figures
+	if sig_figs < 1:
+		print(_string_or_exception('Minimum allowable value for significant figures is 1.'))
+
+	# Convert to set number of significant figures
+	highness = int(_pl.log10(_pl.absolute(x)))
+	factor   = 10**(1 + highness - sig_figs)
+	return round(x / factor) * factor
+
+def _convert_exponent_notation(x, digit_group_size):
+	# Convert to exponent notation
+	highness = int(_pl.log10(_pl.absolute(x)) / _pl.log10(10**digit_group_size))
+	return x / 10**(highness * digit_group_size), highness * digit_group_size
 
 # TODO: Support complex numbers!
 # TODO: Smart thing to print percent if in a good range but not otherwise
-def str_sci(x, quantity=None, unit = '', sig_figs = None):
-	# Default number of significant figures
-	if sig_figs is None:
-		sig_figs = _default_sig_figs
+def str_sci(x,
+	quantity       = None,
+	num_sig_figs   = None,
+	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
+	unit           = '',
+):
+	# TODO: Add trailing zeroes in the end
 
-	# Limit to at least 3 significant figures
-	if sig_figs < 3:
-		print(_string_or_exception('Minimum allowable value for significant figures is 3.'))
-		sig_figs = 3
+	# Default number of significant figures
+	if num_sig_figs is None:
+		num_sig_figs = _default_num_sig_figs
+
+	# Default notation style
+	if notation_style is None:
+		notation_style = 'metric' # TODO: Make a default variable
+
+	# Set number of significant figures for real and imaginary part separately
+	x = _convert_sig_figs(x.real, num_sig_figs) + _convert_sig_figs(x.imag, num_sig_figs)*1j
+
+	# TODO: Do for real and imaginary parts separately instead
+	# Convert to float if imaginary part is 0
+	if (x.imag == 0):
+		x = float(x)
+
+	# Notation variables
+	if notation_style == 'metric' or notation_style == 'engineering':
+		digit_group_size = 3
+	elif notation_style == 'scientific':
+		digit_group_size = 1
+	else:
+		print(_string_or_exception('Invalid notation style.'))
+	
+	# TODO: Comment
+	base, exponent = _convert_exponent_notation(x, num_sig_figs)
+
+	if notation_style == 'scientific' or notation_style == 'engineering':
+		return '%de%i' % (base, exponent)
 
 	# Consider only positive numbers
 	sign_x = _pl.sign(x)
-	x *= sign_x
+	x      = _pl.absolute(x)
 
 	# Prefixes
 	PREFIXES = ['y', 'z', 'a', 'f', 'p', 'n', 'u', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] # Metric prefixes
@@ -65,11 +109,11 @@ def str_sci(x, quantity=None, unit = '', sig_figs = None):
 	# Adjust 'x' and find prefix
 	i       = min(int(_pl.log10(_pl.real(x))), (len(PREFIXES) - 1)*3)
 	prefix  = PREFIXES[i//3]
-	x       = round(x, -(i + 1) + sig_figs)
+	x       = round(x, -(i + 1) + num_sig_figs)
 	x      /= 1e3**(i//3)
 
 	# Add prefix and unit
-	ret = ('%.'+ str(sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
+	ret = ('%.'+ str(num_sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
 	if prefix + unit:
 		ret += ' '+ prefix + unit
 
@@ -79,8 +123,8 @@ def str_sci(x, quantity=None, unit = '', sig_figs = None):
 
 	return ret
 
-def print_sci(x, quantity = None, unit = '', sig_figs = _default_sig_figs):
-	print(str_sci(x, quantity = quantity, unit = unit, sig_figs = sig_figs))
+def print_sci(x, quantity = None, unit = '', num_sig_figs = _default_num_sig_figs):
+	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
 
 # Dynamic docstring generation
 def _doc_sci(printAlso):
