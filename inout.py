@@ -93,35 +93,38 @@ def str_sci(x,
 		print(_string_or_exception('Invalid notation style.'))
 	
 	# TODO: Comment
-	base, exponent = _convert_exponent_notation(x, num_sig_figs)
+	significand, exponent = _convert_exponent_notation(x, num_sig_figs)
 
 	if notation_style == 'scientific' or notation_style == 'engineering':
-		return '%de%i' % (base, exponent)
+		return '%de%i' % (significand, exponent)
 
-	# Consider only positive numbers
-	sign_x = _pl.sign(x)
-	x      = _pl.absolute(x)
+	# Metric prefixes
+	PREFIXES = [
+		'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm',
+		'',
+		'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y',
+	]
 
-	# Prefixes
-	PREFIXES = ['y', 'z', 'a', 'f', 'p', 'n', 'u', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] # Metric prefixes
-	x *= 1.e24                                                                                      # Largest prefix multiplier
+	# Adjust prefix
+	try:
+		prefix = PREFIXES[exponent // 3]
+	except IndexError: # Out of range for metric
+		print(_string_or_exception('Number out of range for metric prefixes too %s.' % ('low' if exponent < 0 else 'high')))
+		prefix = 'XXX'
+		
 
-	# Adjust 'x' and find prefix
-	i       = min(int(_pl.log10(_pl.real(x))), (len(PREFIXES) - 1)*3)
-	prefix  = PREFIXES[i//3]
-	x       = round(x, -(i + 1) + num_sig_figs)
-	x      /= 1e3**(i//3)
+	return '%d %s' % (significand, prefix)
 
 	# Add prefix and unit
-	ret = ('%.'+ str(num_sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
-	if prefix + unit:
-		ret += ' '+ prefix + unit
+	# ret = ('%.'+ str(num_sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
+	# if prefix + unit:
+		# ret += ' '+ prefix + unit
 
 	# Add quantity
-	if not quantity is None:
-		ret = '%s =\n\t%s' % (quantity, ret)
+	# if not quantity is None:
+		# ret = '%s =\n\t%s' % (quantity, ret)
 
-	return ret
+	# return ret
 
 def print_sci(x, quantity = None, unit = '', num_sig_figs = _default_num_sig_figs):
 	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
