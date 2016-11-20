@@ -16,10 +16,10 @@
 # TODO: Can local contexts be automated by getting caller's locals()?
 def print_var(var, customName = None):
 	import inspect
-	
+
 	# Get global and caller's local variables (the latter overrides the former)
 	context = dict(list(globals().items()) + list(inspect.currentframe().f_back.f_locals.items()))
-	
+
 	if (customName == None):
 		# Print name
 		notFound = True
@@ -28,12 +28,12 @@ def print_var(var, customName = None):
 				print(name)
 				notFound = False
 				break
-		
+
 		# Print unknown name
 		if notFound:
 			print('?expression?')
 	else:
 		print(customName)
-	
+
 	# Print value
 	print('\t= %s' % str(var))
