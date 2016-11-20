@@ -82,7 +82,7 @@ def str_sci(x,
 	ret = []
 	for xx, complex_prefix in zip((x.real, x.imag), ('', 'j')):
 		# Don't convert if 0
-		if xx == 0:
+		if  xx == 0:
 			continue
 
 		# Remove insignificant figures
@@ -123,7 +123,16 @@ def str_sci(x,
 
 			ret.append('%d %s' % (significand, prefix))
 
-	return ' + '.join(ret)
+	operator_str = '+'
+
+	if len(ret) == 0:
+		return '0' # TODO: With correct amount of sig. figs.
+	elif len(ret) == 2:
+		if ret[1][0] == '-':
+			ret[1] = ret[1][1:]
+		operator_str = '-'
+
+	return (' %s ' % operator_str).join(ret)
 
 
 	# Add prefix and unit
