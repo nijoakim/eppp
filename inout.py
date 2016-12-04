@@ -20,12 +20,13 @@
 #=========
 
 # External
-import glob  as _glob
-import pylab as _pl
+import decimal as _dec
+import glob    as _glob
+import pylab   as _pl
 
 # Internal
-from .error import _string_or_exception
 from .debug import *
+from .error import _string_or_exception
 
 #==========
 # Notation
@@ -60,8 +61,33 @@ def str_sci(x,
 
 		# Convert to set number of significant figures
 		highness = int(_pl.log10(abs(x)))
-		factor   = 10**(1 + highness - sig_figs)
-		return round(x / factor) * factor
+
+		#========================================
+		# Return rounded (halves are rounded up)
+		#========================================
+
+		# Decimal form (for appropriate rounding method)
+		# _dec.getcontext().prec = num_sig_figs + 1
+		x = _dec.Decimal(x)
+
+		# Shift for appropriate rounding
+		num_shifts = 1 + highness - sig_figs
+		for i in range(num_shifts):
+			x /= 10
+		for i in range(-num_shifts):
+			x *= 10
+
+		# Round
+		x = x.quantize(_dec.Decimal('1'), rounding=_dec.ROUND_HALF_UP)
+
+		# Shift back
+		for i in range(num_shifts):
+			x *= 10
+		for i in range(-num_shifts):
+			x /= 10
+
+		x = float(x) # Back to float
+		return x     # Return
 
 	# Logarithms with base (math does not allow bases bigger than 36)
 	def log_base_x(x, base):
@@ -83,6 +109,7 @@ def str_sci(x,
 			larger_xx = max(abs(x.real), abs(x.imag))
 
 	# Set number of significant figures for real and imaginary part separately
+	original_x = x     # Remember 'x' before converting
 	ret_strs   = []    # String representations of real and imaginary part
 	has_prefix = False # Whether a prefix for unit has been added
 	for xx, complex_prefix in zip((x.real, x.imag), ('', 'j')):
@@ -92,6 +119,10 @@ def str_sci(x,
 
 		# Remove insignificant figures
 		xx = convert_sig_figs(xx.real, num_sig_figs)
+
+		# Don't convert if 0 (check this again in case of rounding to 0)
+		if  xx == 0:
+			continue
 
 		# Notation variables
 		if notation_style == 'metric' or notation_style == 'engineering':
@@ -116,6 +147,10 @@ def str_sci(x,
 
 		# Convert significand to string
 		significand_str = ('%%.%if' % max(0, (num_sig_figs - digit_offset - num_frac_zeros - 1))) % (significand)
+
+		# Do not add to list if 0 after rounding
+		if  float(significand_str) == 0:
+			continue
 
 		# Add 'j'-prefix if complex
 		significand_str = complex_prefix + significand_str
@@ -154,9 +189,13 @@ def str_sci(x,
 			# Adjust prefix
 			if not has_prefix:
 				try:
-					prefix = PREFIXES[(exponent + 24) // 3] # (yocto is 1e-24)
+					index = (exponent + 24) // 3 # (yocto is 1e-24)
+					prefix = PREFIXES[index]
+
+					# Treat negative indices as out of bounds
+					if index < 0:
+						raise IndexError()
 				except IndexError: # Out of range for metric
-					print(_string_or_exception('Number out of range for metric prefixes too %s.' % ('low' if exponent < 0 else 'high')))
 					# Default to engineering style
 					return str_sci(
 						original_x,
