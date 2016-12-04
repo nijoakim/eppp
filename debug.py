@@ -14,13 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Can local contexts be automated by getting caller's locals()?
-def print_var(var, customName = None):
+def print_var(var, custom_name = None):
 	import inspect
 
 	# Get global and caller's local variables (the latter overrides the former)
 	context = dict(list(globals().items()) + list(inspect.currentframe().f_back.f_locals.items()))
 
-	if (customName == None):
+	if (custom_name == None):
 		# Print name
 		notFound = True
 		for name in context:
@@ -33,7 +33,7 @@ def print_var(var, customName = None):
 		if notFound:
 			print('?expression?')
 	else:
-		print(customName)
+		print(custom_name)
 
 	# Print value
 	print('\t= %s' % str(var))
