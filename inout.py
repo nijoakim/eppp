@@ -32,24 +32,26 @@ from .error import _string_or_exception
 # Notation
 #==========
 
-_default_num_sig_figs = 4
+_default_str_sci_args = {
+	'num_sig_figs'   : 4,
+	'notation_style' : 'metric',
+	'strict_style'   : False,
+}
 
-def set_default_num_sig_figs(sig_figs):
+# TODO: Error if invalid kwarg
+def set_default_str_sci_args(**kwargs):
 	"""
-	Sets the default value for the number of significant figures to use during conversion to scientific notation with 'str_sci' and 'print_sci'.
-
-	Args:
-		sig_figs: New default value for number of significant figures.
+		TODO
 	"""
-	global _default_num_sig_figs
-	_default_num_sig_figs = sig_figs
+	global _default_str_sci_args
+	for name, value in kwargs.items():
+		_default_str_sci_args[name] = value
 
-# TODO: If unit is percent, divide by 100
-# TODO: Same for permille, ppm and ppb?
+# TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(x,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
-	strict_style   = False,
+	strict_style   = None,
 	unit           = '',
 	quantity       = None,
 ):
@@ -67,10 +69,11 @@ def str_sci(x,
 		#========================================
 
 		# Decimal form (for appropriate rounding method)
-		# _dec.getcontext().prec = num_sig_figs + 1
+		_dec.getcontext().prec = num_sig_figs + 1
 		x = _dec.Decimal(x)
 
 		# Decimal shift for appropriate rounding
+		# (float multiplication/division unsupported)
 		num_shifts = 1 + highness - sig_figs
 		if num_shifts < 0:
 			x *= int(10**-num_shifts)
@@ -93,13 +96,14 @@ def str_sci(x,
 	def log_base_x(x, base):
 		return _pl.log(x) / _pl.log(base)
 
-	# Default number of significant figures
+	# Default arguments
+	global _default_str_sci_args
 	if num_sig_figs is None:
-		num_sig_figs = _default_num_sig_figs
-
-	# Default notation style
+		num_sig_figs = _default_str_sci_args['num_sig_figs']
 	if notation_style is None:
-		notation_style = 'metric'
+		notation_style = _default_str_sci_args['notation_style']
+	if strict_style is None:
+		strict_style = _default_str_sci_args['strict_style']
 
 	# Determine the larger of the real and imaginary parts if metric style
 	if notation_style == 'metric':
@@ -242,11 +246,11 @@ def str_sci(x,
 
 	return ret
 
-def print_sci(x, quantity = None, unit = '', num_sig_figs = _default_num_sig_figs):
+def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
 	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
 
 # Dynamic docstring generation
-def _doc_sci(printAlso):
+def _doc_sci(print_also):
 	return """
 		Convert a number to scientific notation%s.
 
@@ -257,12 +261,12 @@ def _doc_sci(printAlso):
 			quantity (str): Quantity to add to string
 			unit (str):     Unit of number to be converted%s
 	""" % (
-		' and print it' if printAlso else '',
+		' and print it' if print_also else '',
 		"""
 
 		Returns:
 			str. String representation of the converted number.
-		""" if not printAlso else ''
+		""" if not print_also else ''
 	)
 str_sci.__doc__   = _doc_sci(False)
 print_sci.__doc__ = _doc_sci(True)

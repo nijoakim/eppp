@@ -61,7 +61,7 @@ class TestStringMethods(ut.TestCase):
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
-		eppp.set_default_num_sig_figs(3)
+		eppp.set_default_str_sci_args(num_sig_figs=3)
 		self.assertEqual(eppp.str_sci(1e6), '1.00 M')
 		self.assertEqual(eppp.str_sci(1e6, num_sig_figs=5), '1.0000 M')
 		self.assertEqual(eppp.str_sci(111.111e6), '111 M')
