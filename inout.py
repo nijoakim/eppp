@@ -70,21 +70,21 @@ def str_sci(x,
 		# _dec.getcontext().prec = num_sig_figs + 1
 		x = _dec.Decimal(x)
 
-		# Shift for appropriate rounding
+		# Decimal shift for appropriate rounding
 		num_shifts = 1 + highness - sig_figs
-		for i in range(num_shifts):
-			x /= 10
-		for i in range(-num_shifts):
-			x *= 10
+		if num_shifts < 0:
+			x *= int(10**-num_shifts)
+		else:
+			x /= int(10**num_shifts)
 
 		# Round
 		x = x.quantize(_dec.Decimal('1'), rounding=_dec.ROUND_HALF_UP)
 
 		# Shift back
-		for i in range(num_shifts):
-			x *= 10
-		for i in range(-num_shifts):
-			x /= 10
+		if num_shifts < 0:
+			x /= int(10**-num_shifts)
+		else:
+			x *= int(10**num_shifts)
 
 		x = float(x) # Back to float
 		return x     # Return
