@@ -61,20 +61,38 @@ class TestStringMethods(ut.TestCase):
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
-		eppp.set_default_sig_figs(3)
+		eppp.set_default_str_sci_args(num_sig_figs=3)
 		self.assertEqual(eppp.str_sci(1e6), '1.00 M')
-		self.assertEqual(eppp.str_sci(1e6, sig_figs = 5), '1.0000 M')
+		self.assertEqual(eppp.str_sci(1e6, num_sig_figs=5), '1.0000 M')
 		self.assertEqual(eppp.str_sci(111.111e6), '111 M')
-		self.assertEqual(eppp.str_sci( 11.1111e6), '11.1 M')
+		self.assertEqual(eppp.str_sci(11.1111e6), '11.1 M')
 
 		# Rounding
 		self.assertEqual(eppp.str_sci(1005), '1.01 k')
 
 		# Unit naming
-		self.assertEqual(eppp.str_sci(1000, unit = 'm'), '1.00 km')
+		self.assertEqual(eppp.str_sci(1e+3,  unit = 'm'), '1.00 km')
 
-		# Complex numbers TODO
-		# self.assertEqual(eppp.str_sci(1000, unit = 'm'), '1.00 km')
+		# Metric style
+		self.assertEqual(eppp.str_sci(1e+3 ), '1.00 k')
+		self.assertEqual(eppp.str_sci(1e-3 ), '1.00 m')
+		self.assertEqual(eppp.str_sci(1e+24), '1.00 Y')
+		self.assertEqual(eppp.str_sci(1e-24), '1.00 y')
+		self.assertEqual(eppp.str_sci(1e+27), '1.00e27')
+		self.assertEqual(eppp.str_sci(1e-27), '1.00e-27')
+
+		# TODO: Scientific style
+		# TODO: Engineering style
+
+		# Complex numbers
+		self.assertEqual(eppp.str_sci(   1 +    1j),  '1.00 + j1.00')
+		self.assertEqual(eppp.str_sci(   1 -    1j),  '1.00 - j1.00')
+		self.assertEqual(eppp.str_sci(  -1 -    1j), '-1.00 - j1.00')
+		self.assertEqual(eppp.str_sci(          1j),         'j1.00')
+		self.assertEqual(eppp.str_sci(         -1j),        '-j1.00')
+		self.assertEqual(eppp.str_sci(1000 +   10j),  '1.00 + j0.01 k')
+		self.assertEqual(eppp.str_sci(  10 + 1000j),  '0.01 + j1.00 k')
+		self.assertEqual(eppp.str_sci(1000 +    1j),          '1.00 k')
 
 ut.main(exit = False)
 

@@ -20,117 +20,237 @@
 #=========
 
 # External
-import pylab as _pl
-import glob  as _glob
+import decimal as _dec
+import glob    as _glob
+import pylab   as _pl
 
 # Internal
+from .debug import *
 from .error import _string_or_exception
 
 #==========
 # Notation
 #==========
 
-_default_num_sig_figs = 4
+_default_str_sci_args = {
+	'num_sig_figs'   : 4,
+	'notation_style' : 'metric',
+	'strict_style'   : False,
+}
 
-def set_default_num_sig_figs(sig_figs):
+# TODO: Error if invalid kwarg
+def set_default_str_sci_args(**kwargs):
 	"""
-	Sets the default value for the number of significant figures to use during conversion to scientific notation with 'str_sci' and 'print_sci'.
-	
-	Args:
-		TODO: Add some args
-		sig_figs: New default value for number of significant figures.
+		TODO
 	"""
-	global _default_num_sig_figs
-	_default_num_sig_figs = sig_figs
+	global _default_str_sci_args
+	for name, value in kwargs.items():
+		_default_str_sci_args[name] = value
 
-def _convert_sig_figs(x, sig_figs):
-	# Minimum amount of significant figures
-	if sig_figs < 1:
-		print(_string_or_exception('Minimum allowable value for significant figures is 1.'))
-
-	# Convert to set number of significant figures
-	highness = int(_pl.log10(_pl.absolute(x)))
-	factor   = 10**(1 + highness - sig_figs)
-	return round(x / factor) * factor
-
-def _convert_exponent_notation(x, digit_group_size):
-	# Convert to exponent notation
-	highness = int(_pl.log10(_pl.absolute(x)) / _pl.log10(10**digit_group_size))
-	return x / 10**(highness * digit_group_size), highness * digit_group_size
-
-# TODO: Support complex numbers!
-# TODO: Smart thing to print percent if in a good range but not otherwise
+# TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(x,
-	quantity       = None,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
+	strict_style   = None,
 	unit           = '',
+	quantity       = None,
 ):
-	# TODO: Add trailing zeroes in the end
+	# Round a number to a set number of significant figures
+	def convert_sig_figs(x, sig_figs):
+		# Minimum amount of significant figures
+		if sig_figs < 1:
+			print(_string_or_exception('Minimum amount of significant figures is 1.'))
 
-	# Default number of significant figures
+		# Convert to set number of significant figures
+		highness = int(_pl.log10(abs(x)))
+
+		#========================================
+		# Return rounded (halves are rounded up)
+		#========================================
+
+		# Decimal form (for appropriate rounding method)
+		_dec.getcontext().prec = num_sig_figs + 1
+		x = _dec.Decimal(x)
+
+		# Decimal shift for appropriate rounding
+		# (float multiplication/division unsupported)
+		num_shifts = 1 + highness - sig_figs
+		if num_shifts < 0:
+			x *= int(10**-num_shifts)
+		else:
+			x /= int(10**num_shifts)
+
+		# Round
+		x = x.quantize(_dec.Decimal('1'), rounding=_dec.ROUND_HALF_UP)
+
+		# Shift back
+		if num_shifts < 0:
+			x /= int(10**-num_shifts)
+		else:
+			x *= int(10**num_shifts)
+
+		x = float(x) # Back to float
+		return x     # Return
+
+	# Logarithms with base (math does not allow bases bigger than 36)
+	def log_base_x(x, base):
+		return _pl.log(x) / _pl.log(base)
+
+	# Default arguments
+	global _default_str_sci_args
 	if num_sig_figs is None:
-		num_sig_figs = _default_num_sig_figs
-
-	# Default notation style
+		num_sig_figs = _default_str_sci_args['num_sig_figs']
 	if notation_style is None:
-		notation_style = 'metric' # TODO: Make a default variable
+		notation_style = _default_str_sci_args['notation_style']
+	if strict_style is None:
+		strict_style = _default_str_sci_args['strict_style']
+
+	# Determine the larger of the real and imaginary parts if metric style
+	if notation_style == 'metric':
+		if x.real == 0 or x.imag == 0:
+			larger_xx = abs(x)
+		else:
+			larger_xx = max(abs(x.real), abs(x.imag))
 
 	# Set number of significant figures for real and imaginary part separately
-	x = _convert_sig_figs(x.real, num_sig_figs) + _convert_sig_figs(x.imag, num_sig_figs)*1j
+	original_x = x     # Remember 'x' before converting
+	ret_strs   = []    # String representations of real and imaginary part
+	has_prefix = False # Whether a prefix for unit has been added
+	for xx, complex_prefix in zip((x.real, x.imag), ('', 'j')):
+		# Don't convert if 0
+		if  xx == 0:
+			continue
 
-	# TODO: Do for real and imaginary parts separately instead
-	# Convert to float if imaginary part is 0
-	if (x.imag == 0):
-		x = float(x)
+		# Remove insignificant figures
+		xx = convert_sig_figs(xx.real, num_sig_figs)
 
-	# Notation variables
-	if notation_style == 'metric' or notation_style == 'engineering':
-		digit_group_size = 3
-	elif notation_style == 'scientific':
-		digit_group_size = 1
-	else:
-		print(_string_or_exception('Invalid notation style.'))
-	
-	# TODO: Comment
-	significand, exponent = _convert_exponent_notation(x, num_sig_figs)
+		# Don't convert if 0 (check this again in case of rounding to 0)
+		if  xx == 0:
+			continue
 
-	if notation_style == 'scientific' or notation_style == 'engineering':
-		return '%de%i' % (significand, exponent)
+		# Notation variables
+		if notation_style == 'metric' or notation_style == 'engineering':
+			digit_group_size = 3
+		elif notation_style == 'scientific':
+			digit_group_size = 1
+		else:
+			print(_string_or_exception('Invalid notation style.'))
 
-	# Metric prefixes
-	PREFIXES = [
-		'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm',
-		'',
-		'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y',
-	]
+		# Convert to exponent notation
+		xxx          = larger_xx if notation_style == 'metric' else xx
+		highness     = int(log_base_x(abs(xxx), 10**digit_group_size))
+		significand  = xx / 10**(highness * digit_group_size)
+		exponent     = highness * digit_group_size
+		digit_offset = int(_pl.log10(abs(significand)))
 
-	# Adjust prefix
-	try:
-		prefix = PREFIXES[exponent // 3]
-	except IndexError: # Out of range for metric
-		print(_string_or_exception('Number out of range for metric prefixes too %s.' % ('low' if exponent < 0 else 'high')))
-		prefix = 'XXX'
-		
+		# Number of fractional zeroes needed for metric style
+		if notation_style == 'metric':
+			num_frac_zeros = max(-int(_pl.log10(abs(significand))), 0)
+		else:
+			num_frac_zeros = 0
 
-	return '%d %s' % (significand, prefix)
+		# Convert significand to string
+		significand_str = ('%%.%if' % max(0, (num_sig_figs - digit_offset - num_frac_zeros - 1))) % (significand)
 
-	# Add prefix and unit
-	# ret = ('%.'+ str(num_sig_figs - 1 - i%3) +'f') % (_pl.real(x*sign_x))
-	# if prefix + unit:
-		# ret += ' '+ prefix + unit
+		# Do not add to list if 0 after rounding
+		if  float(significand_str) == 0:
+			continue
+
+		# Add 'j'-prefix if complex
+		significand_str = complex_prefix + significand_str
+
+		# Put minus in front of j
+		if significand_str[1] == '-':
+			significand_str = \
+				significand_str[1 ] + \
+				significand_str[0 ] + \
+				significand_str[2:]
+
+		# Scientific or engineering style
+		if notation_style == 'scientific' or notation_style == 'engineering':
+			to_append = '%se%i' % (significand_str, exponent)
+
+			# Remove trailing 'e0' if not strict
+			if not strict_style:
+				if to_append.endswith('e0'):
+					to_append = to_append[:-2]
+
+			# Append to return strings list
+			ret_strs.append(to_append)
+
+		# Metric style
+		elif notation_style == 'metric':
+			# Metric prefixes
+			PREFIXES = [
+				'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm',
+				'',
+				'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y',
+			]
+
+			# Append to return string list
+			ret_strs.append(significand_str)
+
+			# Adjust prefix
+			if not has_prefix:
+				try:
+					index = (exponent + 24) // 3 # (yocto is 1e-24)
+					prefix = PREFIXES[index]
+
+					# Treat negative indices as out of bounds
+					if index < 0:
+						raise IndexError()
+				except IndexError: # Out of range for metric
+					# Default to engineering style
+					return str_sci(
+						original_x,
+						num_sig_figs   = num_sig_figs,
+						notation_style = 'engineering',
+						strict_style   = strict_style,
+						unit           = unit,
+						quantity       = quantity,
+					)
+
+				# Add prefix to unit
+				unit       = prefix + unit
+				has_prefix = True
+
+	# Provoke error which was missed in case of x = 0
+	convert_sig_figs(1, num_sig_figs)
+
+	# Default operator is plus
+	operator_str = '+'
+
+	# Return 0 with correct significant figures ('convert_sig_figs()' does not work with x = 0)
+	if len(ret_strs) == 0:
+		if num_sig_figs == 1:
+			return '0'
+		else:
+			return '0.' + '0'*(num_sig_figs - 1)
+
+	# Use minus as operator for beauty if applicable
+	elif len(ret_strs) == 2:
+		if ret_strs[1][0] == '-':
+			ret_strs[1] = ret_strs[1][1:]
+			operator_str = '-'
+
+	# Add whitespace in front of 'unit' for separation
+	if unit != '':
+		unit = ' '+ unit
+
+	# Assemble string
+	ret = (' %s ' % operator_str).join(ret_strs) + unit
 
 	# Add quantity
-	# if not quantity is None:
-		# ret = '%s =\n\t%s' % (quantity, ret)
+	if not quantity is None:
+		ret = '%s =\n\t%s' % (quantity, ret)
 
-	# return ret
+	return ret
 
-def print_sci(x, quantity = None, unit = '', num_sig_figs = _default_num_sig_figs):
+def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
 	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
 
 # Dynamic docstring generation
-def _doc_sci(printAlso):
+def _doc_sci(print_also):
 	return """
 		Convert a number to scientific notation%s.
 
@@ -141,12 +261,12 @@ def _doc_sci(printAlso):
 			quantity (str): Quantity to add to string
 			unit (str):     Unit of number to be converted%s
 	""" % (
-		' and print it' if printAlso else '',
+		' and print it' if print_also else '',
 		"""
 
 		Returns:
 			str. String representation of the converted number.
-		""" if not printAlso else ''
+		""" if not print_also else ''
 	)
 str_sci.__doc__   = _doc_sci(False)
 print_sci.__doc__ = _doc_sci(True)
