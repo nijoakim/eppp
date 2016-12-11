@@ -11,3 +11,7 @@ $ epppu network 88123 -c4 -e0 -pe
 (2.200 k + (1.000 M || (47.00 k + 47.00 k))) = 88.12 k
 relative error =
 	246.9 u%
+
+# 3
+$ epppu network 88120 -c 5 -e 0.00000
+(no printout)
