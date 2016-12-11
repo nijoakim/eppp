@@ -75,7 +75,8 @@ parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
 global_args = parser.parse_args()
 
 # Set default significant figures
-eppp.set_default_sig_figs(global_args.significant_figures)
+# eppp.set_default_sig_figs(global_args.significant_figures)
+eppp.set_default_str_sci_args(num_sig_figs=global_args.significant_figures)
 
 # Match input command with available command
 cmd_in = global_args.command
