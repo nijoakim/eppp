@@ -215,9 +215,9 @@ def get_avail_vals(series = 'E6', min_val = 10, max_val = 10000000, comp_type = 
 	if comp_type == 'resistor':
 		comp_specific_func = lambda x: x
 	elif comp_type == 'capacitor':
-		comp_specific_func = lambda x: 1/(1j * x * freq)
+		comp_specific_func = lambda x: capacitor_imp(x, freq)
 	elif comp_type == 'inductor':
-		comp_specific_func = lambda x: 1j * x * freq
+		comp_specific_func = lambda x: inductor_imp(x, freq)
 	avail_vals = map(comp_specific_func, avail_vals)
 
 	return list(avail_vals)
