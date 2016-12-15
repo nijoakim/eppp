@@ -141,6 +141,12 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
+def inductor_imp(inductance, freq):
+	return inductance * 1j * 2 * _pl.pi * freq
+
+def capacitor_imp(capacitance, freq):
+	return 1 / (capacitance * 1j * 2 * _pl.pi * freq)
+
 def parallel_imp(*vals):
 	"""
 	Calculates the equivalent impedance of a set of parallel connected components.

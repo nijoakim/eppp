@@ -49,6 +49,7 @@ def _util_print():
 
 # Availible sub-commands
 _CMDS = [
+	'impedance',
 	'network',
 	'parallel',
 ]
@@ -98,7 +99,41 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 #=====================
 # 'impedance' command
 #=====================
-# Command to calculate impedance of inductor or capacitor for a given frequency
+# TODO: Comment
+
+if cmd == 'impedance':
+	# Parse
+	parser = argparse.ArgumentParser(
+		description = '', # TODO
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help = "Type of component. ('inductor or capacitor')",
+	)
+	parser.add_argument(
+		'value',
+		type = float,
+		help = 'Component value. (Henry or Farad)',
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency. (Hertz)',
+	)
+	args = parser.parse_args()
+
+	# TODO: Do not require whole words
+	if args.type == 'inductor':
+		res = eppp.calc.inductor_imp(args.value, args.frequency)
+	elif args.type == 'capacitor':
+		res = eppp.calc.capacitor_imp(args.value, args.frequency)
+	else:
+		# TODO: Error
+		pass
+
+	# Print the result
+	eppp.print_sci(res, unit='Ω')
 
 #===================
 # 'network' command
@@ -113,7 +148,11 @@ if cmd == 'network':
 	parser = argparse.ArgumentParser(
 		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
 	)
-	parser.add_argument('target', type=complex)
+	parser.add_argument(
+		'target',
+		type = complex,
+		help = 'Target impedance.',
+	)
 	parser.add_argument(
 		'-e',
 		'--error',
