@@ -2,7 +2,7 @@ PREFIX=/usr/local/bin
 INSTALL_EPPPU=1
 INSTALL_EPPPU_COMPLETION=1
 
-all: test
+all: unit-test benchmark
 
 interpreter:
 	cd ../; python3
@@ -10,8 +10,19 @@ interpreter:
 profile:
 	cd ../; python3 -m eppp.profiler
 
-test:
-	cd ../; python3 -m eppp.test
+unit-test:
+	cd ../; python3 -m eppp.tests.unit_test
+
+benchmark:
+	cd ../; python3 -m eppp.tests.benchmark
+
+LOGFILE=tests/log/$(shell date +%Y-%m-%d-%H:%M).log
+log-benchmark:
+	echo $$(hostname) >> $(LOGFILE) 2>&1
+	echo \\n--------\\n >> $(LOGFILE) 2>&1
+	lscpu >> $(LOGFILE) 2>&1
+	echo \\n--------\\n >> $(LOGFILE) 2>&1
+	make benchmark >> $(LOGFILE) 2>&1
 
 install:
 	cd ../; eppp/setup.py build -b eppp/build install

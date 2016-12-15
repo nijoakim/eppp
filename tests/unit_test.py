@@ -18,7 +18,6 @@
 #=========
 
 # External
-import time
 import unittest as ut
 
 # Internal
@@ -40,7 +39,7 @@ class TestStringMethods(ut.TestCase):
 	# TODO: Finish this
 	def test_lumped_network(self):
 		self.assertEqual(
-			str(eppp.calc.lumped_network(88123, max_num_comps = 3)),
+			str(eppp.calc.lumped_network(88120, max_num_comps = 3)),
 			'(220.0 k || (47.00 k + 100.0 k))'
 		)
 
@@ -95,25 +94,3 @@ class TestStringMethods(ut.TestCase):
 		self.assertEqual(eppp.str_sci(1000 +    1j),          '1.00 k')
 
 ut.main(exit = False)
-
-#=============
-# Speed tests
-#=============
-
-# Lumped network
-
-# t = time.time()
-# eppp.calc.lumped_network(88123, max_num_comps = 3, max_rel_error = 0)
-# eppp.print_sci(
-# 	time.time() - t,
-# 	quantity='lumped_network, 3 components, time',
-# 	unit='s'
-# )
-
-# t = time.time()
-# eppp.calc.lumped_network(88123, max_num_comps = 4, max_rel_error = 0)
-# eppp.print_sci(
-# 	time.time() - t,
-# 	quantity='lumped_network, 4 components, time',
-# 	unit='s'
-# )
