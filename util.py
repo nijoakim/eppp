@@ -118,12 +118,6 @@ if cmd == 'parallel':
 
 	# Do the calculation
 	res = eppp.calc.parallel_imp(*vals)
-	
-	# Convert to weakest type for nicer printing
-	if res.imag == 0:
-		res = res.real
-		if res == int(res):
-			res = int(res)
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
