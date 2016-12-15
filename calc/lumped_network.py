@@ -241,6 +241,7 @@ def _polish_eval(expr):
 	stack.reverse()
 	return stack
 
+# TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
 		target,
 		max_num_comps = float('inf'),
