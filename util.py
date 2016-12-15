@@ -47,17 +47,13 @@ def _util_print():
 # Parser
 #========
 
+# Availible sub-commands
 _CMDS = [
 	'network',
 	'parallel',
 ]
 
-def _make_cmds_str(cmds):
-	cmds_str = ''
-	for cmd in cmds:
-		cmds_str += '%s, ' % cmd
-	return cmds_str
-
+# Description
 desc_str = 'Executes a command based on the functionality provided by the eppp library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
 
 # Parse global arguments
@@ -114,7 +110,9 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 
 if cmd == 'network':
 	# Parse
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(
+		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
+	)
 	parser.add_argument('target', type=complex)
 	parser.add_argument(
 		'-e',
@@ -162,15 +160,15 @@ if cmd == 'network':
 			unit     = '%',
 		)
 
-# TODO: Add descriptions for commands
-
 #====================
 # 'parallel' command
 #====================
 
 if cmd == 'parallel':
 	# Parse
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(
+		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
+	)
 	parser.add_argument(
 		'values',
 		type  = complex,
