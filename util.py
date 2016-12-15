@@ -47,18 +47,15 @@ def _util_print():
 # Parser
 #========
 
+# Availible sub-commands
 _CMDS = [
-	'parallel',
+	'impedance',
 	'network',
+	'parallel',
 ]
 
-def _make_cmds_str(cmds):
-	cmds_str = ''
-	for cmd in cmds:
-		cmds_str += '\t%s\n' % cmd
-	return cmds_str
-
-desc_str = 'Executes a command based on the functionality provided by the eppp library. Avaliable commands are:\n%s' % _make_cmds_str(_CMDS)
+# Description
+desc_str = 'Executes a command based on the functionality provided by the eppp library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
 
 # Parse global arguments
 parser = argparse.ArgumentParser(description=desc_str)
@@ -69,13 +66,12 @@ parser.add_argument(
 	type=int,
 	default = 4,
 	nargs   = '?',
-	help    = 'Number of significant figures to print with.',
+	help    = 'Number of significant figures to print with. (default: %(default)d)',
 )
 parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
 global_args = parser.parse_args()
 
 # Set default significant figures
-# eppp.set_default_sig_figs(global_args.significant_figures)
 eppp.set_default_str_sci_args(num_sig_figs=global_args.significant_figures)
 
 # Match input command with available command
@@ -87,7 +83,7 @@ for matchcmd in _CMDS:
 		matches.append(matchcmd)
 		cmd = matchcmd
 num_matches = len(matches)
-	
+
 # Check for mismatches and ambiguities
 if num_matches == 0:
 	sys.stderr.write("'%s' does not match any command.\n" % cmd_in)
@@ -100,26 +96,41 @@ elif num_matches == 2:
 # Remove global arguments for argv
 sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 
-# TODO: Add descriptions for commands
+#=====================
+# 'impedance' command
+#=====================
+# TODO: Comment
 
-#====================
-# 'parallel' command
-#====================
-
-if cmd == 'parallel':
+if cmd == 'impedance':
 	# Parse
-	parser = argparse.ArgumentParser()
-	parser.add_argument('values', type=complex, nargs='+')
-	vals = parser.parse_args().values
+	parser = argparse.ArgumentParser(
+		description = '', # TODO
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help = "Type of component. ('inductor or capacitor')",
+	)
+	parser.add_argument(
+		'value',
+		type = float,
+		help = 'Component value. (Henry or Farad)',
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency. (Hertz)',
+	)
+	args = parser.parse_args()
 
-	# Do the calculation
-	res = eppp.calc.parallel_imp(*vals)
-	
-	# Convert to weakest type for nicer printing
-	if res.imag == 0:
-		res = res.real
-		if res == int(res):
-			res = int(res)
+	# TODO: Do not require whole words
+	if args.type == 'inductor':
+		res = eppp.calc.inductor_imp(args.value, args.frequency)
+	elif args.type == 'capacitor':
+		res = eppp.calc.capacitor_imp(args.value, args.frequency)
+	else:
+		# TODO: Error
+		pass
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
@@ -134,15 +145,21 @@ if cmd == 'parallel':
 
 if cmd == 'network':
 	# Parse
-	parser = argparse.ArgumentParser()
-	parser.add_argument('target', type=complex)
+	parser = argparse.ArgumentParser(
+		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
+	)
+	parser.add_argument(
+		'target',
+		type = complex,
+		help = 'Target impedance.',
+	)
 	parser.add_argument(
 		'-e',
 		'--error',
 		type    = float,
 		nargs   = '?',
 		default = 0.01,
-		help    = 'Maximum relative error for the resulting network.',
+		help    = 'Maximum relative error for the resulting network. (default: %(default)d)',
 	)
 	parser.add_argument(
 		'-c',
@@ -150,7 +167,7 @@ if cmd == 'network':
 		type    = float,
 		nargs   = '?',
 		default = None,
-		help    = 'Maximum number of components for the resulting network.',
+		help    = 'Maximum number of components for the resulting network. (default: infinity)',
 	)
 	parser.add_argument(
 		'-pe',
@@ -182,7 +199,25 @@ if cmd == 'network':
 			unit     = '%',
 		)
 
-#=====================
-# 'impedance' command
-#=====================
-# Command to calculate impedance of inductor or capacitor for a given frequency
+#====================
+# 'parallel' command
+#====================
+
+if cmd == 'parallel':
+	# Parse
+	parser = argparse.ArgumentParser(
+		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
+	)
+	parser.add_argument(
+		'values',
+		type  = complex,
+		nargs = '+',
+		help = 'List of parallel impedances.'
+	)
+	vals = parser.parse_args().values
+
+	# Do the calculation
+	res = eppp.calc.parallel_imp(*vals)
+
+	# Print the result
+	eppp.print_sci(res, unit='Ω')
