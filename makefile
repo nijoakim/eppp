@@ -28,6 +28,6 @@ install:
 ifeq ($(INSTALL_EPPPU),1)
 	cp util.py $(PREFIX)/epppu
 ifeq ($(INSTALL_EPPPU_COMPLETION),1)
-	cp epppu /etc/bash_completion.d/
+	cp bash_completion /etc/bash_completion.d/epppu
 endif
 endif
