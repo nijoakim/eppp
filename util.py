@@ -48,17 +48,17 @@ def _util_print():
 #========
 
 _CMDS = [
-	'parallel',
 	'network',
+	'parallel',
 ]
 
 def _make_cmds_str(cmds):
 	cmds_str = ''
 	for cmd in cmds:
-		cmds_str += '\t%s\n' % cmd
+		cmds_str += '%s, ' % cmd
 	return cmds_str
 
-desc_str = 'Executes a command based on the functionality provided by the eppp library. Avaliable commands are:\n%s' % _make_cmds_str(_CMDS)
+desc_str = 'Executes a command based on the functionality provided by the eppp library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
 
 # Parse global arguments
 parser = argparse.ArgumentParser(description=desc_str)
@@ -99,28 +99,10 @@ elif num_matches == 2:
 # Remove global arguments for argv
 sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 
-# TODO: Add descriptions for commands
-
-#====================
-# 'parallel' command
-#====================
-
-if cmd == 'parallel':
-	# Parse
-	parser = argparse.ArgumentParser()
-	parser.add_argument(
-		'values',
-		type  = complex,
-		nargs = '+',
-		help = 'List of parallel impedances.'
-	)
-	vals = parser.parse_args().values
-
-	# Do the calculation
-	res = eppp.calc.parallel_imp(*vals)
-
-	# Print the result
-	eppp.print_sci(res, unit='Ω')
+#=====================
+# 'impedance' command
+#=====================
+# Command to calculate impedance of inductor or capacitor for a given frequency
 
 #===================
 # 'network' command
@@ -180,7 +162,25 @@ if cmd == 'network':
 			unit     = '%',
 		)
 
-#=====================
-# 'impedance' command
-#=====================
-# Command to calculate impedance of inductor or capacitor for a given frequency
+# TODO: Add descriptions for commands
+
+#====================
+# 'parallel' command
+#====================
+
+if cmd == 'parallel':
+	# Parse
+	parser = argparse.ArgumentParser()
+	parser.add_argument(
+		'values',
+		type  = complex,
+		nargs = '+',
+		help = 'List of parallel impedances.'
+	)
+	vals = parser.parse_args().values
+
+	# Do the calculation
+	res = eppp.calc.parallel_imp(*vals)
+
+	# Print the result
+	eppp.print_sci(res, unit='Ω')
