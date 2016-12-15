@@ -13,5 +13,9 @@ relative error =
 	246.9 u%
 
 # 3
-$ epppu network 88120 -c 5 -e 0.00000
+$ epppu network 88120 -c5 -e 0.00000
 (no printout)
+
+# 4
+$ epppu network 155 -c50 -sE3
+(470.0 || (10.00 + 220.0)) = 154.4
