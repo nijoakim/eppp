@@ -16,10 +16,8 @@ unit-test:
 benchmark:
 	cd ../; python3 -m eppp.tests.benchmark
 
-LOGFILE=tests/log/$(shell date +%Y-%m-%d-%H:%M).log
+LOGFILE=tests/log/$(shell hostname)_$(shell date +%Y-%m-%d-%H:%M).log
 log-benchmark:
-	echo $$(hostname) >> $(LOGFILE) 2>&1
-	echo \\n--------\\n >> $(LOGFILE) 2>&1
 	lscpu >> $(LOGFILE) 2>&1
 	echo \\n--------\\n >> $(LOGFILE) 2>&1
 	make benchmark >> $(LOGFILE) 2>&1
