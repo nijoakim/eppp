@@ -187,19 +187,59 @@ def parallel_imp(*vals):
 			ret *= val / (val + ret)
 	return ret
 
-def get_avail_vals(series = 'E6', min_val = 10, max_val = 10000000, comp_type = 'resistor', freq = None):
+def get_avail_vals(
+	series    = 'E6',
+	min_val   = 10,
+	max_val   = 10000000,
+	comp_type = 'resistor',
+	freq      = None,
+):
 	# Component type setting
 	if not comp_type in ['resistor', 'capacitor', 'inductor']:
 		raise Exception("'comp_type' must be either 'resistor', 'capacitor' or 'inductor'.")
 	if comp_type in ['capacitor', 'inductor'] and freq == None:
 		raise Exception("'freq' must be specified if '%s' is chosen as component type." % comp_type)
 
-	# Dictionry with common series
-	# TODO: Add more
-	# TODO: Calculate these?
+	# Derives an E-series from a higher one
+	def _derive_series(series_num, orig_series):
+		skip = len(orig_series) / series_num
+		return [el for i, el in enumerate(orig_series) if i % skip == 0]
+
+	# Dictionary with common series
 	avail_vals_dict = {}
-	avail_vals_dict['E6']  = [10,     15,     22,     33,     47,     68    ]
-	avail_vals_dict['E12'] = [10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82]
+
+	# Longest 2-digit series
+	avail_vals_dict['E24'] = [
+		10, 11, 12, 13, 15, 16, 18, 20, 22, 24, 27, 30,
+		33, 36, 39, 43, 47, 51, 56, 62, 68, 75, 82, 91,
+	]
+
+	# Longest 3-digit series
+	avail_vals_dict['E192'] = [
+		100, 101, 102, 104, 105, 106, 107, 109, 110, 111, 113, 114,
+		115, 117, 118, 120, 121, 123, 124, 126, 127, 129, 130, 132,
+		133, 135, 137, 138, 140, 142, 143, 145, 147, 149, 150, 152,
+		154, 156, 158, 160, 162, 164, 165, 167, 169, 172, 174, 176,
+		178, 180, 182, 184, 187, 189, 191, 193, 196, 198, 200, 203,
+		205, 208, 210, 213, 215, 218, 221, 223, 226, 229, 232, 234,
+		237, 240, 243, 246, 249, 252, 255, 258, 261, 264, 267, 271,
+		274, 277, 280, 284, 287, 291, 294, 297, 301, 305, 309, 312,
+		316, 320, 324, 328, 332, 336, 340, 344, 348, 352, 357, 361,
+		365, 370, 374, 379, 383, 388, 392, 397, 402, 407, 412, 417,
+		422, 427, 432, 437, 442, 448, 453, 459, 464, 470, 475, 481,
+		487, 493, 499, 505, 511, 517, 523, 530, 536, 542, 549, 556,
+		562, 569, 576, 583, 590, 597, 604, 612, 619, 626, 634, 642,
+		649, 657, 665, 673, 681, 690, 698, 706, 715, 723, 732, 741,
+		750, 759, 768, 777, 787, 796, 806, 816, 825, 835, 845, 856,
+		866, 876, 887, 898, 909, 920, 931, 942, 953, 965, 976, 988,
+	]
+
+	# Derived series
+	avail_vals_dict['E3']  = _derive_series( 3, avail_vals_dict['E24'])
+	avail_vals_dict['E6']  = _derive_series( 6, avail_vals_dict['E24'])
+	avail_vals_dict['E12'] = _derive_series(12, avail_vals_dict['E24'])
+	avail_vals_dict['E48'] = _derive_series(48, avail_vals_dict['E192'])
+	avail_vals_dict['E96'] = _derive_series(96, avail_vals_dict['E192'])
 
 	# Get basic available values
 	if type(series) is str:

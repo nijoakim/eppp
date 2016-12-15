@@ -170,10 +170,16 @@ if cmd == 'network':
 		help    = 'Maximum number of components for the resulting network. (default: infinity)',
 	)
 	parser.add_argument(
+		'-s',
+		'--series',
+		default = 'E6',
+		help    = 'E-series from which to get available components. (E3, E6, E12, E24, E48, E96 or E192) (default: %(default)s)',
+	)
+	parser.add_argument(
 		'-pe',
 		'--print-error',
 		action = 'store_true',
-		help   = 'Prints the relative error by which the resulting network deviates from the target.'
+		help   = 'Prints the relative error by which the resulting network deviates from the target.',
 	)
 	parser.add_argument(
 		'-or',
@@ -186,11 +192,13 @@ if cmd == 'network':
 	# Get the expression
 	expr = eppp.calc.lumped_network(
 		args.target,
+		avail_vals    = eppp.calc.get_avail_vals(args.series),
 		max_rel_error = args.error,
 		max_num_comps = args.components,
 	)
 	res = expr.evaluate()
 
+	# Print error
 	print(str(expr) + (' = '+ eppp.str_sci(res) if args.omit_result else ''))
 	if args.print_error:
 		eppp.print_sci(
