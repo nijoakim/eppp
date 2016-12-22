@@ -66,7 +66,7 @@ parser.add_argument(
 	type=int,
 	default = 4,
 	nargs   = '?',
-	help    = 'Number of significant figures to print with. (default: %(default)d)',
+	help    = 'Number of significant figures to print with. (default: %(default)s)',
 )
 parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
 global_args = parser.parse_args()
@@ -159,7 +159,7 @@ if cmd == 'network':
 		type    = float,
 		nargs   = '?',
 		default = 0.01,
-		help    = 'Maximum relative error for the resulting network. (default: %(default)d)',
+		help    = 'Maximum relative error for the resulting network. (default: %(default)s)',
 	)
 	parser.add_argument(
 		'-c',
