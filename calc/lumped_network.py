@@ -122,7 +122,7 @@ class ExprTree:
 				if \
 					not operand._is_leaf() \
 					and operand.operator is self.operator \
-				:
+					:
 					new_operands.extend(operand.operands)
 				
 				# Add unmodified operand otherwise
@@ -188,12 +188,12 @@ def parallel_imp(*vals):
 	return ret
 
 def get_avail_vals(
-	series    = 'E6',
-	min_val   = 10,
-	max_val   = 10000000,
-	comp_type = 'resistor',
-	freq      = None,
-):
+		series    = 'E6',
+		min_val   = 10,
+		max_val   = 10000000,
+		comp_type = 'resistor',
+		freq      = None,
+	):
 	# Component type setting
 	if not comp_type in ['resistor', 'capacitor', 'inductor']:
 		raise Exception("'comp_type' must be either 'resistor', 'capacitor' or 'inductor'.")
@@ -407,8 +407,8 @@ def lumped_network(
 
 					# Remember result if best so far
 					if error <= best_error:
-						best_error = error
-						best_expr  = expr
+						best_error        = error
+						best_expr         = expr
 						best_signed_error = best_error * _pl.sign(value - target)
 
 						# Return if an optimal solution has been found
