@@ -258,7 +258,7 @@ def get_avail_vals(
 	avail_vals.reverse()
 	basic_avail_vals.reverse()
 
-	# Append low order series
+	# Append lower order series
 	divider = 10
 	while avail_vals[-1] >= min_val:
 		avail_vals += map(lambda x: x / divider, basic_avail_vals)
