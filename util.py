@@ -16,10 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Parser should understand prefixes?
-# TODO: Possibility to switch off print_sci
+# TODO: print_sci style
 # TODO: Possibility to omit unit
-# TODO: --plain for plainer output text
-# TODO: --color for colored parentheses?
 
 #=========
 # Imports
@@ -69,11 +67,22 @@ parser.add_argument(
 	nargs   = '?',
 	help    = 'Number of significant figures to print with. (default: %(default)s)',
 )
+parser.add_argument(
+	'-ns',
+	'--notation-style',
+	type=str,
+	default = 'metric',
+	nargs   = '?',
+	help    = 'Style used for numbers that are printed. (metric, engineering or scientific) (default: %(default)s)',
+)
 parser.add_argument('command-arguments', nargs=ap.REMAINDER)
 global_args = parser.parse_args()
 
 # Set default significant figures
-eppp.set_default_str_sci_args(num_sig_figs=global_args.significant_figures)
+eppp.set_default_str_sci_args(
+	num_sig_figs   = global_args.significant_figures,
+	notation_style = global_args.notation_style,
+)
 
 # Match input command with available command
 cmd_in = global_args.command
