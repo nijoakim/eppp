@@ -202,9 +202,8 @@ if cmd == 'network':
 	print(str(expr) + (' = '+ eppp.str_sci(res) if args.omit_result else ''))
 	if args.print_error:
 		eppp.print_sci(
-			100*(res - args.target) / args.target,
+			(res - args.target) / args.target,
 			quantity = 'relative error',
-			unit     = '%',
 		)
 
 #====================

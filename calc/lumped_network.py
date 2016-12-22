@@ -418,7 +418,7 @@ def lumped_network(
 		# Log best error so far
 		if best_signed_error is not None:
 			if use_rel_error:
-				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error*100, unit='%')))
+				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error)))
 			else:
 				_log(2, 'Best absolute error so far: %s' % (_str_sci(best_signed_error)))
 
