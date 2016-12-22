@@ -62,7 +62,7 @@ def str_sci(x,
 			print(_string_or_exception('Minimum amount of significant figures is 1.'))
 
 		# Convert to set number of significant figures
-		highness = int(_pl.log10(abs(x)))
+		highness = int(_pl.floor(_pl.log10(abs(x))))
 
 		#========================================
 		# Return rounded (halves are rounded up)
@@ -138,14 +138,14 @@ def str_sci(x,
 
 		# Convert to exponent notation
 		xxx          = larger_xx if notation_style == 'metric' else xx
-		highness     = int(log_base_x(abs(xxx), 10**digit_group_size))
+		highness     = int(_pl.floor(log_base_x(abs(xxx), 10**digit_group_size)))
 		significand  = xx / 10**(highness * digit_group_size)
 		exponent     = highness * digit_group_size
-		digit_offset = int(_pl.log10(abs(significand)))
+		digit_offset = int(_pl.floor(_pl.log10(abs(significand))))
 
 		# Number of fractional zeroes needed for metric style
 		if notation_style == 'metric':
-			num_frac_zeros = max(-int(_pl.log10(abs(significand))), 0)
+			num_frac_zeros = max(-int(_pl.floor(_pl.log10(abs(significand)))), 0)
 		else:
 			num_frac_zeros = 0
 
