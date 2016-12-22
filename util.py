@@ -26,9 +26,10 @@
 #=========
 
 # External
-import argparse
+import argparse as ap
 import re
 import sys
+import operator as op
 
 # Internal
 import eppp
@@ -58,7 +59,7 @@ _CMDS = [
 desc_str = 'Executes a command based on the functionality provided by the eppp library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
 
 # Parse global arguments
-parser = argparse.ArgumentParser(description=desc_str)
+parser = ap.ArgumentParser(description=desc_str)
 parser.add_argument('command')
 parser.add_argument(
 	'-sf',
@@ -68,7 +69,7 @@ parser.add_argument(
 	nargs   = '?',
 	help    = 'Number of significant figures to print with. (default: %(default)s)',
 )
-parser.add_argument('command-arguments', nargs=argparse.REMAINDER)
+parser.add_argument('command-arguments', nargs=ap.REMAINDER)
 global_args = parser.parse_args()
 
 # Set default significant figures
@@ -103,7 +104,7 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 
 if cmd == 'impedance':
 	# Parse
-	parser = argparse.ArgumentParser(
+	parser = ap.ArgumentParser(
 		description = '', # TODO
 	)
 	parser.add_argument(
@@ -140,12 +141,10 @@ if cmd == 'impedance':
 #===================
 # TODO: Add frequency and support for inductors and capacitors?
 # TODO: Switches for what to print
-# TODO: Switch for error
-# TODO: Switch for component series (E6, E12, e.t.c.)
 
 if cmd == 'network':
 	# Parse
-	parser = argparse.ArgumentParser(
+	parser = ap.ArgumentParser(
 		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
 	)
 	parser.add_argument(
@@ -212,7 +211,7 @@ if cmd == 'network':
 
 if cmd == 'parallel':
 	# Parse
-	parser = argparse.ArgumentParser(
+	parser = ap.ArgumentParser(
 		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
 	)
 	parser.add_argument(
