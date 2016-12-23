@@ -23,8 +23,7 @@ log-benchmark:
 	make benchmark >> $(LOGFILE) 2>&1
 
 install:
-	cd ../; eppp/setup.py build -b eppp/build install
-	rm -rf build
+	cd ../; eppp/setup.py install
 ifeq ($(INSTALL_EPPPU),1)
 	cp util.py $(PREFIX)/epppu
 ifeq ($(INSTALL_EPPPU_COMPLETION),1)
