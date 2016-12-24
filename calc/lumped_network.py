@@ -283,6 +283,30 @@ def get_avail_vals(
 # Optimised way to evaluate polish expressions (faster than going through ExprTree)
 # TODO: C-version of this function
 def _polish_eval(expr):
+	# Do not modify original expression
+	expr = list(expr)
+
+	# Start with an empty stack
+	stack = []
+
+	# While there are elements left in the expression
+	while expr:
+		el = expr.pop()
+
+		# If operator
+		if callable(el):
+			expr.append(el(stack.pop(), stack.pop()))
+
+		# If value
+		else:
+			stack.append(el)
+
+	# Return the stack in the correct order
+	stack.reverse()
+	return stack
+
+# Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
+def _polish_eval_non_strict(expr):
 	expr  = list(expr) # Make a copy of original expression
 	stack = list(expr) # Stack with equal max length of original expression
 
@@ -306,8 +330,8 @@ def _polish_eval(expr):
 			stack[j] = el
 			j += 1
 
-	# Return the stack (slice to remove fake-popped elements)
-	return stack[:j]
+	# Return the stack (no reverse, we assume just one element)
+	return stack
 
 # TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
@@ -399,7 +423,7 @@ def lumped_network(
 
 					# Get value from evaluated expression
 					# value = ExprTree(expr).evaluate()
-					value = _polish_eval(expr)[0] # Faster than the above
+					value = _polish_eval_non_strict(expr)[0] # Faster than the above
 
 					# Calculate error
 					if use_rel_error:
