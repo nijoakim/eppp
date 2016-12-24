@@ -172,18 +172,29 @@ def parallel_imp(*vals):
 	Calculates the equivalent impedance of a set of parallel connected components.
 
 	Args:
-		*vals (number): Parallel impedances.
+		*vals (number): Parallel connected impedances.
 
 	Returns:
 		The equivalent impedance for all '*vals' impedances connected in parallel.
 	"""
-	ret = 0
+
+	# Sum admittances
+	admittance = 0
 	try:
 		for val in vals:
-			ret += 1 / val
+			admittance += 1 / val
+
+	# Return 0 if there is at least one 0 impedance
 	except ZeroDivisionError:
 		return 0
-	return 1 / ret
+
+	# Return equivalent impedance
+	try:
+		return 1 / admittance
+
+	# Return infinity if total admittance is 0
+	except ZeroDivisionError:
+		return float('inf')
 
 def get_avail_vals(
 		series    = 'E6',
@@ -330,7 +341,7 @@ def _polish_eval_non_strict(expr):
 			stack[j] = el
 			j += 1
 
-	# Return the stack (no reverse, we assume just one element)
+	# Return the stack (no stack reversal as a complete evaluation is assumed)
 	return stack
 
 # TODO: Argument for fraction of maximum dissipated power?
