@@ -318,7 +318,7 @@ def _polish_eval(expr):
 
 # Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
 def _polish_eval_non_strict(expr):
-	expr  = list(expr) # Copy of original expression
+	expr  = list(expr) # Make a copy of original expression
 	stack = list(expr) # Stack with equal max length as original expression
 
 	# Indices to avoid using 'pop()'/'append()' for better performance
@@ -341,7 +341,7 @@ def _polish_eval_non_strict(expr):
 			stack[j] = el
 			j += 1
 
-	# Return the stack (no stack reversal since a complete evaluation is assumed)
+	# Return the stack (no stack reversal as a complete evaluation is assumed)
 	return stack
 
 # TODO: Argument for fraction of maximum dissipated power?
