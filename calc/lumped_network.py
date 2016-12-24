@@ -177,15 +177,13 @@ def parallel_imp(*vals):
 	Returns:
 		The equivalent impedance for all '*vals' impedances connected in parallel.
 	"""
-	ret = vals[0]
-	for val in vals[1:]:
-		if val == 0:
-			return 0
-		elif val == float('inf'):
-			ret = val
-		else:
-			ret *= val / (val + ret)
-	return ret
+	ret = 0
+	try:
+		for val in vals:
+			ret += 1 / val
+	except ZeroDivisionError:
+		return 0
+	return 1 / ret
 
 def get_avail_vals(
 		series    = 'E6',
@@ -285,27 +283,31 @@ def get_avail_vals(
 # Optimised way to evaluate polish expressions (faster than going through ExprTree)
 # TODO: C-version of this function
 def _polish_eval(expr):
-	# Do not modify original expression
-	expr = list(expr)
+	expr  = list(expr) # Make a copy of original expression
+	stack = list(expr) # Stack with equal max length of original expression
 
-	# Start with an empty stack
-	stack = []
+	# Indices to avoid using 'pop()'/'append()' for better performance
+	i = len(expr) # 'expr' index
+	j = 0         # 'stack' index
 
 	# While there are elements left in the expression
-	while expr:
-		el = expr.pop()
+	while i > 0:
+		i -= 1
+		el = expr[i]
 
 		# If operator
 		if callable(el):
-			expr.append(el(stack.pop(), stack.pop()))
+			j -= 2
+			expr[i] = el(stack[j+1], stack[j])
+			i += 1
 
 		# If value
 		else:
-			stack.append(el)
+			stack[j] = el
+			j += 1
 
-	# Return the stack in the correct order
-	stack.reverse()
-	return stack
+	# Return the stack (slice to remove fake-popped elements)
+	return stack[:j]
 
 # TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
