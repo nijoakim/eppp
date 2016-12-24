@@ -44,10 +44,12 @@ class TestStringMethods(ut.TestCase):
 		)
 
 	def test_parallel_imp(self):
-		self.assertEqual(eppp.calc.parallel_imp(3, 3, 3), 1)        # Three elements
-		self.assertEqual(eppp.calc.parallel_imp(1), 1)              # One element
-		self.assertEqual(eppp.calc.parallel_imp(1, 1j), 0.5 + 0.5j) # Complex numbers
-		self.assertEqual(eppp.calc.parallel_imp(1, 2), 2/3)         # Floating point
+		self.assertEqual(eppp.calc.parallel_imp(3, 3, 3), 1)         # Three elements
+		self.assertEqual(eppp.calc.parallel_imp(1), 1)               # One element
+		self.assertEqual(eppp.calc.parallel_imp(1, 1j), 0.5 + 0.5j)  # Complex numbers
+		self.assertEqual(eppp.calc.parallel_imp(1, 2), 2/3)          # Floating point
+		self.assertEqual(eppp.calc.parallel_imp(1, 0), 0)            # Zero
+		self.assertEqual(eppp.calc.parallel_imp(1, float('inf')), 1) # Infinity
 
 	def test_decibel(self):
 		# Amplitude
