@@ -34,7 +34,7 @@ cd ../; python3 -m eppp.tests.benchmark
 lumped_network, 3 components
 
 duration =
-	0.601 s
+	601.0 ms
 
 
 ----------------------------
