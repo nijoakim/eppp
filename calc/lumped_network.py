@@ -409,7 +409,7 @@ def lumped_network(
 
 	# Use more general parallel function if 'avail_vals' contains 0 or infinity
 	if 0 in avail_vals or float('inf') in avail_vals:
-		avails_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x))
+		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x))
 
 	# Don't display a unit (may change later)
 	# unit = 'Ω'
