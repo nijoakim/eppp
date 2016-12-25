@@ -204,10 +204,25 @@ def _parallel_imp_non_strict(z1, z2):
 def get_avail_vals(
 		series    = 'E6',
 		min_val   = 10,
-		max_val   = 10000000,
+		max_val   = 10e6,
 		comp_type = 'resistor',
 		freq      = None,
 	):
+	"""
+	Generates a list of resistors based on a standard series.
+
+
+	Kwargs:
+		series (string):    (Default: 'E6') Series to generate from. ('E3', 'E6', 'E12', 'E24', 'E48', 'E96' or 'E192')
+		min_val (float):    (Default: 10)   Minimum value to be included in the generated series.
+		max_val (float):    (Default: 10e6) Maximum value to be included in the generated series.
+		comp_type (string): (Default: 'resistor') Type of components to generate. ('resistor', 'capacitor' or 'inductor')
+		freq (float):       Frequency at which impedances for reactive components are calculated.
+
+	Returns:
+		[complex]. Impedances of available components from the specified series.
+	"""
+
 	# Component type setting
 	if not comp_type in ['resistor', 'capacitor', 'inductor']:
 		raise Exception("'comp_type' must be either 'resistor', 'capacitor' or 'inductor'.")
