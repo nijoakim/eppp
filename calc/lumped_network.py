@@ -353,16 +353,13 @@ def _polish_eval_non_strict(expr):
 		i -= 1
 		el = expr[i]
 
-		# if callable(el):
-		# 	j += 2
-		# 	expr[i] = el(expr[j-1], expr[j])
-		# 	i += 1
-
-		# TODO: Fall back to original function if there are other functions (do this in 'lumped_network')
 		# If operator
 		if el == _parallel_imp_non_strict:
 			j += 1
-			expr[j+1] = (expr[j+1] * expr[j]) / (expr[j+1] + expr[j])
+			k = j + 1
+			a = expr[k]
+			b = expr[j]
+			expr[k] = (a * b) / (a + b)
 		elif el == add:
 			j += 1
 			expr[j+1] = expr[j+1] + expr[j]
