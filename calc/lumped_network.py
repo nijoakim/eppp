@@ -319,11 +319,10 @@ def _polish_eval(expr):
 # Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
 def _polish_eval_non_strict(expr):
 	expr  = list(expr) # Copy of original expression
-	stack = list(expr) # Stack with equal max length as original expression
 
 	# Indices to avoid using 'pop()'/'append()' for better performance
-	i = len(expr) # 'expr' index
-	j = 0         # 'stack' index
+	i = len(expr) # Expression index
+	j = i-1       # Stack index
 
 	# While there are elements left in the expression
 	while i > 0:
@@ -332,17 +331,17 @@ def _polish_eval_non_strict(expr):
 
 		# If operator
 		if callable(el):
-			j -= 2
-			expr[i] = el(stack[j+1], stack[j])
+			j += 2
+			expr[i] = el(expr[j-1], expr[j])
 			i += 1
 
 		# If value
 		else:
-			stack[j] = el
-			j += 1
+			expr[j] = el
+			j -= 1
 
 	# Return the stack (no stack reversal since a complete evaluation is assumed)
-	return stack
+	return expr
 
 # TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
