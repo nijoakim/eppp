@@ -363,7 +363,7 @@ def _polish_eval_non_strict(expr):
 		if el == _parallel_imp_non_strict:
 			j += 1
 			expr[j+1] = (expr[j+1] * expr[j]) / (expr[j+1] + expr[j])
-		elif el == aaa:
+		elif el == add:
 			j += 1
 			expr[j+1] = expr[j+1] + expr[j]
 
