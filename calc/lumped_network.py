@@ -83,8 +83,9 @@ class ExprTree:
 		else:
 			# Use symbols for some functions
 			symbol_dict = {
-				_op.add:      '+' ,
-				parallel_imp: '||',
+				_op.add:         '+' ,
+				parallel_imp:    '||',
+				_parallel_imp_2: '||',
 			}
 			op_sym = symbol_dict[self.operator] if self.operator in symbol_dict else str(self.operator)
 
@@ -195,6 +196,9 @@ def parallel_imp(*vals):
 	# Return infinity if total admittance is 0
 	except ZeroDivisionError:
 		return float('inf')
+
+def _parallel_imp_2(z1, z2):
+	return z1*z2 / (z1 + z2)
 
 def get_avail_vals(
 		series    = 'E6',
@@ -350,7 +354,7 @@ def lumped_network(
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [parallel_imp, _op.add]
+		avail_ops     = [_parallel_imp_2, _op.add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -368,6 +372,10 @@ def lumped_network(
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
+
+	# Use more general parallel function if 'avail_vals' contains 0 or infinity
+	if 0 in avail_vals or float('inf') in avail_vals:
+		avails_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_2 else x))
 
 	# Don't display a unit (may change later)
 	# unit = 'Ω'
