@@ -345,7 +345,7 @@ def _polish_eval_non_strict(expr):
 	j = i-1       # Stack index
 
 	# While there are elements left in the expression
-	while i > 0:
+	while i >= 0:
 		i -= 1
 		el = expr[i]
 
@@ -357,13 +357,11 @@ def _polish_eval_non_strict(expr):
 		# TODO: Fall back to original function if there are other functions (do this in 'lumped_network')
 		# If operator
 		if el == _parallel_imp_non_strict:
-			j += 2
-			expr[i] = (expr[j-1] * expr[j]) / (expr[j-1] + expr[j])
-			i += 1
+			j += 1
+			expr[j+1] = (expr[j+1] * expr[j]) / (expr[j+1] + expr[j])
 		elif el == _op.add:
-			j += 2
-			expr[i] = expr[j-1] + expr[j]
-			i += 1
+			j += 1
+			expr[j+1] = expr[j+1] + expr[j]
 
 		# If value
 		else:
@@ -371,7 +369,7 @@ def _polish_eval_non_strict(expr):
 			j -= 1
 
 	# Return the stack (no stack reversal since a complete evaluation is assumed)
-	return expr
+	return [expr[j+1]]
 
 # TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
@@ -398,6 +396,15 @@ def lumped_network(
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
+
+	# Determine whether a strict polish_eval function must be used
+	polish_eval_func = _polish_eval_non_strict
+	for op in avail_ops:
+		if  op != _op.add \
+		and op != _parallel_imp_non_strict \
+		and op != parallel_imp:
+			polish_eval_func = _polish_eval
+	
 
 	# Use more general parallel function if 'avail_vals' contains 0 or infinity
 	if 0 in avail_vals or float('inf') in avail_vals:
@@ -467,7 +474,7 @@ def lumped_network(
 
 					# Get value from evaluated expression
 					# value = ExprTree(expr).evaluate()
-					value = _polish_eval_non_strict(expr)[0] # Faster than the above
+					value = polish_eval_func(expr)[0] # Faster than the above
 
 					# Calculate error
 					if use_rel_error:
