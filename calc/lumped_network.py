@@ -341,8 +341,8 @@ def _polish_eval_non_strict(expr):
 	expr  = list(expr) # Copy of original expression
 
 	# Indices to avoid using 'pop()'/'append()' for better performance
-	i = len(expr) # Expression index
-	j = i-1       # Stack index
+	i = len(expr) - 2 # Expression index
+	j = i-1           # Stack index
 
 	# While there are elements left in the expression
 	while i >= 0:
