@@ -85,7 +85,7 @@ class ExprTree:
 			symbol_dict = {
 				_op.add:         '+' ,
 				parallel_imp:    '||',
-				_parallel_imp_2: '||',
+				_parallel_imp_non_strict: '||',
 			}
 			op_sym = symbol_dict[self.operator] if self.operator in symbol_dict else str(self.operator)
 
@@ -197,7 +197,8 @@ def parallel_imp(*vals):
 	except ZeroDivisionError:
 		return float('inf')
 
-def _parallel_imp_2(z1, z2):
+# Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
+def _parallel_imp_non_strict(z1, z2):
 	return z1*z2 / (z1 + z2)
 
 def get_avail_vals(
@@ -354,7 +355,7 @@ def lumped_network(
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [_parallel_imp_2, _op.add],
+		avail_ops     = [_parallel_imp_non_strict, _op.add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -375,7 +376,7 @@ def lumped_network(
 
 	# Use more general parallel function if 'avail_vals' contains 0 or infinity
 	if 0 in avail_vals or float('inf') in avail_vals:
-		avails_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_2 else x))
+		avails_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x))
 
 	# Don't display a unit (may change later)
 	# unit = 'Ω'
