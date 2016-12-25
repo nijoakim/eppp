@@ -338,7 +338,11 @@ def _polish_eval(expr):
 
 # Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
 def _polish_eval_non_strict(expr):
-	expr  = list(expr) # Copy of original expression
+	# To avoid avoid property lookups
+	add = _op.add
+
+	# Copy of original expression
+	expr  = list(expr)
 
 	# Indices to avoid using 'pop()'/'append()' for better performance
 	i = len(expr) - 2 # Expression index
@@ -359,7 +363,7 @@ def _polish_eval_non_strict(expr):
 		if el == _parallel_imp_non_strict:
 			j += 1
 			expr[j+1] = (expr[j+1] * expr[j]) / (expr[j+1] + expr[j])
-		elif el == _op.add:
+		elif el == aaa:
 			j += 1
 			expr[j+1] = expr[j+1] + expr[j]
 
