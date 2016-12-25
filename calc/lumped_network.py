@@ -349,10 +349,20 @@ def _polish_eval_non_strict(expr):
 		i -= 1
 		el = expr[i]
 
+		# if callable(el):
+		# 	j += 2
+		# 	expr[i] = el(expr[j-1], expr[j])
+		# 	i += 1
+
+		# TODO: Fall back to original function if there are other functions (do this in 'lumped_network')
 		# If operator
-		if callable(el):
+		if el == _parallel_imp_non_strict:
 			j += 2
-			expr[i] = el(expr[j-1], expr[j])
+			expr[i] = (expr[j-1] * expr[j]) / (expr[j-1] + expr[j])
+			i += 1
+		elif el == _op.add:
+			j += 2
+			expr[i] = expr[j-1] + expr[j]
 			i += 1
 
 		# If value
