@@ -402,10 +402,8 @@ def lumped_network(
 	polish_eval_func = _polish_eval_non_strict
 	for op in avail_ops:
 		if  op != _op.add \
-		and op != _parallel_imp_non_strict \
-		and op != parallel_imp:
+		and op != _parallel_imp_non_strict:
 			polish_eval_func = _polish_eval
-	
 
 	# Use more general parallel function if 'avail_vals' contains 0 or infinity
 	if 0 in avail_vals or float('inf') in avail_vals:
