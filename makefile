@@ -5,16 +5,16 @@ INSTALL_EPPPU_COMPLETION=1
 all: unit-test benchmark
 
 interpreter:
-	cd ../; python3
+	python3
 
 profile:
-	cd ../; python3 -m eppp.profiler
+	python3 -m eppp.profiler
 
 unit-test:
-	cd ../; python3 -m eppp.tests.unit_test
+	python3 -m eppp.tests.unit_test
 
 benchmark:
-	cd ../; python3 -m eppp.tests.benchmark
+	python3 -m eppp.tests.benchmark
 
 LOGFILE=tests/log/$(shell hostname)_$(shell date +%Y-%m-%d-%H:%M).log
 log-benchmark:
@@ -23,9 +23,9 @@ log-benchmark:
 	make benchmark >> $(LOGFILE) 2>&1
 
 install:
-	cd ../; eppp/setup.py install
+	./setup.py install
 ifeq ($(INSTALL_EPPPU),1)
-	cp util.py $(PREFIX)/epppu
+	cp eppp/util.py $(PREFIX)/epppu
 ifeq ($(INSTALL_EPPPU_COMPLETION),1)
 	cp bash_completion /etc/bash_completion.d/epppu
 endif
