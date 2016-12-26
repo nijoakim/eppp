@@ -346,7 +346,7 @@ def _polish_eval_non_strict(expr):
 	j = i-1           # Stack index
 
 	# While there are elements left in the expression
-	while i >= 0:
+	while i > 0:
 		i -= 1
 		el = expr[i]
 
