@@ -18,16 +18,16 @@
 #=========
 
 # External
-import functools as _ft
-import itertools as _it
-import operator  as _op
-import pylab     as _pl
+import functools            as _ft
+import itertools            as _it
+from   operator  import add as _add
+import pylab                as _pl
 
 # Internal
-from ..error import _string_or_exception
-from ..log   import _log
 from ..debug import *
+from ..error import _string_or_exception
 from ..inout import str_sci as _str_sci
+from ..log   import _log
 
 #=======
 # Other
@@ -83,8 +83,8 @@ class ExprTree:
 		else:
 			# Use symbols for some functions
 			symbol_dict = {
-				_op.add:         '+' ,
-				parallel_imp:    '||',
+				_add:                     '+' ,
+				parallel_imp:             '||',
 				_parallel_imp_non_strict: '||',
 			}
 			op_sym = symbol_dict[self.operator] if self.operator in symbol_dict else str(self.operator)
@@ -338,9 +338,6 @@ def _polish_eval(expr):
 
 # Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
 def _polish_eval_non_strict(expr):
-	# To avoid avoid property lookups
-	add = _op.add
-
 	# Copy of original expression
 	expr  = list(expr)
 
@@ -360,7 +357,7 @@ def _polish_eval_non_strict(expr):
 			a = expr[k]
 			b = expr[j]
 			expr[k] = (a * b) / (a + b)
-		elif el == add:
+		elif el == _add:
 			j += 1
 			expr[j+1] = expr[j+1] + expr[j]
 
@@ -379,7 +376,7 @@ def lumped_network(
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [_parallel_imp_non_strict, _op.add],
+		avail_ops     = [_parallel_imp_non_strict, _add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -401,7 +398,7 @@ def lumped_network(
 	# Determine whether a strict polish_eval function must be used
 	polish_eval_func = _polish_eval_non_strict
 	for op in avail_ops:
-		if  op != _op.add \
+		if  op != _add \
 		and op != _parallel_imp_non_strict:
 			polish_eval_func = _polish_eval
 
