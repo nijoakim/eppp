@@ -15,13 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from distutils.core import setup
+from distutils.core import setup, Extension
+
+fast_misc_module = Extension(
+	'eppp/fast_misc',
+	sources = ['eppp/fast_misc.c'],
+)
 
 setup(
 	name         = 'eppp',
 	version      = '0.1.0',
 	author       = 'Joakim Nilsson',
 	author_email = 'nijoakim@gmail.com',
+	ext_modules  = [fast_misc_module],
 	packages     = [
 		'eppp',
 		'eppp.calc',
