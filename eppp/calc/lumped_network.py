@@ -18,16 +18,17 @@
 #=========
 
 # External
-import functools            as _ft
-import itertools            as _it
-from   operator  import add as _add
-import pylab                as _pl
+import functools           as _ft
+import itertools           as _it
+from   operator import add as _add
+import pylab               as _pl
 
 # Internal
-from ..debug import *
-from ..error import _string_or_exception
-from ..inout import str_sci as _str_sci
-from ..log   import _log
+from ..debug     import *
+from ..error     import _string_or_exception
+from ..inout     import str_sci as _str_sci
+from ..log       import _log
+from ..fast_misc import * # TODO: Namespace
 
 #=======
 # Other
@@ -369,6 +370,9 @@ def _polish_eval_non_strict(expr):
 	# Return the stack (no stack reversal since a complete evaluation is assumed)
 	return [expr[j+1]]
 
+# Initialize 'polish_eval'
+polish_eval_init(_parallel_imp_non_strict, _add)
+
 # TODO: Argument for fraction of maximum dissipated power?
 def lumped_network(
 		target,
@@ -470,7 +474,8 @@ def lumped_network(
 
 					# Get value from evaluated expression
 					# value = ExprTree(expr).evaluate()
-					value = polish_eval_func(expr)[0] # Faster than the above
+					# value = polish_eval_func(expr)[0] # Faster than the above
+					value = polish_eval(expr)[0] # Faster than the above
 
 					# Calculate error
 					if use_rel_error:
