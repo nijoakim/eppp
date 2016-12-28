@@ -38,7 +38,7 @@ static PyObject* polish_eval(PyObject *self, PyObject *expr) {
 		}
 	}
 
-	i = len - 2;
+	i = len - 1;
 	j = i - 1;
 
 	while (i > 0) {

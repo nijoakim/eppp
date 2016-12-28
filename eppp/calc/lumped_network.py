@@ -340,7 +340,7 @@ def _polish_eval(expr):
 # Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
 def _polish_eval_non_strict(expr):
 	# Copy of original expression
-	expr  = list(expr)
+	expr = list(expr)
 
 	# Indices to avoid using 'pop()'/'append()' for better performance
 	i = len(expr) - 2 # Expression index
