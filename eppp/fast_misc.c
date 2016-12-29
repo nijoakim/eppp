@@ -7,11 +7,12 @@
 #define OP_SER 2
 
 // TODO: Support complex numbers
-// TODO Comment everything
 
+// Pointers to Python functions
 static PyObject* parallel_imp_func_pointer;
 static PyObject* add_func_pointer;
 
+// Inititalize Python function pointers
 static PyObject* polish_eval_init(PyObject *self, PyObject *args) {
 	if (!PyArg_ParseTuple(args, "OO", &parallel_imp_func_pointer, &add_func_pointer)) {
 		return NULL;
@@ -20,13 +21,20 @@ static PyObject* polish_eval_init(PyObject *self, PyObject *args) {
 	Py_RETURN_NONE;
 }
 
+// Evaluates a polish expression
 static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
+	// Size of expression
 	long len = PyList_Size(expr);
 
-	int    ops[len];
-	double els[len];
+	// Arrays to operate on
+	int    ops[len]; // Operations (parallel, series, value)
+	double els[len]; // Elements (only used by value)
 
+	
+	// Index variables
 	int i, j;
+
+	// Convert Python objects to C types
 	for (i = 0; i < len; i++) {
 		PyObject* el = PyList_GetItem(expr, i);
 		if (el == parallel_imp_func_pointer) {
@@ -39,11 +47,14 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 		}
 	}
 
-	i = len - 1;
-	j = i - 1;
+	// Initialize pointers
+	i = len - 1; // Expression pointer
+	j = i - 1;   // Stack pointer
 
+	// While there are elements left in the expression
 	while (i > 0) {
 		switch (ops[--i]) {
+			// If parallel operator
 			case OP_PAR:
 				j++;
 				int k = j + 1;
@@ -51,25 +62,26 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 				double b = els[j];
 				els[k] = a * b / (a + b);
 				break;
+
+			// If series operator
 			case OP_SER:
 				j++;
 				els[j+1] = els[j+1] + els[j];
 				break;
+
+			// If value
 			default:
 				els[j--] = els[i];
 				break;
 		}
 	}
 
+	// Return the remaining element
 	PyObject* ret = PyFloat_FromDouble(els[j+1]);
 	return ret;
 }
 
-// Method definition object for this extension, these arguments mean:
-// ml_name:  The name of the method
-// ml_meth:  Function pointer to the method implementation
-// ml_flags: Flags indicating special features of this method, such as accepting arguments, accepting keyword arguments, being a class method, or being a static method of a class.
-// ml_doc:   Contents of this method's docstring
+// Method definitions
 static PyMethodDef module_methods[] = {
 	{
 		"polish_eval_non_strict",

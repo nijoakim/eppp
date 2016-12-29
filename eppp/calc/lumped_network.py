@@ -353,21 +353,23 @@ try:
 except ImportError:
 	def _polish_eval_non_strict(expr):
 		# Indices to avoid using 'pop()'/'append()' for better performance
-		i = len(expr) - 2 # Expression index
-		j = i - 1         # Stack index
+		i = len(expr) - 2 # Expression pointer
+		j = i - 1         # Stack pointer
 
 		# While there are elements left in the expression
 		while i > 0:
 			i -= 1
 			el = expr[i]
 
-			# If operator
+			# If parallel operator
 			if el == _parallel_imp_non_strict:
 				j += 1
 				k = j + 1
 				a = expr[k]
 				b = expr[j]
 				expr[k] = (a * b) / (a + b)
+
+			# If series operator
 			elif el == _add:
 				j += 1
 				expr[j+1] = expr[j+1] + expr[j]
