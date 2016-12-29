@@ -7,6 +7,7 @@ all: unit-test benchmark
 
 clean:
 	rm -rf build
+	rm -rf eppp/*.so
 
 build: $(SOURCE)
 	./setup.py build

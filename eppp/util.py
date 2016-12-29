@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO: Parser should understand prefixes?
-# TODO: print_sci style
 # TODO: Possibility to omit unit
 
 #=========
@@ -202,7 +201,6 @@ if cmd == 'network':
 	)
 	args = parser.parse_args()
 
-	# TODO: Move this inside lumped_network?
 	# Generate list of operations
 	if args.configuration == 'any':
 		ops = [eppp.calc.parallel_imp, op.add]

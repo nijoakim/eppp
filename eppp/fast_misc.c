@@ -6,6 +6,7 @@
 #define OP_PAR 1
 #define OP_SER 2
 
+// TODO: Support complex numbers
 // TODO Comment everything
 
 static PyObject* parallel_imp_func_pointer;
@@ -19,7 +20,7 @@ static PyObject* polish_eval_init(PyObject *self, PyObject *args) {
 	Py_RETURN_NONE;
 }
 
-static PyObject* polish_eval(PyObject *self, PyObject *expr) {
+static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	long len = PyList_Size(expr);
 
 	int    ops[len];
@@ -71,13 +72,13 @@ static PyObject* polish_eval(PyObject *self, PyObject *expr) {
 // ml_doc:   Contents of this method's docstring
 static PyMethodDef module_methods[] = {
 	{
-		"polish_eval",
-		polish_eval,
+		"polish_eval_non_strict",
+		polish_eval_non_strict,
 		METH_O,
 		"",
 	},
 	{
-		"polish_eval_init",
+		"polish_eval_non_strict_init",
 		polish_eval_init,
 		METH_VARARGS,
 		"",

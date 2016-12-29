@@ -29,7 +29,6 @@ from ..debug     import *
 from ..error     import _string_or_exception
 from ..inout     import str_sci as _str_sci
 from ..log       import _log
-from ..fast_misc import * # TODO: Namespace
 
 #=======
 # Other
@@ -337,79 +336,57 @@ def _polish_eval(expr):
 	stack.reverse()
 	return stack
 
-def _polish_eval_non_strict(expr, length):
-	# Indices to avoid using 'pop()'/'append()' for better performance
-	i = k = length - 2 # Expression index
-	j = i - 1          # Stack index
-
-	# While there are elements left in the expression
-	while i > 0:
-		i -= 1
-		el = expr[i]
-
-		# If operator
-		if el == _parallel_imp_non_strict:
-			j += 1
-			k = j + 1
-			a = expr[k]
-			b = expr[j]
-			expr[k] = (a * b) / (a + b)
-		elif el == _add:
-			j += 1
-			expr[j+1] = expr[j+1] + expr[j]
-
-		# If value
-		else:
-			expr[j] = el
-			j -= 1
-
-	# Return the stack (no stack reversal since a complete evaluation is assumed)
-	return expr[k]
-
-polish_eval_init(_parallel_imp_non_strict, _add)
-
 # Same as the above function but with these differences:
 # - Assumes complete evaluation to exactly one element
 # - Does not preserve 'expr'
 # - Assumes the only functions are '_parallel_imp_non_strict' and '_add'
 # - Extra argument for pre-calculated list length
-def _polish_eval_non_strict(expr, length):
-	# Indices to avoid using 'pop()'/'append()' for better performance
-	i = length - 2 # Expression index
-	j = i - 1      # Stack index
+# def polish_eval_non_strict(expr):
 
-	# While there are elements left in the expression
-	while i > 0:
-		i -= 1
-		el = expr[i]
+# Import and initialize C version of '_polish_eval_non_strict'
+try:
+	from ..fast_misc import polish_eval_non_strict      as _polish_eval_non_strict
+	from ..fast_misc import polish_eval_non_strict_init as _polish_eval_non_strict_init
+	_polish_eval_non_strict_init(_parallel_imp_non_strict, _add)
 
-		# If operator
-		if el == _parallel_imp_non_strict:
-			j += 1
-			k = j + 1
-			a = expr[k]
-			b = expr[j]
-			expr[k] = (a * b) / (a + b)
-		elif el == _add:
-			j += 1
-			expr[j+1] = expr[j+1] + expr[j]
+# Fall back to Python version of 'polish_eval_non_strict' if C version can not be imported
+except ImportError:
+	def _polish_eval_non_strict(expr):
+		# Indices to avoid using 'pop()'/'append()' for better performance
+		i = len(expr) - 2 # Expression index
+		j = i - 1         # Stack index
 
-		# If value
-		else:
-			expr[j] = el
-			j -= 1
+		# While there are elements left in the expression
+		while i > 0:
+			i -= 1
+			el = expr[i]
 
-	# Return the stack (no stack reversal since a complete evaluation is assumed)
-	return expr[j+1]
+			# If operator
+			if el == _parallel_imp_non_strict:
+				j += 1
+				k = j + 1
+				a = expr[k]
+				b = expr[j]
+				expr[k] = (a * b) / (a + b)
+			elif el == _add:
+				j += 1
+				expr[j+1] = expr[j+1] + expr[j]
 
-# TODO: Best squared error must be correct for complex numbers too
+			# If value
+			else:
+				expr[j] = el
+				j -= 1
+
+		# Return the stack (no stack reversal since a complete evaluation is assumed)
+		return expr[j+1]
+
 def lumped_network(
 		target,
 		max_num_comps = float('inf'),
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [_parallel_imp_non_strict, _add],
+		avail_ops     = [parallel_imp, _add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -427,18 +404,21 @@ def lumped_network(
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
+	
+	# Use more general parallel function if 'avail_vals' contains 0 or infinity
+	if 0 in avail_vals or float('inf') in avail_vals:
+		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x, avail_ops))
+
+	# Use less general function otherwise
+	else:
+		avail_ops = list(map(lambda x: _parallel_imp_non_strict if x == parallel_imp else x, avail_ops))
 
 	# Determine whether a strict polish_eval function must be used
 	polish_eval_func = _polish_eval_non_strict
 	for op in avail_ops:
 		if  op != _add \
-		and op != _parallel_imp_non_strict \
-		and op != parallel_imp:
-			polish_eval_func = _polish_eval
-
-	# Use more general parallel function if 'avail_vals' contains 0 or infinity
-	if 0 in avail_vals or float('inf') in avail_vals:
-		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x))
+		and op != _parallel_imp_non_strict:
+			polish_eval_func = lambda x: _polish_eval(x)[0]
 
 	# Don't display a unit (may change later)
 	# unit = 'Ω'
@@ -463,7 +443,6 @@ def lumped_network(
 
 	# Initial values
 	best_error = float('inf')
-	best_sqr_error = best_error
 	best_expr  = None
 
 	# Insertions generator
@@ -487,9 +466,9 @@ def lumped_network(
 	for num_comps in _it.count(1):
 		_log(1, 'Finding lumped network for %i component%s...' % (num_comps, '' if num_comps == 1 else 's'))
 
-		num_ops = num_comps - 1
+		num_ops  = num_comps - 1
 		expr_len = 2 * num_comps - 1
-		expr = [0] * expr_len
+		expr     = [0] * expr_len
 
 		ops_len             = 2 ** num_ops
 		ops_range           = range(ops_len)
@@ -542,18 +521,13 @@ def lumped_network(
 						#	index += 1
 
 						# Get value from evaluated expression
-						# print(expr)
-						# value = polish_eval_func(expr, expr_len)
-						value = polish_eval(expr)
-						# value = _polish_eval(expr)[0]
-						# print(value)
+						value = polish_eval_func(expr)
 
 					# Calculate error
-					diff      = value - target
-					sqr_error = diff * diff
+					error = abs(value - target)
 
 					# Remember result if best so far
-					if sqr_error <= best_sqr_error:
+					if error <= best_error:
 
 						# Calculate error
 						if use_rel_error:
@@ -562,8 +536,7 @@ def lumped_network(
 							best_signed_error = value - target
 
 						# Remember best error
-						best_sqr_error = sqr_error
-						best_error     = abs(best_signed_error)
+						best_error = error
 
 						# Rebuild the expression
 						best_expr  = [0] * expr_len
