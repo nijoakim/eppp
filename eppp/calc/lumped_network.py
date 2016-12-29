@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Rename Jimmy's fantastic variable names such as 'korv'
-
 #=========
 # Imports
 #=========
@@ -63,7 +61,7 @@ class ExprTree:
 
 		# Consume polishly
 		el = polish_expr.pop()
-		if el < 0: # callable(el): # If not leaf
+		if callable(el): # If not leaf
 			self.operator = el
 
 			# Append the two operands
@@ -87,8 +85,9 @@ class ExprTree:
 		else:
 			# Use symbols for some functions
 			symbol_dict = {
-				-1.0: '||',
-				-2.0: '+'
+				parallel_imp:             '||',
+				_parallel_imp_non_strict: '||',
+				_add:                     '+',
 			}
 			op_sym = symbol_dict[self.operator] if self.operator in symbol_dict else str(self.operator)
 
@@ -315,7 +314,6 @@ def get_avail_vals(
 	return list(avail_vals)
 
 # Optimised way to evaluate polish expressions (faster than going through ExprTree)
-# TODO: C-version of this function
 def _polish_eval(expr):
 	# Do not modify original expression
 	expr = list(expr)
@@ -339,11 +337,10 @@ def _polish_eval(expr):
 	stack.reverse()
 	return stack
 
-# Same as the above function, but assumes it will evaluate to 1 element and is therefore faster
-def _polish_eval_non_strict(expr, korv):
+def _polish_eval_non_strict(expr, length):
 	# Indices to avoid using 'pop()'/'append()' for better performance
-	i = k = korv - 2 # Expression index
-	j = i - 1        # Stack index
+	i = k = length - 2 # Expression index
+	j = i - 1          # Stack index
 
 	# While there are elements left in the expression
 	while i > 0:
@@ -351,16 +348,16 @@ def _polish_eval_non_strict(expr, korv):
 		el = expr[i]
 
 		# If operator
-		if el < 0.0:
+		if el == _parallel_imp_non_strict:
 			j += 1
 			k = j + 1
 			a = expr[k]
 			b = expr[j]
-			s = a + b
-			if el == -1.0:
-				expr[k] = (a * b) / s
-			else: # if el == -2.0:
-				expr[k] = s
+			expr[k] = (a * b) / (a + b)
+		elif el == _add:
+			j += 1
+			expr[j+1] = expr[j+1] + expr[j]
+
 		# If value
 		else:
 			expr[j] = el
@@ -369,14 +366,50 @@ def _polish_eval_non_strict(expr, korv):
 	# Return the stack (no stack reversal since a complete evaluation is assumed)
 	return expr[k]
 
-# TODO: Argument for fraction of maximum dissipated power?
+polish_eval_init(_parallel_imp_non_strict, _add)
+
+# Same as the above function but with these differences:
+# - Assumes complete evaluation to exactly one element
+# - Does not preserve 'expr'
+# - Assumes the only functions are '_parallel_imp_non_strict' and '_add'
+# - Extra argument for pre-calculated list length
+def _polish_eval_non_strict(expr, length):
+	# Indices to avoid using 'pop()'/'append()' for better performance
+	i = length - 2 # Expression index
+	j = i - 1      # Stack index
+
+	# While there are elements left in the expression
+	while i > 0:
+		i -= 1
+		el = expr[i]
+
+		# If operator
+		if el == _parallel_imp_non_strict:
+			j += 1
+			k = j + 1
+			a = expr[k]
+			b = expr[j]
+			expr[k] = (a * b) / (a + b)
+		elif el == _add:
+			j += 1
+			expr[j+1] = expr[j+1] + expr[j]
+
+		# If value
+		else:
+			expr[j] = el
+			j -= 1
+
+	# Return the stack (no stack reversal since a complete evaluation is assumed)
+	return expr[j+1]
+
+# TODO: Best squared error must be correct for complex numbers too
 def lumped_network(
 		target,
 		max_num_comps = float('inf'),
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [-1.0, -2.0],
+		avail_ops     = [_parallel_imp_non_strict, _add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -397,12 +430,11 @@ def lumped_network(
 
 	# Determine whether a strict polish_eval function must be used
 	polish_eval_func = _polish_eval_non_strict
-	#for op in avail_ops:
-	#	if  op != _add \
-	#	and op != _parallel_imp_non_strict \
-	#	and op != parallel_imp:
-	#		polish_eval_func = _polish_eval
-
+	for op in avail_ops:
+		if  op != _add \
+		and op != _parallel_imp_non_strict \
+		and op != parallel_imp:
+			polish_eval_func = _polish_eval
 
 	# Use more general parallel function if 'avail_vals' contains 0 or infinity
 	if 0 in avail_vals or float('inf') in avail_vals:
@@ -459,11 +491,11 @@ def lumped_network(
 		expr_len = 2 * num_comps - 1
 		expr = [0] * expr_len
 
-		ops_len = 2 ** num_ops
-		ops_range = range(ops_len)
+		ops_len             = 2 ** num_ops
+		ops_range           = range(ops_len)
 		insertions_pre_calc = [0] * ops_len
-		ops_pre_calc = [0] * ops_len
-		index = 0
+		ops_pre_calc        = [0] * ops_len
+		index               = 0
 		for ops in _it.product(avail_ops, repeat = num_ops):
 			ops_pre_calc[index] = ops
 			if num_comps == 1:
@@ -510,33 +542,39 @@ def lumped_network(
 						#	index += 1
 
 						# Get value from evaluated expression
-						value = polish_eval_func(expr, expr_len)
+						# print(expr)
+						# value = polish_eval_func(expr, expr_len)
+						value = polish_eval(expr)
+						# value = _polish_eval(expr)[0]
+						# print(value)
 
 					# Calculate error
-					diff = value - target
+					diff      = value - target
 					sqr_error = diff * diff
 
 					# Remember result if best so far
 					if sqr_error <= best_sqr_error:
 
+						# Calculate error
 						if use_rel_error:
-							best_signed_error = (value - target) / abs(target) # Division-by-zero safe since target can not be 0
+							best_signed_error = (value - target) / abs(target) # Division-by-zero safe since target can't be 0
 						else:
 							best_signed_error = value - target
 
-						best_sqr_error    = sqr_error
-						best_error = abs(best_signed_error)
+						# Remember best error
+						best_sqr_error = sqr_error
+						best_error     = abs(best_signed_error)
 
 						# Rebuild the expression
-						best_expr = [0] * expr_len
+						best_expr  = [0] * expr_len
 						insert_pos = insertions[0]
-						op_index = 0
-						val_index = 0
-						index = 0
+						op_index   = 0
+						val_index  = 0
+						index      = 0
 						while index < expr_len:
 							if index == insert_pos:
 								best_expr[index] = ops[op_index]
-								op_index += 1
+								op_index   += 1
 								insert_pos += insertions[op_index]
 							else:
 								best_expr[index] = values[val_index]

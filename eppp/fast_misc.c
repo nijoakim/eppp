@@ -60,8 +60,7 @@ static PyObject* polish_eval(PyObject *self, PyObject *expr) {
 		}
 	}
 
-	PyObject* ret = PyList_New(1);
-	PyList_SetItem(ret, 0, PyFloat_FromDouble(els[j+1]));
+	PyObject* ret = PyFloat_FromDouble(els[j+1]);
 	return ret;
 }
 
