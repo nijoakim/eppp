@@ -26,7 +26,7 @@ unit-test: build
 benchmark: build
 	python3 -m eppp.tests.benchmark
 
-LOGFILE=tests/log/$(shell hostname)_$(shell date +%Y-%m-%d-%H:%M).log
+LOGFILE=eppp/tests/log/$(shell hostname)_$(shell date +%Y-%m-%d-%H:%M).log
 log-benchmark:
 	lscpu >> $(LOGFILE) 2>&1
 	echo \\n--------\\n >> $(LOGFILE) 2>&1
