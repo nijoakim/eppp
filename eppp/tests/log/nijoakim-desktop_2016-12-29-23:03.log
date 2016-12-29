@@ -1,0 +1,81 @@
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                4
+On-line CPU(s) list:   0-3
+Thread(s) per core:    1
+Core(s) per socket:    4
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 58
+Model name:            Intel(R) Core(TM) i5-3450 CPU @ 3.10GHz
+Stepping:              9
+CPU MHz:               3100.000
+CPU max MHz:           3100.0000
+CPU min MHz:           1600.0000
+BogoMIPS:              6185.99
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              6144K
+NUMA node0 CPU(s):     0-3
+Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm epb tpr_shadow vnmi flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm arat pln pts
+
+--------
+
+make[1]: Entering directory '/home/nijoakim/projects/eppp'
+./setup.py build
+running build
+running build_py
+creating build
+creating build/lib.linux-x86_64-3.5
+creating build/lib.linux-x86_64-3.5/eppp
+copying eppp/debug.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/error.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/__init__.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/inout.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/plot.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/util.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/profiler.py -> build/lib.linux-x86_64-3.5/eppp
+copying eppp/log.py -> build/lib.linux-x86_64-3.5/eppp
+creating build/lib.linux-x86_64-3.5/eppp/calc
+copying eppp/calc/__init__.py -> build/lib.linux-x86_64-3.5/eppp/calc
+copying eppp/calc/lumped_network.py -> build/lib.linux-x86_64-3.5/eppp/calc
+copying eppp/calc/misc.py -> build/lib.linux-x86_64-3.5/eppp/calc
+running build_ext
+building 'eppp/fast_misc' extension
+creating build/temp.linux-x86_64-3.5
+creating build/temp.linux-x86_64-3.5/eppp
+x86_64-linux-gnu-gcc -pthread -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -g -fdebug-prefix-map=/build/python3.5-6wkcjD/python3.5-3.5.2=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -I/usr/include/python3.5m -c eppp/fast_misc.c -o build/temp.linux-x86_64-3.5/eppp/fast_misc.o
+x86_64-linux-gnu-gcc -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,relro -g -fdebug-prefix-map=/build/python3.5-6wkcjD/python3.5-3.5.2=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 build/temp.linux-x86_64-3.5/eppp/fast_misc.o -o build/lib.linux-x86_64-3.5/eppp/fast_misc.cpython-35m-x86_64-linux-gnu.so
+touch build
+cp build/*/eppp/*.so eppp/
+python3 -m eppp.tests.benchmark
+
+----------------------------
+
+lumped_network, 3 components
+
+duration =
+	75.37 ms
+
+
+----------------------------
+
+lumped_network, 4 components
+
+duration =
+	2.817 s
+
+
+----------------------------
+
+lumped_network, 5 components
+
+duration =
+	80.27 s
+
+make[1]: Leaving directory '/home/nijoakim/projects/eppp'
