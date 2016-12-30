@@ -1,12 +1,10 @@
 #include <Python.h>
-#include <stdio.h>
+#include <complex.h>
 
 // Operation constants
 #define OP_VAL 0
 #define OP_PAR 1
 #define OP_SER 2
-
-// TODO: Support complex numbers
 
 // Pointers to Python functions
 static PyObject* parallel_imp_func_pointer;
@@ -27,10 +25,9 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	long len = PyList_Size(expr);
 
 	// Arrays to operate on
-	int    ops[len]; // Operations (parallel, series, value)
-	double els[len]; // Elements (only used by value)
+	int            ops[len]; // Operations ('OP_PAR', 'OP_SER' or 'OP_VALUE')
+	double complex els[len]; // Elements (only used by 'value'), 'double complex' is faster than 'Py_complex'
 
-	
 	// Index variables
 	int i, j;
 
@@ -43,7 +40,8 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 			ops[i] = OP_SER;
 		} else {
 			ops[i] = OP_VAL;
-			els[i] = PyFloat_AsDouble(PyNumber_Float(el));
+			Py_complex value = PyComplex_AsCComplex(el);
+			els[i]           = value.real + value.imag*I;
 		}
 	}
 
@@ -77,7 +75,10 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	}
 
 	// Return the remaining element
-	PyObject* ret = PyFloat_FromDouble(els[j+1]);
+	Py_complex value;
+	value.real = crealf(els[j+1]);
+	value.imag = cimagf(els[j+1]);
+	PyObject* ret = PyComplex_FromCComplex(value);
 	return ret;
 }
 
