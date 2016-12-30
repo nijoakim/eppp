@@ -179,11 +179,27 @@ if cmd == 'network':
 	parser.add_argument(
 		'-s',
 		'--series',
+		type    = str,
 		default = 'E6',
 		help    = 'E-series from which to get available components. (E3, E6, E12, E24, E48, E96 or E192) (default: %(default)s)',
 	)
 	parser.add_argument(
+		'-mr',
+		'--min-resistance',
+		type    = float,
+		default = 10,
+		help    = 'Minimum resistance used when generating the series (default: %(default)s)',
+	)
+	parser.add_argument(
+		'-Mr',
+		'--max-resistance',
+		type    = float,
+		default = 10e6,
+		help    = 'Maximum resistance used when generating the series (default: %(default)s)',
+	)
+	parser.add_argument(
 		'--configuration',
+		type    = str,
 		default = 'any',
 		help    = 'Valid configurations in the resulting network. (series, parallel or any) (default: %(default)s)',
 	)
@@ -215,7 +231,7 @@ if cmd == 'network':
 	# Get the expression
 	expr = eppp.calc.lumped_network(
 		args.target,
-		avail_vals    = eppp.calc.get_avail_vals(args.series),
+		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_res, max_val=args.max_res),
 		max_rel_error = args.error,
 		max_num_comps = args.components,
 		avail_ops     = ops,
