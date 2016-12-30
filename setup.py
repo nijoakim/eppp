@@ -19,7 +19,9 @@ from distutils.core import setup, Extension
 
 fast_misc_module = Extension(
 	'eppp/fast_misc',
-	sources = ['eppp/fast_misc.c'],
+	sources            = ['eppp/fast_misc.c'],
+	extra_compile_args = ['-O3'],
+	extra_link_args    = ['-O3'],
 )
 
 setup(
