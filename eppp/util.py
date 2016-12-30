@@ -231,7 +231,7 @@ if cmd == 'network':
 	# Get the expression
 	expr = eppp.calc.lumped_network(
 		args.target,
-		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_res, max_val=args.max_res),
+		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		max_rel_error = args.error,
 		max_num_comps = args.components,
 		avail_ops     = ops,
