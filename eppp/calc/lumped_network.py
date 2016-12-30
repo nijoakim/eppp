@@ -530,15 +530,17 @@ def lumped_network(
 
 					# Remember result if best so far
 					if error <= best_error:
-
-						# Calculate error
-						if use_rel_error:
-							best_signed_error = (value - target) / abs(target) # Division-by-zero safe since target can't be 0
-						else:
-							best_signed_error = value - target
-
 						# Remember best error
 						best_error = error
+
+						# Calculate signed error
+						if use_rel_error:
+							# Division-by-zero safe since target can't be 0
+							error             = abs((value - target) / target)
+							best_signed_error = (value - target) / abs(target)
+						else:
+							error             = abs(value - target)
+							best_signed_error = value - target
 
 						# Rebuild the expression
 						best_expr  = [0] * expr_len
@@ -571,5 +573,5 @@ def lumped_network(
 		_log(3, 'Best network so far: '+ str(ExprTree(best_expr, unit = unit)))
 
 		# Return if sufficiently good or maximum number of components have been used
-		if best_error <= max_error or num_comps == max_num_comps:
+		if abs(best_signed_error) <= max_error or num_comps == max_num_comps:
 			return ExprTree(best_expr, unit = unit)
