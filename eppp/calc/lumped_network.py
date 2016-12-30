@@ -445,6 +445,7 @@ def lumped_network(
 
 	# Initial values
 	best_error = float('inf')
+	best_value = None
 	best_expr  = None
 
 	# Insertions generator
@@ -452,6 +453,7 @@ def lumped_network(
 		# Base case
 		if len(ops) == 0:
 			yield [-1]
+
 		# Recurse
 		else:
 			cur_op = ops[0]
@@ -459,19 +461,22 @@ def lumped_network(
 				# Avoid redundant insertion variations by not varying operator order in case of consecutive equal operations
 				if cur_op == last_op or cur_op == None:
 					yield [2] + insertions
+
 				# Non-redundant case
 				else:
 					yield [1] + insertions
 					yield [2] + insertions
 
-	# For all numbers of components, starting from one up to 'max_num_comps'
+	# For all numbers of components, starting from one and up until return
 	for num_comps in _it.count(1):
 		_log(1, 'Finding lumped network for %i component%s...' % (num_comps, '' if num_comps == 1 else 's'))
 
+		# Initialize stuff that can be known in advance for performance
 		num_ops  = num_comps - 1
 		expr_len = 2 * num_comps - 1
 		expr     = [0] * expr_len
 
+		# Precalculate lists of non-redundant combinations of operations
 		ops_len             = 2 ** num_ops
 		ops_range           = range(ops_len)
 		insertions_pre_calc = [0] * ops_len
@@ -489,17 +494,15 @@ def lumped_network(
 					insertions_pre_calc[index].append([0] + insertions)
 			index += 1
 
-		# print("*******")
-		# print(num_comps)
-		# print(ops_pre_calc)
-		# print(insertions_pre_calc)
-
-		best_signed_error = None
-
+		# For all non-redundant combinations of values
 		for values in _it.combinations_with_replacement(avail_vals, num_comps):
-			for x in ops_range:
-				ops = ops_pre_calc[x]
-				for insertions in insertions_pre_calc[x]:
+			# For all non-redundant combinations of operations
+			for op_index in ops_range:
+				# Use precalculated list of operations
+				ops = ops_pre_calc[op_index]
+
+				# Build expression from insertions
+				for insertions in insertions_pre_calc[op_index]:
 					if num_comps == 1:
 						value   = values[0]
 						expr[0] = value
@@ -507,7 +510,7 @@ def lumped_network(
 						expr[0]   = ops[0]
 						op_index  = 1
 						val_index = 0
-						index = 1
+						index     = 1
 						while op_index < num_ops:
 							if insertions[op_index] == 2:
 								expr[index] = values[val_index]
@@ -517,10 +520,6 @@ def lumped_network(
 							op_index += 1
 							index    += 1
 						expr[index:] = values[val_index:]
-						#while val_index < num_comps:
-						#	expr[index] = values[val_index]
-						#	val_index += 1
-						#	index += 1
 
 						# Get value from evaluated expression
 						value = polish_eval_func(expr)
@@ -530,17 +529,9 @@ def lumped_network(
 
 					# Remember result if best so far
 					if error <= best_error:
-						# Remember best error
+						# Remember best things
 						best_error = error
-
-						# Calculate signed error
-						if use_rel_error:
-							# Division-by-zero safe since target can't be 0
-							error             = abs((value - target) / target)
-							best_signed_error = (value - target) / abs(target)
-						else:
-							error             = abs(value - target)
-							best_signed_error = value - target
+						best_value = value
 
 						# Rebuild the expression
 						best_expr  = [0] * expr_len
@@ -562,12 +553,17 @@ def lumped_network(
 						if best_error == 0:
 							return ExprTree(best_expr, unit = unit)
 
+		# Calculate error
+		if use_rel_error:
+			best_signed_error = (best_value - target) / abs(target) # Division-by-zero safe since target can't be 0
+		else:
+			best_signed_error = best_value - target
+
 		# Log best error so far
-		if best_signed_error is not None:
-			if use_rel_error:
-				_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error)))
-			else:
-				_log(2, 'Best absolute error so far: %s' % (_str_sci(best_signed_error)))
+		if use_rel_error:
+			_log(2, 'Best relative error so far: %s' % (_str_sci(best_signed_error)))
+		else:
+			_log(2, 'Best absolute error so far: %s' % (_str_sci(best_signed_error)))
 
 		# Log best network
 		_log(3, 'Best network so far: '+ str(ExprTree(best_expr, unit = unit)))
