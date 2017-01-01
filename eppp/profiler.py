@@ -30,4 +30,4 @@ import eppp.calc
 # Profiling
 #===========
 
-cProfile.run('eppp.calc.lumped_network(88123, max_num_comps = 4, max_rel_error = 0)')
+cProfile.run('eppp.calc.lumped_network(88123, max_num_comps=4, max_rel_error=0)')
