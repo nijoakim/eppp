@@ -56,8 +56,8 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 			case OP_PAR:
 				j++;
 				int k = j + 1;
-				double a = els[k];
-				double b = els[j];
+				double complex a = els[k];
+				double complex b = els[j];
 				els[k] = a * b / (a + b);
 				break;
 
