@@ -60,8 +60,12 @@ The logging verbosity can be set with the function `eppp.set_log_level()`.
 
 To run unit and performance tests, run:
 
-	$ make test
+	$ make unit-test
 
 For code profiling, run:
 
 	$ make profile
+
+For benchmarking, run:
+
+	$ make benchmark
