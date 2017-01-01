@@ -24,8 +24,9 @@ TODO: Expand this section when it is more clear what does what
 - calc/misc.py
 
 ## EPPP utilities
-`epppu` currently provides the following functions:
+`epppu` currently provides the following commands:
 
+- `epppu impedance`
 - `epppu network`
 - `epppu parallel`
 
