@@ -1,5 +1,4 @@
 #include <Python.h>
-#include <complex.h>
 
 // Operation constants
 #define OP_VAL 0
@@ -25,8 +24,8 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	long len = PyList_Size(expr);
 
 	// Arrays to operate on
-	int            ops[len]; // Operations ('OP_PAR', 'OP_SER' or 'OP_VALUE')
-	double complex els[len]; // Elements (only used by 'value'), 'double complex' is faster than 'Py_complex'
+	int    ops[len]; // Operations ('OP_PAR', 'OP_SER' or 'OP_VALUE')
+	double els[len]; // Elements (only used by 'value')
 
 	// Index variables
 	int i, j;
@@ -40,8 +39,7 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 			ops[i] = OP_SER;
 		} else {
 			ops[i] = OP_VAL;
-			Py_complex value = PyComplex_AsCComplex(el);
-			els[i]           = value.real + value.imag*I;
+			els[i] = PyFloat_AsDouble(el);
 		}
 	}
 
@@ -56,8 +54,8 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 			case OP_PAR:
 				j++;
 				int k = j + 1;
-				double complex a = els[k];
-				double complex b = els[j];
+				double a = els[k];
+				double b = els[j];
 				els[k] = a * b / (a + b);
 				break;
 
@@ -75,10 +73,7 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	}
 
 	// Return the remaining element
-	Py_complex value;
-	value.real = crealf(els[j+1]);
-	value.imag = cimagf(els[j+1]);
-	PyObject* ret = PyComplex_FromCComplex(value);
+	PyObject* ret = PyFloat_FromDouble(els[j+1]);
 	return ret;
 }
 
