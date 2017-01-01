@@ -55,7 +55,7 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 				; // Dummy statement after label
 				double a = els[++j];
 				double b = els[j+1];
-				els[j] = a * b / (a + b);
+				els[j+1] = a * b / (a + b);
 				break;
 
 			// If series operator
