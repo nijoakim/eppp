@@ -407,6 +407,10 @@ def lumped_network(
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
 
+	# Make target real type if it is real
+	if complex(target).imag == 0:
+		target = complex(target).real
+
 	# Check what types of numbers 'avail_vals' contains
 	has_complex_vals = complex in map(type, avail_vals)
 	if has_complex_vals:
