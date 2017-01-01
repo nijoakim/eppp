@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Joakim Nilsson
+# Copyright 2015-2017 Joakim Nilsson
 # Copyright 2016      Jimmy Nyström
 #
 # This program is free software: you can redistribute it and/or modify
@@ -413,8 +413,12 @@ def lumped_network(
 		may_have_negative_vals = True
 	else:
 		may_have_negative_vals = True in map(lambda x: x < 0, avail_vals)
-	
-	# Use more general parallel function if 'avail_vals' contains 0 or infinity or negative values
+
+	# Sort 'avail_vals' if not complex
+	if not has_complex_vals:
+		avail_vals.sort()
+
+	# Use more general parallel function if 'avail_vals' contains 0, infinity or negative values
 	if 0 in avail_vals \
 	or float('inf') in avail_vals \
 	or may_have_negative_vals:
@@ -505,9 +509,14 @@ def lumped_network(
 
 		# For all non-redundant combinations of values
 		for values in _it.combinations_with_replacement(avail_vals, num_comps):
-			# Do not calculate obviously sub-optimal values
+			# Do not calculate obvious sub-optimal values
 			if not may_have_negative_vals:
 				if sum(values) < target - best_error:
+					continue
+				# if parallel_imp(*values) > target + best_error:
+				# 	continue
+				# Approximation (subset) of the above which is faster to calculate
+				if values[0] > (target + best_error) * num_comps: # 'values[0]' = 'min(values)' since list is sorted
 					continue
 
 			# For all non-redundant combinations of operations
