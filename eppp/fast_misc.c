@@ -52,11 +52,10 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 		switch (ops[--i]) {
 			// If parallel operator
 			case OP_PAR:
-				j++;
-				int k = j + 1;
-				double a = els[k];
-				double b = els[j];
-				els[k] = a * b / (a + b);
+				; // Dummy statement after label
+				double a = els[++j];
+				double b = els[j+1];
+				els[j] = a * b / (a + b);
 				break;
 
 			// If series operator
