@@ -406,9 +406,18 @@ def lumped_network(
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
+
+	# Check what types of numbers 'avail_vals' contains
+	has_complex_vals = complex in map(type, avail_vals)
+	if has_complex_vals:
+		may_have_negative_vals = True
+	else:
+		may_have_negative_vals = True in map(lambda x: x < 0, avail_vals)
 	
-	# Use more general parallel function if 'avail_vals' contains 0 or infinity
-	if 0 in avail_vals or float('inf') in avail_vals:
+	# Use more general parallel function if 'avail_vals' contains 0 or infinity or negative values
+	if 0 in avail_vals \
+	or float('inf') in avail_vals \
+	or may_have_negative_vals:
 		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x, avail_ops))
 
 	# Use less general function otherwise
@@ -496,9 +505,14 @@ def lumped_network(
 
 		# For all non-redundant combinations of values
 		for values in _it.combinations_with_replacement(avail_vals, num_comps):
+			# Do not calculate obviously sub-optimal values
+			if not may_have_negative_vals:
+				if sum(values) < target - best_error:
+					continue
+
 			# For all non-redundant combinations of operations
 			for op_index in ops_range:
-				# Use precalculated list of operations
+				# Use pre-calculated list of operations
 				ops = ops_pre_calc[op_index]
 
 				# Build expression from insertions
