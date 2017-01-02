@@ -182,7 +182,7 @@ def str_sci(x,
 		elif notation_style == 'metric':
 			# Metric prefixes
 			PREFIXES = [
-				'y', 'z', 'a', 'f', 'p', 'n', 'u', 'm',
+				'y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm',
 				'',
 				'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y',
 			]
