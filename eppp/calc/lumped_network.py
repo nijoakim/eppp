@@ -21,7 +21,6 @@
 # External
 import functools           as _ft
 import itertools           as _it
-from   operator import add as _add
 import pylab               as _pl
 
 # Internal
@@ -34,6 +33,14 @@ from ..log       import _log
 # Other
 #=======
 
+# String representation for functions decorator
+def _func_str(str_):
+	def decorator(func):
+		func.str = str_
+		return func
+	return decorator
+
+# TODO: Document
 class ExprTree:
 	def __init__(
 			self,
@@ -83,12 +90,7 @@ class ExprTree:
 			return _str_sci(self.operands[0], unit = self._unit)
 		else:
 			# Use symbols for some functions
-			symbol_dict = {
-				parallel_imp:             '||',
-				_parallel_imp_non_strict: '||',
-				_add:                     '+',
-			}
-			op_sym = symbol_dict[self.operator] if self.operator in symbol_dict else str(self.operator)
+			op_sym = self.operator.str if hasattr(self.operator, 'str') else str(self.operator)
 
 			# Form expression
 			ret = ''
@@ -169,6 +171,7 @@ def capacitor_imp(capacitance, freq):
 inductor_imp.__doc__  = _doc_reactive_comp_imp("inductance")
 capacitor_imp.__doc__ = _doc_reactive_comp_imp("capacitance")
 
+@_func_str('||')
 def parallel_imp(*vals):
 	"""
 	Calculates the equivalent impedance of a set of parallel connected components.
@@ -199,8 +202,14 @@ def parallel_imp(*vals):
 		return float('inf')
 
 # Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
+@_func_str('||')
 def _parallel_imp_non_strict(z1, z2):
 	return z1*z2 / (z1 + z2)
+
+# Sums two numbers (for series impedance calculations)
+@_func_str('+')
+def _add(x1, x2):
+	return x1 + x2
 
 def get_avail_vals(
 		series    = 'E6',
