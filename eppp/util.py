@@ -125,7 +125,6 @@ if cmd == 'expression':
 
 	# Make string from arguments
 	expr_str = ' '.join(args.expression)
-	print(expr_str)
 
 	# Print the result
 	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
