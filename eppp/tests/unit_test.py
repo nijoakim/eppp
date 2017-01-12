@@ -36,6 +36,8 @@ eppp.set_log_level(0)
 #============
 
 class TestStringMethods(ut.TestCase):
+	# TODO: Test electronic_eval
+
 	def test_lumped_network(self):
 		# 1 component
 		self.assertEqual(

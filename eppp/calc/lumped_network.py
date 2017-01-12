@@ -19,9 +19,11 @@
 #=========
 
 # External
-import functools           as _ft
-import itertools           as _it
-import pylab               as _pl
+import ast       as _ast
+import functools as _ft
+import itertools as _it
+import operator  as _op
+import pylab     as _pl
 
 # Internal
 from ..debug     import *
@@ -200,6 +202,36 @@ def parallel_imp(*vals):
 	# Return infinity if total admittance is 0
 	except ZeroDivisionError:
 		return float('inf')
+
+def electronic_eval(expr):
+	OPERATORS = {
+		_ast.Add:      _op.add,
+		_ast.Sub:      _op.sub,
+		_ast.USub:     _op.neg,
+		_ast.Mult:     _op.mul,
+		_ast.Div:      _op.truediv,
+		_ast.Pow:      _op.pow,
+		_ast.FloorDiv: parallel_imp,
+	}
+	# TODO: Docstring
+
+	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
+	expr = expr.replace('**', 'a')  # Will result in error (which is intended)
+	expr = expr.replace('^', '**')   # Use '^' for exponentiation
+
+	# Evaluates the parsed abstract syntax tree
+	def eval_ast(node):
+		if isinstance(node, _ast.Num):
+			return node.n
+		elif isinstance(node, _ast.BinOp):
+			return OPERATORS[type(node.op)](eval_ast(node.left), eval_ast(node.right))
+		elif isinstance(node, _ast.UnaryOp):
+			return OPERATORS[type(node.op)](eval_ast(node.operand))
+
+	try:
+		return eval_ast(_ast.parse(expr, mode='eval').body)
+	except:
+		raise Exception('Invalid expression.') # TODO: Proper expression type
 
 # Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
 @_func_str('||')

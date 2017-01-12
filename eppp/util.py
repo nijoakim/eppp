@@ -47,6 +47,7 @@ def _util_print():
 
 # Availible sub-commands
 _CMDS = [
+	'expression',
 	'impedance',
 	'network',
 	'parallel',
@@ -104,6 +105,30 @@ elif num_matches == 2:
 
 # Remove global arguments for argv
 sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
+
+#======================
+# 'expression' command
+#======================
+
+if cmd == 'expression':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = "Evaluates an expression. Electronic operators, such as the parallel operator, '||' are supported.",
+	)
+	parser.add_argument(
+		'expression',
+		type  = str,
+		nargs = '+',
+		help  = "Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^'.",
+	)
+	args = parser.parse_args()
+
+	# Make string from arguments
+	expr_str = ' '.join(args.expression)
+	print(expr_str)
+
+	# Print the result
+	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
 
 #=====================
 # 'impedance' command
