@@ -36,7 +36,6 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix = convert_parameter_matrix(matrix, 'z',   to)  # Convert to 'to'-parameters
 		return matrix
 
-
 	# Symmetric conversions
 	if   'y' in (from_, to):
 		return _np.linalg.inv(matrix)
