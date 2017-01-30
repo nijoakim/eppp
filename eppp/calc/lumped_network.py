@@ -27,7 +27,6 @@ import numpy     as _np
 
 # Internal
 from ..debug import *
-from ..error import _string_or_exception
 from ..inout import str_sci as _str_sci
 from ..log   import _log
 
@@ -486,14 +485,14 @@ def lumped_network(
 
 	# Check so that target is non-zero
 	if target == 0:
-		return _string_or_exception("Target impedance must be non-zero.")
+		raise ValueError("Target impedance must be non-zero.")
 
 	# Figure out error mode
 	if max_abs_error is None and max_rel_error is None:
 		max_error = 0.01
 		use_rel_error = True
 	elif not max_abs_error is None and not max_rel_error is None:
-		return _string_or_exception("Can not specify both 'max_abs_error' and 'max_rel_error'.")
+		raise ValueError("Can not specify both 'max_abs_error' and 'max_rel_error'.")
 	elif not max_abs_error is None:
 		max_error = max_abs_error
 		use_rel_error = False

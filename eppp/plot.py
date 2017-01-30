@@ -13,8 +13,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#=========
+# Imports
+#=========
+
+# External
 import matplotlib.pyplot as _pyplot
-from .error import _string_or_exception
+
+#==========
+# Plotting
+#==========
 
 def bode(freq, mag, phase, power = False, title_text = ''):
 	"""
@@ -32,7 +40,7 @@ def bode(freq, mag, phase, power = False, title_text = ''):
 	
 	# Size check
 	if freq.size != mag.size != phase.size:
-		return _string_or_exception("'freq' and 'mag' and 'phase' must be of the same size.")
+		raise ValueError("'freq' and 'mag' and 'phase' must be of the same size.")
 	
 	# Magnitude plot
 	_pyplot.subplot(211)

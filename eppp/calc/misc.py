@@ -23,9 +23,6 @@
 # External
 import numpy as _np
 
-# Internal
-from ..error import _string_or_exception
-
 #=====================
 # Decibel conversions
 #=====================
@@ -63,7 +60,7 @@ convert_from_db.__doc__ = _doc_convert_db("converted from")
 def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	# Size check
 	if freq.size != mag.size:
-		return _string_or_exception("'freq' and 'mag' must be of the same size.")
+		raise ValueError("'freq' and 'mag' must be of the same size.")
 
 	# Return negated if stop filter
 	if is_stop_filter:
@@ -84,7 +81,7 @@ def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	if i < 0:
 		return 0.
 	elif i >= mag.size:
-		return _string_or_exception("High break frequency is not in interval") # TODO: Only high?
+		raise ValueError("High break frequency is not in interval.") # TODO: Only high?
 
 def lo_break_freq(freq, mag, decibel = 3, is_stop_filter = False):
 	return _breakFreq(freq, mag, -1, decibel, is_stop_filter)
@@ -121,7 +118,7 @@ bandwidth.__doc__     = _doc_bandwidth("bandwidth")
 
 def intersects(x, y, target):
 	"""
-	Calculates where y = f(x) intersecsts target.
+	Calculates where y = f(x) intersects target.
 
 	Args:
 		x (numpy.ndarray): x data
@@ -154,7 +151,7 @@ def intersects(x, y, target):
 		i += 1
 
 	# Never reached target
-	return _string_or_exception("Data never intersects target.")
+	raise ValueError("Data never intersects target.")
 
 def unity_gain_freq(freq, mag):
 	"""

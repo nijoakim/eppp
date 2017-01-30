@@ -26,7 +26,6 @@ import numpy   as _np
 
 # Internal
 from .debug import *
-from .error import _string_or_exception
 
 #==========
 # Notation
@@ -60,7 +59,7 @@ def str_sci(x,
 	def convert_sig_figs(x, sig_figs):
 		# Minimum amount of significant figures
 		if sig_figs < 1:
-			print(_string_or_exception('Minimum amount of significant figures is 1.'))
+			raise ValueError('Minimum amount of significant figures is 1.')
 
 		# Convert to set number of significant figures
 		highness = int(_np.floor(_np.log10(abs(x))))
@@ -135,7 +134,7 @@ def str_sci(x,
 		elif notation_style == 'scientific':
 			digit_group_size = 1
 		else:
-			print(_string_or_exception('Invalid notation style.'))
+			raise ValueError('Invalid notation style.')
 
 		# Convert to exponent notation
 		xxx          = larger_xx if notation_style == 'metric' else xx
