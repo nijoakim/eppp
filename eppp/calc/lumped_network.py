@@ -26,10 +26,10 @@ import operator  as _op
 import pylab     as _pl
 
 # Internal
-from ..debug     import *
-from ..error     import _string_or_exception
-from ..inout     import str_sci as _str_sci
-from ..log       import _log
+from ..debug import *
+from ..error import _string_or_exception
+from ..inout import str_sci as _str_sci
+from ..log   import _log
 
 #=======
 # Other

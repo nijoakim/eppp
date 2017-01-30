@@ -39,6 +39,7 @@ _default_str_sci_args = {
 }
 
 # TODO: Error if invalid kwarg
+# TODO: Always print real part of complex numbers if it is non-zero (same with imaginary part)
 def set_default_str_sci_args(**kwargs):
 	"""
 		TODO
