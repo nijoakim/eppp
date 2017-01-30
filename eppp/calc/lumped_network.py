@@ -146,31 +146,34 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
+# Dynamic docstring decorator for 'inductor_imp' and 'capacitor_imp'.
 def _doc_reactive_comp_imp(quantity):
-	return """
-	Calculates the impedance of an inductor for a given frequency.
+	def decorator(func):
+		func.__doc__ = """
+			Calculates the impedance of an inductor for a given frequency.
 
-	Args:
-		%s (number): %s
-		freq (number):       %sFrequency
+			Args:
+				%s (number): %s
+				freq (number):       %sFrequency
 
-	Returns:
-		The impedance for an inductor with the specified %s at the specified frequency.
-	""" % (
-		quantity,
-		quantity[0].upper() + quantity[1:],        # First letter upper-case
-		' ' * (len(quantity) - len('inductance')), # For alignment
-		quantity,
-	)
+			Returns:
+				The impedance for an inductor with the specified %s at the specified frequency.
+		""" % (
+			quantity,
+			quantity[0].upper() + quantity[1:],        # First letter upper-case
+			' ' * (len(quantity) - len('inductance')), # For alignment
+			quantity,
+		)
+		return func
+	return decorator
 
+@ _doc_reactive_comp_imp('inductance')
 def inductor_imp(inductance, freq):
 	return inductance * 1j * 2 * _np.pi * freq
 
+@ _doc_reactive_comp_imp('capacitance')
 def capacitor_imp(capacitance, freq):
 	return 1 / (capacitance * 1j * 2 * _np.pi * freq)
-
-inductor_imp.__doc__  = _doc_reactive_comp_imp("inductance")
-capacitor_imp.__doc__ = _doc_reactive_comp_imp("capacitance")
 
 @_func_str('||')
 def parallel_imp(*vals):

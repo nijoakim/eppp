@@ -27,30 +27,33 @@ import numpy as _np
 # Decibel conversions
 #=====================
 
+# Dynamic docstring decorator for 'convert_to_db' and 'convert_from_db'.
+def _doc_convert_db(convert_str):
+	def decorator(func):
+		func.__doc__ = """
+			Converts a number to and from its decibel form.
+
+			Args:
+				x: number to be converted.
+
+			Kwargs:
+				use_power_db (bool): Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+			
+			Returns:
+				'x' %s decibels.
+		""" % convert_str
+		return func
+	return decorator
+
+@_doc_convert_db('in')
 def convert_to_db(x, use_power_db = False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return factor*_np.log10(x)          # Return converted value
 
+@_doc_convert_db('converted from')
 def convert_from_db(x, use_power_db = False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return 10 ** (x/factor)             # Return converted value
-
-# Dynamic docstring generation
-def _doc_convert_db(convert_str):
-	return """
-	Converts a number to and from its decibel form.
-
-	Args:
-		x: number to be converted
-
-	Kwargs:
-		use_power_db (bool): Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
-	
-	Returns:
-		'x' %s decibels.
-	""" % convert_str
-convert_to_db.__doc__   = _doc_convert_db("in")
-convert_from_db.__doc__ = _doc_convert_db("converted from")
 
 #===========
 # Bandwidth
@@ -83,34 +86,37 @@ def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	elif i >= mag.size:
 		raise ValueError("High break frequency is not in interval.") # TODO: Only high?
 
-def lo_break_freq(freq, mag, decibel = 3, is_stop_filter = False):
+# Dynamic docstring generator for 'lo_break_freq', 'hi_break_freq' and 'bandwidth'.
+def _doc_bandwidth(what_str):
+	def decorator(func):
+		func.__doc__ = """
+			Calculates the %s of a filter.
+
+			Args:
+				freq (numpy.ndarray): Frequency data.
+				mag (numpy.ndarray):  Magnitude data.
+
+			Kwargs:
+				decibel (number):      Deviation from min/max value required to qualify as break frequency, given in amplitude decibels.
+				is_stop_filter (bool): Whether to treat data as a stop filter. If False, data is treated as a pass filter.
+
+			Returns:
+				float. %s
+		""" % (what_str, what_str[0].upper() + what_str[1:])
+		return func
+	return decorator
+
+@_doc_bandwidth('low break frequency')
+def lo_break_freq(freq, mag, decibel=3, is_stop_filter=False):
 	return _breakFreq(freq, mag, -1, decibel, is_stop_filter)
 
-def hi_break_freq(freq, mag, decibel = 3, is_stop_filter = False):
+@_doc_bandwidth('high break frequency')
+def hi_break_freq(freq, mag, decibel=3, is_stop_filter=False):
 	return _breakFreq(freq, mag, 1, decibel, is_stop_filter)
 
-def bandwidth(freq, mag, decibel = 3, is_stop_filter = False):
+@_doc_bandwidth('bandwidth')
+def bandwidth(freq, mag, decibel=3, is_stop_filter=False):
 	return hi_break_freq(freq, mag, decibel, is_stop_filter) - lo_break_freq(freq, mag, decibel, is_stop_filter)
-
-# Dynamic docstring generation
-def _doc_bandwidth(what_str):
-	return """
-		Calculates the %s of a filter.
-
-		Args:
-			freq (numpy.ndarray): Frequency data
-			mag (numpy.ndarray):  Magnitude data
-
-		Kwargs:
-			decibel (number):      Deviation from min/max value required to qualify as break frequency, given in amplitude decibels
-			is_stop_filter (bool): Whether to treat data as a stop filter. If False, data is treated as a pass filter
-
-		Returns:
-			float. %s
-	""" % (what_str, what_str[0].upper() + what_str[1:])
-lo_break_freq.__doc__ = _doc_bandwidth("low break frequency")
-hi_break_freq.__doc__ = _doc_bandwidth("high break frequency")
-bandwidth.__doc__     = _doc_bandwidth("bandwidth")
 
 #=========
 # Margins
@@ -121,12 +127,12 @@ def intersects(x, y, target):
 	Calculates where y = f(x) intersects target.
 
 	Args:
-		x (numpy.ndarray): x data
-		y (numpy.ndarray): y data
+		x (numpy.ndarray): x data.
+		y (numpy.ndarray): y data.
 		target (number):   y value for where the intersect is taken.
 
 	Returns:
-		float. x value for where y intersects target
+		float. x value for where y intersects target.
 	"""
 
 	# Offset to zero for simplicity
@@ -158,11 +164,11 @@ def unity_gain_freq(freq, mag):
 	Calculates unity gain frequency from magnitude data as function of frequency.
 
 	Args:
-		freq (numpy.ndarray): Frequency data
-		mag (numpy.ndarray):  Magnitude data
+		freq (numpy.ndarray): Frequency data.
+		mag (numpy.ndarray):  Magnitude data.
 
 	Returns:
-		float. Unity gain frequency
+		float. Unity gain frequency.
 	"""
 
 	return intersects(freq, mag, 1)
@@ -172,11 +178,11 @@ def phase_180_freq(freq, phase):
 	Calculates frequency of 180 degree phase shift from magnitude data as function of frequency.
 	
 	Args:
-		freq (numpy.ndarray):  Frequency data
-		phase (numpy.ndarray): Phase data
+		freq (numpy.ndarray):  Frequency data.
+		phase (numpy.ndarray): Phase data.
 	
 	Returns:
-		float. Frequency of 180 degrees phase shift
+		float. Frequency of 180 degrees phase shift.
 	"""
 
 	freqs = []
@@ -201,13 +207,13 @@ def gain_margin(freq, mag, phase, use_power_db = False):
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 
 	Args:
-		freq (numpy.ndarray):  Frequency data
-		mag (numpy.ndarray):   Magnitude data
-		phase (numpy.ndarray): Phase data
+		freq (numpy.ndarray):  Frequency data.
+		mag (numpy.ndarray):   Magnitude data.
+		phase (numpy.ndarray): Phase data.
 		use_power_db (bool):   Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
 
 	Returns:
-		float. Gain margin in decibel
+		float. Gain margin in decibel.
 	"""
 
 	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db = use_power_db)
@@ -217,11 +223,11 @@ def phase_margin(freq, mag, phase):
 	Calculates phase margin from magnitude and phase data, both as functions of frequency.
 
 	Args:
-		freq (numpy.ndarray):  Frequency data
-		mag (numpy.ndarray):   Magnitude data
-		phase (numpy.ndarray): Phase data
+		freq (numpy.ndarray):  Frequency data.
+		mag (numpy.ndarray):   Magnitude data.
+		phase (numpy.ndarray): Phase data.
 
 	Returns:
-		float. Phase margin
+		float. Phase margin.
 	"""
 	return 180 + phase[abs(freq - unity_gain_freq(freq, mag)).argmin()]

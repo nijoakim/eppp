@@ -45,7 +45,35 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
+# Dynamic docstring decorator for 'str_sci' and 'print_sci'.
+def _doc_sci(print_also):
+	def decorator(func):
+		func.__doc__ = """
+			Convert a number to scientific notation%s.
+
+			Args:
+				x (number): Number to convert
+
+			Kwargs:
+				quantity (str): Quantity to add to string
+				unit (str):     Unit of number to be converted%s
+		""" % (
+			' and print it' if print_also else '',
+			"""
+
+			Returns:
+				str. String representation of the converted number.
+			""" if not print_also else ''
+		)
+		return func
+	return decorator
+
+@_doc_sci(True)
+def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
+	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
+
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
+@_doc_sci(False)
 def str_sci(x,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
@@ -243,31 +271,6 @@ def str_sci(x,
 		ret = '%s =\n\t%s' % (quantity, ret)
 
 	return ret
-
-def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
-	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
-
-# Dynamic docstring generation
-def _doc_sci(print_also):
-	return """
-		Convert a number to scientific notation%s.
-
-		Args:
-			x (number): Number to convert
-
-		Kwargs:
-			quantity (str): Quantity to add to string
-			unit (str):     Unit of number to be converted%s
-	""" % (
-		' and print it' if print_also else '',
-		"""
-
-		Returns:
-			str. String representation of the converted number.
-		""" if not print_also else ''
-	)
-str_sci.__doc__   = _doc_sci(False)
-print_sci.__doc__ = _doc_sci(True)
 
 #===========
 # Read data
