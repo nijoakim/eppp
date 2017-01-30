@@ -12,7 +12,7 @@ EPPP comes as a python module but also defines a program, `epppu`, "EPPP utiliti
 uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.123 kΩ, while
 
 	$ epppu expression '10e3 || (47 + 2200)'
-	1.835 k<Paste>
+	1.835 k
 
 evaluates an expression which includes the parallel impedance operator, '||'.
 
@@ -27,6 +27,7 @@ TODO: Expand this section when it is more clear what does what
 - plot.py
 - calc/lumped\_network.py
 - calc/misc.py
+- calc/n\_port\_network.py
 
 ## EPPP utilities
 `epppu` currently provides the following commands:
@@ -39,7 +40,7 @@ TODO: Expand this section when it is more clear what does what
 For doumentation on the different commands use
 `epppu <command> -h`.
 
-## Installing
+## Installation
 
 ### Dependencies
 - python3
