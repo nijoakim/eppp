@@ -37,6 +37,6 @@ def get_log_level():
 
 def _log(level, msg):
 	if level < 1:
-		raise Exception('Log level must be at least 1.')
+		raise ValueError('Log level must greater than.')
 	if _log_level >= level:
 		print(msg)
