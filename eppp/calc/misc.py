@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2017 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #=========
 
 # External
-import pylab as _pl
+import numpy as _np
 
 # Internal
 from ..error import _string_or_exception
@@ -32,7 +32,7 @@ from ..error import _string_or_exception
 
 def convert_to_db(x, use_power_db = False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
-	return factor*_pl.log10(x)          # Return converted value
+	return factor*_np.log10(x)          # Return converted value
 
 def convert_from_db(x, use_power_db = False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
@@ -185,7 +185,7 @@ def phase_180_freq(freq, phase):
 	freqs = []
 
 	# Loop through all necessary phase 360-offsets
-	for phase_offset in range( (int(_pl.floor(min(phase))) / 360) * 360, (int(_pl.ceil(max(phase))) / 360) * 360, 360): # TODO: Is int(...) necessary?
+	for phase_offset in range( (int(_np.floor(min(phase))) / 360) * 360, (int(_np.ceil(max(phase))) / 360) * 360, 360): # TODO: Is int(...) necessary?
 		# Error means no intersection for given phase and can therefore be ignored
 		try:
 			freqs.append(intersects(freq, phase - phase_offset, 180))

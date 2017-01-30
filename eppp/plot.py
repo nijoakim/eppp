@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2017 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pylab as _pl
+import matplotlib.pyplot as _pyplot
 from .error import _string_or_exception
 
 def bode(freq, mag, phase, power = False, title_text = ''):
@@ -35,22 +35,22 @@ def bode(freq, mag, phase, power = False, title_text = ''):
 		return _string_or_exception("'freq' and 'mag' and 'phase' must be of the same size.")
 	
 	# Magnitude plot
-	_pl.subplot(211)
-	_pl.plot(freq, convert_db(mag, power = power))
-	_pl.xscale('log')
-	_pl.ylabel('Magnitude [convert_db]')
+	_pyplot.subplot(211)
+	_pyplot.plot(freq, convert_db(mag, power = power))
+	_pyplot.xscale('log')
+	_pyplot.ylabel('Magnitude [convert_db]')
 	
 	# Title text
-	_pl.title(title_text)
+	_pyplot.title(title_text)
 	
 	# Phase plot
-	_pl.subplot(212)
-	_pl.plot(freq, phase)
-	_pl.xscale('log')
-	_pl.ylabel('Phase [degrees]')
+	_pyplot.subplot(212)
+	_pyplot.plot(freq, phase)
+	_pyplot.xscale('log')
+	_pyplot.ylabel('Phase [degrees]')
 	
 	# x-label
-	_pl.xlabel('Frequency [Hz]')
+	_pyplot.xlabel('Frequency [Hz]')
 
 def heatmap(data, title_text = 'Heatmap', axes_unit = 'um', quantity_str = 'Magnitude [1]'):
 	# Data
@@ -59,19 +59,19 @@ def heatmap(data, title_text = 'Heatmap', axes_unit = 'um', quantity_str = 'Magn
 	mag = data['mag']
 	
 	# Plot heatmap
-	_pl.hist2d(
+	_pyplot.hist2d(
 		x, y,
 		weights = mag,
-		bins = (len(_pl.unique(x)), len(_pl.unique(y))),
+		bins = (len(_pyplot.unique(x)), len(_pyplot.unique(y))),
 	) 
 	
 	# Plot colorbar
-	cb = _pl.colorbar()
+	cb = _pyplot.colorbar()
 	cb.set_label(quantity_str)
 	
 	# Title text
-	_pl.title(title_text)
+	_pyplot.title(title_text)
 	
 	# Axis labels
-	_pl.xlabel('x-position [%s]' % axes_unit)
-	_pl.ylabel('y-position [%s]' % axes_unit)
+	_pyplot.xlabel('x-position [%s]' % axes_unit)
+	_pyplot.ylabel('y-position [%s]' % axes_unit)

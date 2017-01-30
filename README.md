@@ -45,12 +45,11 @@ For doumentation on the different commands use
 ### Dependencies
 - python3
 - python3-numpy
-- python3-scipy
 - python3-matplotlib
 
 On Debian-based systems,
 
-	$ sudo aptitude install python3 python3-numpy python3-scipy python3-matplotlib
+	$ sudo aptitude install python3 python3-numpy python3-matplotlib
 
 should install all the dependencies.
 

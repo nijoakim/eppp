@@ -23,7 +23,7 @@ import ast       as _ast
 import functools as _ft
 import itertools as _it
 import operator  as _op
-import pylab     as _pl
+import numpy     as _np
 
 # Internal
 from ..debug import *
@@ -165,10 +165,10 @@ def _doc_reactive_comp_imp(quantity):
 	)
 
 def inductor_imp(inductance, freq):
-	return inductance * 1j * 2 * _pl.pi * freq
+	return inductance * 1j * 2 * _np.pi * freq
 
 def capacitor_imp(capacitance, freq):
-	return 1 / (capacitance * 1j * 2 * _pl.pi * freq)
+	return 1 / (capacitance * 1j * 2 * _np.pi * freq)
 
 inductor_imp.__doc__  = _doc_reactive_comp_imp("inductance")
 capacitor_imp.__doc__ = _doc_reactive_comp_imp("capacitance")
