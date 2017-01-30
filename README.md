@@ -21,7 +21,6 @@ The library provides, among many other things, functions for plotting Bode diagr
 ## Library
 TODO: Expand this section when it is more clear what does what
 
-- eppp.error
 - eppp.inout
 - eppp.log
 - eppp.plot
