@@ -21,13 +21,13 @@ The library provides, among many other things, functions for plotting Bode diagr
 ## Library
 TODO: Expand this section when it is more clear what does what
 
-- error.py
-- inout.py
-- log.py
-- plot.py
-- calc/lumped\_network.py
-- calc/misc.py
-- calc/n\_port\_network.py
+- eppp.error
+- eppp.inout
+- eppp.log
+- eppp.plot
+- eppp.calc.lumped\_network
+- eppp.calc.misc.py
+- eppp.calc.n\_port\_network.py
 
 ## EPPP utilities
 `epppu` currently provides the following commands:
@@ -45,7 +45,7 @@ For doumentation on the different commands use
 ### Dependencies
 - python3
 - python3-numpy
-- python3-matplotlib
+- python3-matplotlib (only needed for `eppp.plot`)
 
 On Debian-based systems,
 
