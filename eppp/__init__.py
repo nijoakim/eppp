@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2017 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ TODO: Document properlier!
 
 # TODO: Make sub-modules out of these?
 # Internal
-from .error import *
 from .inout import *
 from .log   import *
 from .plot  import *
@@ -42,7 +41,6 @@ import types as _t
 
 # Private internal
 from . import calc  as _calc
-from . import error as _error
 from . import inout as _inout
 from . import log   as _log
 from . import plot  as _plot
@@ -93,4 +91,4 @@ def _format_doc_strings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_format_doc_strings([_calc, _error, _inout, _log, _plot], 79, 4)
+_format_doc_strings([_calc, _inout, _log, _plot], 79, 4)

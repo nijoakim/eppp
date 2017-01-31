@@ -23,11 +23,10 @@ import ast       as _ast
 import functools as _ft
 import itertools as _it
 import operator  as _op
-import pylab     as _pl
+import numpy     as _np
 
 # Internal
 from ..debug import *
-from ..error import _string_or_exception
 from ..inout import str_sci as _str_sci
 from ..log   import _log
 
@@ -147,31 +146,34 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
+# Dynamic docstring decorator for 'inductor_imp' and 'capacitor_imp'.
 def _doc_reactive_comp_imp(quantity):
-	return """
-	Calculates the impedance of an inductor for a given frequency.
+	def decorator(func):
+		func.__doc__ = """
+			Calculates the impedance of an inductor for a given frequency.
 
-	Args:
-		%s (number): %s
-		freq (number):       %sFrequency
+			Args:
+				%s (number): %s
+				freq (number):       %sFrequency
 
-	Returns:
-		The impedance for an inductor with the specified %s at the specified frequency.
-	""" % (
-		quantity,
-		quantity[0].upper() + quantity[1:],        # First letter upper-case
-		' ' * (len(quantity) - len('inductance')), # For alignment
-		quantity,
-	)
+			Returns:
+				The impedance for an inductor with the specified %s at the specified frequency.
+		""" % (
+			quantity,
+			quantity[0].upper() + quantity[1:],        # First letter upper-case
+			' ' * (len(quantity) - len('inductance')), # For alignment
+			quantity,
+		)
+		return func
+	return decorator
 
+@ _doc_reactive_comp_imp('inductance')
 def inductor_imp(inductance, freq):
-	return inductance * 1j * 2 * _pl.pi * freq
+	return inductance * 1j * 2 * _np.pi * freq
 
+@ _doc_reactive_comp_imp('capacitance')
 def capacitor_imp(capacitance, freq):
-	return 1 / (capacitance * 1j * 2 * _pl.pi * freq)
-
-inductor_imp.__doc__  = _doc_reactive_comp_imp("inductance")
-capacitor_imp.__doc__ = _doc_reactive_comp_imp("capacitance")
+	return 1 / (capacitance * 1j * 2 * _np.pi * freq)
 
 @_func_str('||')
 def parallel_imp(*vals):
@@ -486,14 +488,14 @@ def lumped_network(
 
 	# Check so that target is non-zero
 	if target == 0:
-		return _string_or_exception("Target impedance must be non-zero.")
+		raise ValueError("Target impedance must be non-zero.")
 
 	# Figure out error mode
 	if max_abs_error is None and max_rel_error is None:
 		max_error = 0.01
 		use_rel_error = True
 	elif not max_abs_error is None and not max_rel_error is None:
-		return _string_or_exception("Can not specify both 'max_abs_error' and 'max_rel_error'.")
+		raise ValueError("Can not specify both 'max_abs_error' and 'max_rel_error'.")
 	elif not max_abs_error is None:
 		max_error = max_abs_error
 		use_rel_error = False

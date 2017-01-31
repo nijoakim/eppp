@@ -9,23 +9,29 @@ EPPP comes as a python module but also defines a program, `epppu`, "EPPP utiliti
 	$ epppu network 88120
 	(220.0 k || (47.00 k + 100.0 k)) = 88.12 k
 
-uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.123 kΩ.
+uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.123 kΩ, while
+
+	$ epppu expression '10e3 || (47 + 2200)'
+	1.835 k
+
+evaluates an expression which includes the parallel impedance operator, '||'.
 
 The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
 ## Library
 TODO: Expand this section when it is more clear what does what
 
-- error.py
-- inout.py
-- log.py
-- plot.py
-- calc/lumped\_network.py
-- calc/misc.py
+- eppp.inout
+- eppp.log
+- eppp.plot
+- eppp.calc.lumped\_network
+- eppp.calc.misc.py
+- eppp.calc.n\_port\_network.py
 
 ## EPPP utilities
 `epppu` currently provides the following commands:
 
+- `epppu expression`
 - `epppu impedance`
 - `epppu network`
 - `epppu parallel`
@@ -33,17 +39,16 @@ TODO: Expand this section when it is more clear what does what
 For doumentation on the different commands use
 `epppu <command> -h`.
 
-## Installing
+## Installation
 
 ### Dependencies
 - python3
 - python3-numpy
-- python3-scipy
-- python3-matplotlib
+- python3-matplotlib (only needed for `eppp.plot`)
 
 On Debian-based systems,
 
-	$ sudo aptitude install python3 python3-numpy python3-scipy python3-matplotlib
+	$ sudo aptitude install python3 python3-numpy python3-matplotlib
 
 should install all the dependencies.
 

@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2017 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Rename this module! It conflicts with the standard library.
-
 #=========
 # Imports
 #=========
@@ -22,11 +20,10 @@
 # External
 import decimal as _dec
 import glob    as _glob
-import pylab   as _pl
+import numpy   as _np
 
 # Internal
 from .debug import *
-from .error import _string_or_exception
 
 #==========
 # Notation
@@ -48,7 +45,35 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
+# Dynamic docstring decorator for 'str_sci' and 'print_sci'.
+def _doc_sci(print_also):
+	def decorator(func):
+		func.__doc__ = """
+			Convert a number to scientific notation%s.
+
+			Args:
+				x (number): Number to convert
+
+			Kwargs:
+				quantity (str): Quantity to add to string
+				unit (str):     Unit of number to be converted%s
+		""" % (
+			' and print it' if print_also else '',
+			"""
+
+			Returns:
+				str. String representation of the converted number.
+			""" if not print_also else ''
+		)
+		return func
+	return decorator
+
+@_doc_sci(True)
+def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
+	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
+
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
+@_doc_sci(False)
 def str_sci(x,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
@@ -60,10 +85,10 @@ def str_sci(x,
 	def convert_sig_figs(x, sig_figs):
 		# Minimum amount of significant figures
 		if sig_figs < 1:
-			print(_string_or_exception('Minimum amount of significant figures is 1.'))
+			raise ValueError('Minimum amount of significant figures is 1.')
 
 		# Convert to set number of significant figures
-		highness = int(_pl.floor(_pl.log10(abs(x))))
+		highness = int(_np.floor(_np.log10(abs(x))))
 
 		#========================================
 		# Return rounded (halves are rounded up)
@@ -95,7 +120,7 @@ def str_sci(x,
 
 	# Logarithms with base (math does not allow bases bigger than 36)
 	def log_base_x(x, base):
-		return _pl.log(x) / _pl.log(base)
+		return _np.log(x) / _np.log(base)
 
 	# Default arguments
 	global _default_str_sci_args
@@ -135,18 +160,18 @@ def str_sci(x,
 		elif notation_style == 'scientific':
 			digit_group_size = 1
 		else:
-			print(_string_or_exception('Invalid notation style.'))
+			raise ValueError('Invalid notation style.')
 
 		# Convert to exponent notation
 		xxx          = larger_xx if notation_style == 'metric' else xx
-		highness     = int(_pl.floor(log_base_x(abs(xxx), 10**digit_group_size)))
+		highness     = int(_np.floor(log_base_x(abs(xxx), 10**digit_group_size)))
 		significand  = xx / 10**(highness * digit_group_size)
 		exponent     = highness * digit_group_size
-		digit_offset = int(_pl.floor(_pl.log10(abs(significand))))
+		digit_offset = int(_np.floor(_np.log10(abs(significand))))
 
 		# Number of fractional zeroes needed for metric style
 		if notation_style == 'metric':
-			num_frac_zeros = max(-int(_pl.floor(_pl.log10(abs(significand)))), 0)
+			num_frac_zeros = max(-int(_np.floor(_np.log10(abs(significand)))), 0)
 		else:
 			num_frac_zeros = 0
 
@@ -247,31 +272,6 @@ def str_sci(x,
 
 	return ret
 
-def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
-	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
-
-# Dynamic docstring generation
-def _doc_sci(print_also):
-	return """
-		Convert a number to scientific notation%s.
-
-		Args:
-			x (number): Number to convert
-
-		Kwargs:
-			quantity (str): Quantity to add to string
-			unit (str):     Unit of number to be converted%s
-	""" % (
-		' and print it' if print_also else '',
-		"""
-
-		Returns:
-			str. String representation of the converted number.
-		""" if not print_also else ''
-	)
-str_sci.__doc__   = _doc_sci(False)
-print_sci.__doc__ = _doc_sci(True)
-
 #===========
 # Read data
 #===========
@@ -301,7 +301,7 @@ def _read_gnucap(path):
 	with open(path, 'r') as f:
 		names    = f.readline().split()
 		names[0] = names[0][1:] # Remove initial '#'
-	data = _pl.genfromtxt(path)
+	data = _np.genfromtxt(path)
 
 	# Put data in dictionary
 	ret_dict = {}
@@ -310,7 +310,7 @@ def _read_gnucap(path):
 			ret_dict[names[i]] = data[0:, i]
 	except IndexError: # Catch array shape error when data is of length 1
 		for i in range(data.shape[0]):
-			ret_dict[names[i]] = _pl.np.array([data[i]])
+			ret_dict[names[i]] = _np.np.array([data[i]])
 
 	return ret_dict
 
@@ -324,7 +324,7 @@ def _read_archimedes(path):
 	dict_outer = {}
 	for f in files:
 		# Get the data
-		data = _pl.genfromtxt(f)
+		data = _np.genfromtxt(f)
 
 		# Reshape the data so it can be extracted more easily
 		new_shape = data.shape
