@@ -24,12 +24,13 @@ import numpy as _np
 # Other
 #=======
 
-# TODO: s-parameters, t-parameters (also conversion between power/energy to voltage/current typ parameters)
+# TODO: s-parameters, t-parameters (also conversion between power/energy to voltage/current type parameters)
 
 def convert_parameter_matrix(matrix, from_, to):
 	"""
 		TODO
 	"""
+
 	# TODO: Errors instead of asserts
 	if not 'z' in (from_, to):
 		matrix = convert_parameter_matrix(matrix, from_, 'z') # Convert to z-parameters
