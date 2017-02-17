@@ -259,12 +259,16 @@ def str_sci(x,
 			ret_strs[1] = ret_strs[1][1:]
 			operator_str = '-'
 
-	# Add whitespace in front of 'unit' for separation
-	if unit != '':
-		unit = ' '+ unit
-
 	# Assemble string
-	ret = (' %s ' % operator_str).join(ret_strs) + unit
+	ret = (' %s ' % operator_str).join(ret_strs)
+
+	# Parenthesize if complex
+	if len(ret_strs) == 2:
+		ret = '('+ ret +')'
+
+	# Add unit
+	if unit != '':
+		ret += ' '+ unit
 
 	# Add quantity
 	if not quantity is None:
