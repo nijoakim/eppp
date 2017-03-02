@@ -20,6 +20,9 @@
 # External
 import numpy as _np
 
+# Internal
+from .lumped_network import capacitor_imp, inductor_imp
+
 #=======
 # Other
 #=======
@@ -90,3 +93,51 @@ def convert_parameter_matrix(matrix, from_, to):
 		return matrix_out
 
 	raise NotImplementedError()
+
+# TODO: Doctrings for '*_impedance_matrix'
+
+def shunt_impedance_matrix(matrix_type, imp):
+	matrix = _np.ndarray((2, 2), dtype=complex)
+	if matrix_type == 'a':
+		matrix[0][0] = 1
+		matrix[0][1] = 0
+		matrix[1][0] = 1 / imp
+		matrix[1][1] = 1
+	elif matrix_type == 'b':
+		matrix[0][0] = 1
+		matrix[0][1] = 0
+		matrix[1][0] = -1 / imp
+		matrix[1][1] = 1
+	else:
+		raise ValueError('Unsupported matrix type.')
+
+	return matrix
+
+def series_impedance_matrix(matrix_type, imp):
+	matrix = _np.ndarray((2, 2), dtype=complex)
+	if matrix_type == 'a':
+		matrix[0][0] = 1
+		matrix[0][1] = imp
+		matrix[1][0] = 0
+		matrix[1][1] = 1
+	elif matrix_type == 'b':
+		matrix[0][0] = 1
+		matrix[0][1] = -imp
+		matrix[1][0] = 0
+		matrix[1][1] = 1
+	else:
+		raise ValueError('Unsupported matrix type.')
+	return matrix
+
+def series_capacitor_matrix(matrix_type, cap, freq):
+	return series_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
+def shunt_capacitor_matrix(matrix_type, cap, freq):
+	return shunt_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
+def series_inductor_matrix(matrix_type, ind, freq):
+	return series_impedance_matrix(matrix_type, inductor_imp(ind, freq))
+def shunt_inductor_matrix(matrix_type, ind, freq):
+	return shunt_impedance_matrix(matrix_type, inductor_imp(ind, freq))
+def series_resistor_matrix(matrix_type, res):
+	return series_impedance_matrix(matrix_type, res)
+def shunt_resistor_matrix(matrix_type, res):
+	return shunt_impedance_matrix(matrix_type, res)

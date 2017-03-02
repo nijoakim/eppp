@@ -168,12 +168,12 @@ def _doc_reactive_comp_imp(quantity):
 	return decorator
 
 @ _doc_reactive_comp_imp('inductance')
-def inductor_imp(inductance, freq):
-	return inductance * 1j * 2 * _np.pi * freq
+def inductor_imp(ind, freq):
+	return ind * 1j * 2 * _np.pi * freq
 
 @ _doc_reactive_comp_imp('capacitance')
-def capacitor_imp(capacitance, freq):
-	return 1 / (capacitance * 1j * 2 * _np.pi * freq)
+def capacitor_imp(cap, freq):
+	return 1 / (cap * 1j * 2 * _np.pi * freq)
 
 @_func_str('||')
 def parallel_imp(*vals):
