@@ -169,11 +169,17 @@ def _doc_reactive_comp_imp(quantity):
 
 @ _doc_reactive_comp_imp('inductance')
 def inductor_imp(ind, freq):
-	return ind * 1j * 2 * _np.pi * freq
+	if ind == float('inf') or freq == float('inf'):
+		return float('inf')
+	else:
+		return ind * 1j * 2 * _np.pi * freq
 
 @ _doc_reactive_comp_imp('capacitance')
 def capacitor_imp(cap, freq):
-	return 1 / (cap * 1j * 2 * _np.pi * freq)
+	if cap == 0 or freq == 0:
+		return float('inf')
+	else:
+		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
 @_func_str('||')
 def parallel_imp(*vals):
