@@ -72,14 +72,13 @@ def convert_parameter_matrix(matrix, from_, to):
 		return matrix_out
 
 	# Asymmetric conversions
-	# TODO: Verifiy definition
 	if   (from_, to) == ('z', 'b'):
 		assert matrix.shape == (2, 2)
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = matrix[1][1]
 		matrix_out[0][1] = -_np.linalg.det(matrix)
 		matrix_out[1][0] = -1
-		matrix_out[1][1] = matrix[1][1]
+		matrix_out[1][1] = matrix[0][0]
 		matrix_out /= matrix[0][1]
 		return matrix_out
 	elif (from_, to) == ('b', 'z'):
@@ -88,7 +87,7 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out[0][0] = -matrix[1][1]
 		matrix_out[0][1] = -1
 		matrix_out[1][0] = -_np.linalg.det(matrix)
-		matrix_out[1][1] = -matrix[1][1]
+		matrix_out[1][1] = -matrix[0][0]
 		matrix_out /= matrix[1][0]
 		return matrix_out
 
