@@ -129,9 +129,9 @@ def shunt_impedance_matrix(matrix_type, imp):
 	return matrix
 
 def series_admittance_matrix(matrix_type, adm):
-	return series_impedance_matrix(matrix_type, 1/imp)
+	return series_impedance_matrix(matrix_type, 1/adm)
 def shunt_admittance_matrix(matrix_type, adm):
-	return shunt_impedance_matrix(matrix_type, 1/imp)
+	return shunt_impedance_matrix(matrix_type, 1/adm)
 def series_capacitor_matrix(matrix_type, cap, freq):
 	return series_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
 def shunt_capacitor_matrix(matrix_type, cap, freq):
