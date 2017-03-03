@@ -96,23 +96,6 @@ def convert_parameter_matrix(matrix, from_, to):
 
 # TODO: Doctrings for '*_impedance_matrix'
 
-def shunt_impedance_matrix(matrix_type, imp):
-	matrix = _np.ndarray((2, 2), dtype=complex)
-	if matrix_type == 'a':
-		matrix[0][0] = 1
-		matrix[0][1] = 0
-		matrix[1][0] = 1 / imp
-		matrix[1][1] = 1
-	elif matrix_type == 'b':
-		matrix[0][0] = 1
-		matrix[0][1] = 0
-		matrix[1][0] = -1 / imp
-		matrix[1][1] = 1
-	else:
-		raise ValueError('Unsupported matrix type.')
-
-	return matrix
-
 def series_impedance_matrix(matrix_type, imp):
 	matrix = _np.ndarray((2, 2), dtype=complex)
 	if matrix_type == 'a':
@@ -129,6 +112,26 @@ def series_impedance_matrix(matrix_type, imp):
 		raise ValueError('Unsupported matrix type.')
 	return matrix
 
+def shunt_impedance_matrix(matrix_type, imp):
+	matrix = _np.ndarray((2, 2), dtype=complex)
+	if matrix_type == 'a':
+		matrix[0][0] = 1
+		matrix[0][1] = 0
+		matrix[1][0] = 1 / imp
+		matrix[1][1] = 1
+	elif matrix_type == 'b':
+		matrix[0][0] = 1
+		matrix[0][1] = 0
+		matrix[1][0] = -1 / imp
+		matrix[1][1] = 1
+	else:
+		raise ValueError('Unsupported matrix type.')
+	return matrix
+
+def series_admittance_matrix(matrix_type, adm):
+	return series_impedance_matrix(matrix_type, 1/imp)
+def shunt_admittance_matrix(matrix_type, adm):
+	return shunt_impedance_matrix(matrix_type, 1/imp)
 def series_capacitor_matrix(matrix_type, cap, freq):
 	return series_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
 def shunt_capacitor_matrix(matrix_type, cap, freq):
