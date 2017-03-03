@@ -144,3 +144,7 @@ def series_resistor_matrix(matrix_type, res):
 	return series_impedance_matrix(matrix_type, res)
 def shunt_resistor_matrix(matrix_type, res):
 	return shunt_impedance_matrix(matrix_type, res)
+def series_conductor_matrix(matrix_type, con):
+	return series_admittance_matrix(matrix_type, con)
+def shunt_conductor_matrix(matrix_type, con):
+	return shunt_admittance_matrix(matrix_type, con)
