@@ -35,6 +35,11 @@ def convert_parameter_matrix(matrix, from_, to):
 	"""
 
 	# TODO: Errors instead of asserts
+
+	# TODO: Check so that 'from_' and 'to' are valid matrix types
+	if from_ == to:
+		return matrix
+
 	if not 'z' in (from_, to):
 		matrix = convert_parameter_matrix(matrix, from_, 'z') # Convert to z-parameters
 		matrix = convert_parameter_matrix(matrix, 'z',   to)  # Convert to 'to'-parameters
@@ -92,6 +97,116 @@ def convert_parameter_matrix(matrix, from_, to):
 		return matrix_out
 
 	raise NotImplementedError()
+
+class NPortNetwork:
+	"""
+		TODO
+	"""
+	
+	# TODO: s- and t-parameters
+
+	def __init__(self):
+		self._z                = None
+		self._y                = None
+		self._h                = None
+		self._g                = None
+		self._a                = None
+		self._b                = None
+		self._last_assigned_as = None
+
+	def _check_init(self):
+		if self._last_assigned_as is None:
+			raise AttributeError('n-port matrix has not been initialized.')
+
+	def _get_last_assigned_matrix(self):
+		return getattr(self, '_'+ self._last_assigned_as)
+
+	def modify_inplace(self, matrix_type):
+		setattr(self, matrix_type, getattr(self, matrix_type))
+
+	@property
+	def z(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'z',
+		)
+
+	@property
+	def y(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'y',
+		)
+
+	@property
+	def h(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'h',
+		)
+
+	@property
+	def g(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'g',
+		)
+
+	@property
+	def a(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'a',
+		)
+
+	@property
+	def b(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			'b',
+		)
+
+	@z.setter
+	def z(self, matrix):
+		self._z = matrix
+		self._last_assigned_as = 'z'
+
+	@y.setter
+	def y(self, matrix):
+		self._y = matrix
+		self._last_assigned_as = 'y'
+
+	@h.setter
+	def h(self, matrix):
+		self._h = matrix
+		self._last_assigned_as = 'h'
+
+	@g.setter
+	def g(self, matrix):
+		self._g = matrix
+		self._last_assigned_as = 'g'
+
+	@a.setter
+	def a(self, matrix):
+		self._a = matrix
+		self._last_assigned_as = 'a'
+
+	@b.setter
+	def b(self, matrix):
+		self._b = matrix
+		self._last_assigned_as = 'b'
 
 # TODO: Doctrings for '*_impedance_matrix'
 
