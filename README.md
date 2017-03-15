@@ -25,8 +25,8 @@ TODO: Expand this section when it is more clear what does what
 - eppp.log
 - eppp.plot
 - eppp.calc.lumped\_network
-- eppp.calc.misc.py
-- eppp.calc.n\_port\_network.py
+- eppp.calc.misc
+- eppp.calc.n\_port\_network
 
 ## EPPP utilities
 `epppu` currently provides the following commands:
