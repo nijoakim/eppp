@@ -91,7 +91,10 @@ class ExprTree:
 			return _str_sci(self.operands[0], unit = self._unit)
 		else:
 			# Use symbols for some functions
-			op_sym = self.operator.str if hasattr(self.operator, 'str') else str(self.operator)
+			if self.operator is _op.add:
+				op_sym = '+'
+			else:
+				op_sym = self.operator.str if hasattr(self.operator, 'str') else str(self.operator)
 
 			# Form expression
 			ret = ''
