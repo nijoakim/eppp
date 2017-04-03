@@ -106,13 +106,13 @@ class TestStringMethods(ut.TestCase):
 		# TODO: Engineering style
 
 		# Complex numbers
-		self.assertEqual(eppp.str_sci(   1 +    1j),  '1.00 + j1.00')
-		self.assertEqual(eppp.str_sci(   1 -    1j),  '1.00 - j1.00')
-		self.assertEqual(eppp.str_sci(  -1 -    1j), '-1.00 - j1.00')
-		self.assertEqual(eppp.str_sci(          1j),         'j1.00')
-		self.assertEqual(eppp.str_sci(         -1j),        '-j1.00')
-		self.assertEqual(eppp.str_sci(1000 +   10j),  '1.00 + j0.01 k')
-		self.assertEqual(eppp.str_sci(  10 + 1000j),  '0.01 + j1.00 k')
+		self.assertEqual(eppp.str_sci(   1 +    1j),  '(1.00 + j1.00)')
+		self.assertEqual(eppp.str_sci(   1 -    1j),  '(1.00 - j1.00)')
+		self.assertEqual(eppp.str_sci(  -1 -    1j), '(-1.00 - j1.00)')
+		self.assertEqual(eppp.str_sci(          1j),          'j1.00')
+		self.assertEqual(eppp.str_sci(         -1j),         '-j1.00')
+		self.assertEqual(eppp.str_sci(1000 +   10j),  '(1.00 + j0.01) k')
+		self.assertEqual(eppp.str_sci(  10 + 1000j),  '(0.01 + j1.00) k')
 		self.assertEqual(eppp.str_sci(1000 +    1j),          '1.00 k')
 
 ut.main(exit = False)
