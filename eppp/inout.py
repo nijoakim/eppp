@@ -186,7 +186,7 @@ def str_sci(x,
 		significand_str = complex_prefix + significand_str
 
 		# Put minus in front of j
-		if significand_str[1] == '-':
+		if len(significand_str) > 1 and significand_str[1] == '-':
 			significand_str = \
 				significand_str[1 ] + \
 				significand_str[0 ] + \
