@@ -186,7 +186,7 @@ def str_sci(x,
 		significand_str = complex_prefix + significand_str
 
 		# Put minus in front of j
-		if significand_str[1] == '-':
+		if len(significand_str) > 1 and significand_str[1] == '-':
 			significand_str = \
 				significand_str[1 ] + \
 				significand_str[0 ] + \
@@ -249,22 +249,24 @@ def str_sci(x,
 	# Return 0 with correct significant figures ('convert_sig_figs()' does not work with x = 0)
 	if len(ret_strs) == 0:
 		if num_sig_figs == 1:
-			return '0'
+			ret = '0'
 		else:
-			return '0.' + '0'*(num_sig_figs - 1)
+			ret = '0.' + '0'*(num_sig_figs - 1)
+	
+	# Otherwise, assemble string normally
+	else:
+		# Use minus as operator for beauty if applicable
+		if len(ret_strs) == 2:
+			if ret_strs[1][0] == '-':
+				ret_strs[1] = ret_strs[1][1:]
+				operator_str = '-'
 
-	# Use minus as operator for beauty if applicable
-	elif len(ret_strs) == 2:
-		if ret_strs[1][0] == '-':
-			ret_strs[1] = ret_strs[1][1:]
-			operator_str = '-'
+		# Assemble string
+		ret = (' %s ' % operator_str).join(ret_strs)
 
-	# Assemble string
-	ret = (' %s ' % operator_str).join(ret_strs)
-
-	# Parenthesize if complex
-	if len(ret_strs) == 2:
-		ret = '('+ ret +')'
+		# Parenthesize if complex
+		if len(ret_strs) == 2:
+			ret = '('+ ret +')'
 
 	# Add unit
 	if unit != '':
