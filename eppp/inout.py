@@ -284,6 +284,9 @@ EXT_GNUCAP     = 1
 EXT_ARCHIMEDES = 2
 
 def read_data(fmt, path):
+	"""
+	TODO: Documentation
+	"""
 	if (fmt == EXT_GNUCAP    ): return _read_gnucap(path)
 	if (fmt == EXT_ARCHIMEDES): return _read_archimedes(path)
 	raise Exception("Invalid format")
