@@ -20,11 +20,23 @@
 # External
 import matplotlib.pyplot as _pyplot
 
+# Internal
+from .calc import convert_to_db as _convert_to_db
+
+# Create a special version of '_pyplot.plot()' if 'mpldatacursor' is available
+_old_pyplot_plot = _pyplot.plot
+try:
+	from mpldatacursor import datacursor as _datacursor
+	def _new_pyplot_plot(*args, **kwargs):
+		_datacursor(_old_pyplot_plot(*args, **kwargs))
+except ImportError:
+	_new_pyplot_plot = _pyplot.plot
+
 #==========
 # Plotting
 #==========
 
-def bode(freq, mag, phase, power = False, title_text = ''):
+def bode(freq, mag, phase, use_power_db=False, title_text='', use_data_cursors=True):
 	"""
 	Plot a bode plot from magnitude and phase data, both as functions of frequency.
 	
@@ -34,29 +46,36 @@ def bode(freq, mag, phase, power = False, title_text = ''):
 		phase (numpy.ndArray): Phase data
 	
 	Kwargs:
-		power (bool):     Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
-		title_text (str): Title text
+		use_power_db (boolean):      Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		use_data_cursors (booolean): Whether to use data cursor. (Only has an effect if the 'mpldatacursor' package is available.)
+		title_text (str):            Title text
 	"""
-	
+
+	# Which plotting function to use
+	if use_data_cursors:
+		plot = _new_pyplot_plot
+	else:
+		plot = _old_pyplot_plot
+
 	# Size check
 	if freq.size != mag.size != phase.size:
 		raise ValueError("'freq' and 'mag' and 'phase' must be of the same size.")
-	
+
 	# Magnitude plot
 	_pyplot.subplot(211)
-	_pyplot.plot(freq, convert_db(mag, power = power))
+	plot(freq, _convert_to_db(mag, use_power_db = use_power_db))
 	_pyplot.xscale('log')
 	_pyplot.ylabel('Magnitude [convert_db]')
-	
+
 	# Title text
 	_pyplot.title(title_text)
-	
+
 	# Phase plot
 	_pyplot.subplot(212)
-	_pyplot.plot(freq, phase)
+	plot(freq, phase)
 	_pyplot.xscale('log')
 	_pyplot.ylabel('Phase [degrees]')
-	
+
 	# x-label
 	_pyplot.xlabel('Frequency [Hz]')
 
@@ -65,21 +84,21 @@ def heatmap(data, title_text = 'Heatmap', axes_unit = 'um', quantity_str = 'Magn
 	x   = data['x']
 	y   = data['y']
 	mag = data['mag']
-	
+
 	# Plot heatmap
 	_pyplot.hist2d(
 		x, y,
 		weights = mag,
 		bins = (len(_pyplot.unique(x)), len(_pyplot.unique(y))),
-	) 
-	
+	)
+
 	# Plot colorbar
 	cb = _pyplot.colorbar()
 	cb.set_label(quantity_str)
-	
+
 	# Title text
 	_pyplot.title(title_text)
-	
+
 	# Axis labels
 	_pyplot.xlabel('x-position [%s]' % axes_unit)
 	_pyplot.ylabel('y-position [%s]' % axes_unit)
