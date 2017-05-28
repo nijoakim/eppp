@@ -319,7 +319,7 @@ def _read_gnucap(path):
 			ret_dict[names[i]] = data[0:, i]
 	except IndexError: # Catch array shape error when data is of length 1
 		for i in range(data.shape[0]):
-			ret_dict[names[i]] = _np.np.array([data[i]])
+			ret_dict[names[i]] = _np.array([data[i]])
 
 	return ret_dict
 
