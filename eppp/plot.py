@@ -28,7 +28,9 @@ _old_pyplot_plot = _pyplot.plot
 try:
 	from mpldatacursor import datacursor as _datacursor
 	def _new_pyplot_plot(*args, **kwargs):
-		_datacursor(_old_pyplot_plot(*args, **kwargs))
+		ret = _old_pyplot_plot(*args, **kwargs)
+		_datacursor(ret)
+		return ret
 except ImportError:
 	_new_pyplot_plot = _pyplot.plot
 
