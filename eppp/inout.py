@@ -415,14 +415,14 @@ class _TextFields:
 
 	def __str__(self):
 		return 'T '+ str.join(' ', map(str, [
-			self.x,
-			self.y,
+			int(self.x),
+			int(self.y),
 			self.color,
 			self.size,
 			self.visibility,
 			self.show_name_value,
 			self.angle,
-			(self.alignment_hor + 1)*3 + self.alignment_ver + 1,
+			int((self.alignment_hor + 1)*3 + self.alignment_ver + 1),
 			self.numLines,
 		]))
 
@@ -481,22 +481,22 @@ def annotate_gschem(fn_in, fnd_out, data, index = 0):
 						if cur_match == 'netname':
 							# Modify text fields
 							cur_text_fields.move_along_orientation_scaled(0, 1)          # Position
-							cur_text_fields.size -= 2	                                 # Font size
+							cur_text_fields.size -= 2                                    # Font size
 							cur_text_fields.color = _TextFields.COLOR_DETACHED_ATTRIBUTE # Color
 							
 							# Write new text
 							f_out.write(str(cur_text_fields) +'\n')
-							f_out.write(str_sci(data['v('+ cur_id +')'][index], 'V') + '\n')
+							f_out.write(str_sci(data['v('+ cur_id +')'][index], unit='V') + '\n')
 
 						if cur_match == 'refdes':
 							# Modify text fields
 							cur_text_fields.move_along_orientation_scaled(0, -1)         # Position
-							cur_text_fields.size -= 2	                                 # Font size
+							cur_text_fields.size -= 2                                    # Font size
 							cur_text_fields.color = _TextFields.COLOR_DETACHED_ATTRIBUTE # Color
 
 							# Write new text
 							f_out.write(str(cur_text_fields) +'\n')
-							f_out.write(str_sci(data['i('+ cur_id +')'][index], 'A') + '\n')
+							f_out.write(str_sci(data['i('+ cur_id +')'][index], unit='A') + '\n')
 
 						# Reset current match
 						cur_match = 'none'
