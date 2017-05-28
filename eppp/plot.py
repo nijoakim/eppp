@@ -36,7 +36,12 @@ except ImportError:
 # Plotting
 #==========
 
-def bode(freq, mag, phase, use_power_db=False, title_text='', use_data_cursors=True):
+def bode(
+		freq, mag, phase,
+		use_power_db=False,
+		use_data_cursors=True,
+		title_text='',
+	):
 	"""
 	Plot a bode plot from magnitude and phase data, both as functions of frequency.
 	
