@@ -19,6 +19,7 @@
 
 # External
 import unittest as ut
+from math import inf
 
 # Internal
 import eppp
@@ -69,7 +70,7 @@ class TestStringMethods(ut.TestCase):
 		self.assertEqual(eppp.calc.parallel_imp(1, 1j), 0.5 + 0.5j)  # Complex numbers
 		self.assertEqual(eppp.calc.parallel_imp(1, 2), 2/3)          # Floating point
 		self.assertEqual(eppp.calc.parallel_imp(1, 0), 0)            # Zero
-		self.assertEqual(eppp.calc.parallel_imp(1, float('inf')), 1) # Infinity
+		self.assertEqual(eppp.calc.parallel_imp(1, inf), 1)          # Infinity
 
 	def test_decibel(self):
 		# Amplitude

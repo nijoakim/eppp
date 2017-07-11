@@ -24,6 +24,7 @@ import functools as _ft
 import itertools as _it
 import operator  as _op
 import numpy     as _np
+from math import inf
 
 # Internal
 from ..debug import *
@@ -172,15 +173,15 @@ def _doc_reactive_comp_imp(quantity):
 
 @ _doc_reactive_comp_imp('inductance')
 def inductor_imp(ind, freq):
-	if ind == float('inf') or freq == float('inf'):
-		return float('inf')
+	if ind == inf or freq == inf:
+		return inf
 	else:
 		return ind * 1j * 2 * _np.pi * freq
 
 @ _doc_reactive_comp_imp('capacitance')
 def capacitor_imp(cap, freq):
 	if cap == 0 or freq == 0:
-		return float('inf')
+		return inf
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
@@ -212,7 +213,7 @@ def parallel_imp(*vals):
 
 	# Return infinity if total admittance is 0
 	except ZeroDivisionError:
-		return float('inf')
+		return inf
 
 def electronic_eval(expr):
 	OPERATORS = {
@@ -436,7 +437,7 @@ except ImportError:
 
 def lumped_network(
 		target,
-		max_num_comps = float('inf'),
+		max_num_comps = inf,
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
@@ -476,7 +477,7 @@ def lumped_network(
 
 	# Use more general parallel function if 'avail_vals' contains 0, infinity or negative values
 	if 0 in avail_vals \
-	or float('inf') in avail_vals \
+	or inf in avail_vals \
 	or may_have_negative_vals:
 		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x, avail_ops))
 
@@ -513,7 +514,7 @@ def lumped_network(
 		use_rel_error = True
 
 	# Initial values
-	best_error = float('inf')
+	best_error = inf
 	best_value = None
 	best_expr  = None
 
