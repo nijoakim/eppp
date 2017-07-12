@@ -35,11 +35,19 @@ def convert_parameter_matrix(matrix, from_, to):
 	"""
 
 	# TODO: Errors instead of asserts
+	# TODO: s- and t-parameters
 
-	# TODO: Check so that 'from_' and 'to' are valid matrix types
+	# Check so that 'from_' and 'to' are valid matrix types
+	VALID_MATRIX_TYPES = ['z', 'y', 'g', 'h', 'a', 'b', 's', 't']
+	for matrix_type in from_, to:
+		if not matrix_type in VALID_MATRIX_TYPES:
+			raise ValueError("'"+ matrix_type + "' is not a valid matrix type.")
+
+	# Do not convert if input matrix type is the same as output matrix type
 	if from_ == to:
 		return matrix
 
+	# Use z-parameters as intermediate conversion type
 	if not 'z' in (from_, to):
 		matrix = convert_parameter_matrix(matrix, from_, 'z') # Convert to z-parameters
 		matrix = convert_parameter_matrix(matrix, 'z',   to)  # Convert to 'to'-parameters
