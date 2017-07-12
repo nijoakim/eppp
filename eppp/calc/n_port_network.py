@@ -34,9 +34,6 @@ def convert_parameter_matrix(matrix, from_, to):
 		TODO
 	"""
 
-	# TODO: Errors instead of asserts
-	# TODO: s- and t-parameters
-
 	# Check so that 'from_' and 'to' are valid matrix types
 	VALID_MATRIX_TYPES = ['z', 'y', 'g', 'h', 'a', 'b', 's', 't']
 	for matrix_type in from_, to:
@@ -57,7 +54,8 @@ def convert_parameter_matrix(matrix, from_, to):
 	if   'y' in (from_, to):
 		return _np.linalg.inv(matrix)
 	elif 'h' in (from_, to):
-		assert matrix.shape == (2, 2)
+		if matrix.shape != (2, 2):
+			raise ValueError('h-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = _np.linalg.det(matrix)
 		matrix_out[0][1] = matrix[0][1]
@@ -66,7 +64,8 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[1][1]
 		return matrix_out
 	elif 'g' in (from_, to):
-		assert matrix.shape == (2, 2)
+		if matrix.shape != (2, 2):
+			raise ValueError('g-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = 1
 		matrix_out[0][1] = -matrix[0][1]
@@ -75,7 +74,8 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[0][0]
 		return matrix_out
 	elif 'a' in (from_, to):
-		assert matrix.shape == (2, 2)
+		if matrix.shape != (2, 2):
+			raise ValueError('a-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = matrix[0][0]
 		matrix_out[0][1] = _np.linalg.det(matrix)
@@ -86,7 +86,8 @@ def convert_parameter_matrix(matrix, from_, to):
 
 	# Asymmetric conversions
 	if   (from_, to) == ('z', 'b'):
-		assert matrix.shape == (2, 2)
+		if matrix.shape != (2, 2):
+			raise ValueError('b-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = matrix[1][1]
 		matrix_out[0][1] = -_np.linalg.det(matrix)
@@ -95,7 +96,8 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[0][1]
 		return matrix_out
 	elif (from_, to) == ('b', 'z'):
-		assert matrix.shape == (2, 2)
+		if matrix.shape != (2, 2):
+			raise ValueError('b-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = -matrix[1][1]
 		matrix_out[0][1] = -1
