@@ -1,3 +1,5 @@
+# TODO: Don't fail to build if 'libpython3-dev is missing'
+
 PREFIX=/usr/local/bin
 INSTALL_EPPPU=1
 INSTALL_EPPPU_COMPLETION=1

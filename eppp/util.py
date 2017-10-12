@@ -15,8 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO: Possibility to read from stdin. (Switch for this?)
+# TODO: Repeated arguments for some commands should repeat the operation.
 # TODO: Parser should understand prefixes?
-# TODO: Possibility to omit unit
+# TODO: Possibility to omit unit.
 
 #=========
 # Imports
