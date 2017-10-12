@@ -44,11 +44,12 @@ For doumentation on the different commands use
 ### Dependencies
 - python3
 - python3-numpy
-- python3-matplotlib (only needed for `eppp.plot`)
+- python3-matplotlib (optional: required by `eppp.plot`)
+- libpython3-dev (optional: performance boost for some functions through C bindings)
 
 On Debian-based systems,
 
-	$ sudo aptitude install python3 python3-numpy python3-matplotlib
+	$ sudo aptitude install python3 python3-numpy python3-matplotlib libpython3-dev
 
 should install all the dependencies.
 
