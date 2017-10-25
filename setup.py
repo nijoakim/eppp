@@ -30,8 +30,5 @@ setup(
 	author       = 'Joakim Nilsson',
 	author_email = 'nijoakim@gmail.com',
 	ext_modules  = [fast_misc_module],
-	packages     = [
-		'eppp',
-		'eppp.calc',
-	],
+	packages     = ['eppp'],
 )

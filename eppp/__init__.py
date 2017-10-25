@@ -30,11 +30,17 @@ TODO: Document properlier!
 # Imports
 #=========
 
-# TODO: Make sub-modules out of these?
-# Internal
+# Import everything into root module
+from .calc  import *
 from .inout import *
 from .log   import *
 from .plot  import *
+
+# Delete sub-modules
+del calc
+del inout
+del log
+del plot
 
 # Private external
 import types as _t
@@ -48,8 +54,6 @@ from . import plot  as _plot
 #===================================================
 # Linebreak long lines in all functions' docstrings
 #===================================================
-
-# Private imports
 
 # Function to do this
 def _format_doc_strings(modules, width, indent):
