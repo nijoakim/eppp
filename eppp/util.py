@@ -158,10 +158,9 @@ if cmd == 'impedance':
 	)
 	args = parser.parse_args()
 
-	# TODO: Do not require whole words
-	if args.type == 'inductor':
+	if args.type == 'inductor'[:len(args.type)]:
 		res = eppp.calc.inductor_imp(args.value, args.frequency)
-	elif args.type == 'capacitor':
+	elif args.type == 'capacitor'[:len(args.type)]:
 		res = eppp.calc.capacitor_imp(args.value, args.frequency)
 	else:
 		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
