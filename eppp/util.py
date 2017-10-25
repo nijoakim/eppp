@@ -164,8 +164,7 @@ if cmd == 'impedance':
 	elif args.type == 'capacitor':
 		res = eppp.calc.capacitor_imp(args.value, args.frequency)
 	else:
-		# TODO: Error
-		pass
+		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
