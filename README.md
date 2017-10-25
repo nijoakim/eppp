@@ -20,7 +20,7 @@ The library provides, among many other things, functions for plotting Bode diagr
 
 ## Library
 Structure of sub-modules:
-- `eppp.calc`: Mathematical operations and calculations as well as generation of electronic circuits.
+- `eppp.calc`: Mathematical operations and calculations as well as electronic circuit generation.
 - `eppp.inout`: Reading input data and pretty printing.
 - `eppp.log`: Control of the logging verbosity.
 - `eppp.plot`: Generation of various plots using `matplotlib`. For example `eppp.plot.bode` generates a Bode plot.
