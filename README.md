@@ -19,18 +19,12 @@ evaluates an expression which includes the parallel impedance operator, '||'.
 The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
 ## Library
-
-### eppp.calc
-Mathematical operations and calculations and generation of electronic circuits.
-
-### eppp.inout
-Reading input data and pretty printing.
-
-### eppp.log
-Control of the logging verbosity.
-
-### eppp.plot
-Generation of various plots using `matplotlib`. For example `eppp.plot.bode` generates a Bode plot.
+Structure of sub-modules
+- eppp.calc: Mathematical operations and calculations and generation of electronic circuits.
+- eppp.inout: Reading input data and pretty printing.
+- eppp.log: Control of the logging verbosity.
+- eppp.plot: Generation of various plots using `matplotlib`. For example `eppp.plot.bode` generates a Bode plot.
+Everything provided by the sub-modules are also imported into the root module.
 
 ## EPPP utilities
 `epppu` currently provides the following commands:
