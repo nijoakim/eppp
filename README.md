@@ -19,7 +19,7 @@ evaluates an expression which includes the parallel impedance operator, '||'.
 The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
 ## Library
-Structure of sub-modules
+Structure of sub-modules:
 - `eppp.calc`: Mathematical operations and calculations as well as generation of electronic circuits.
 - `eppp.inout`: Reading input data and pretty printing.
 - `eppp.log`: Control of the logging verbosity.
