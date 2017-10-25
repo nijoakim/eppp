@@ -5,7 +5,7 @@ INSTALL_EPPPU=1
 INSTALL_EPPPU_COMPLETION=1
 SOURCE=$(wildcard eppp/*.py) $(wildcard eppp/*/*.py) $(wildcard eppp/*.c) $(wildcard eppp/*/*.c)
 
-all: unit-test benchmark
+all: build
 
 clean:
 	rm -rf build
