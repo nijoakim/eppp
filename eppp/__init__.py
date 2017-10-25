@@ -36,12 +36,6 @@ from .inout import *
 from .log   import *
 from .plot  import *
 
-# Delete sub-modules
-del calc
-del inout
-del log
-del plot
-
 # Private external
 import types as _t
 
