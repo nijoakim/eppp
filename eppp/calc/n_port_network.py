@@ -23,9 +23,9 @@ import numpy as _np
 # Internal
 from .lumped_network import capacitor_imp, inductor_imp
 
-#=======
-# Other
-#=======
+#====================
+# Matrix conversions
+#====================
 
 # TODO: s-parameters, t-parameters (also conversion between power/energy to voltage/current type parameters)
 
@@ -226,8 +226,35 @@ class NPortNetwork:
 		self._b = matrix
 		self._last_assigned_as = 'b'
 
-# TODO: Doctrings for '*_impedance_matrix'
+#===========================
+# Cascade matrix generation
+#===========================
 
+# Docstring decorator for cascade matrix generation
+def _doc_matrix_generator(topology, quantity, use_freq=False):
+	def decorator(func):
+		func.__doc__ = """
+			Yields a %s %s matrix of cascade parameters type.
+
+			Args:
+				matrix_type (chr): 2-port parameter type ('a' or 'b').
+				%s (number):      %s.%s
+
+			Returns:
+				(numpy.ndarray): %s %s cascade matrix.
+		""" % (
+			topology,
+			quantity,
+			quantity[:3],
+			quantity[0].upper() + quantity[1:],
+			'\n\t\t\t\tfreq (number):     Frequency' if use_freq else '',
+			topology[0].upper() + topology[1:],
+			quantity,
+		)
+		return func
+	return decorator
+
+@ _doc_matrix_generator('series', 'impedance')
 def series_impedance_matrix(matrix_type, imp):
 	matrix = _np.ndarray((2, 2), dtype=complex)
 	if matrix_type == 'a':
@@ -244,6 +271,7 @@ def series_impedance_matrix(matrix_type, imp):
 		raise ValueError('Unsupported matrix type.')
 	return matrix
 
+@ _doc_matrix_generator('shunt', 'admittance')
 def shunt_admittance_matrix(matrix_type, adm):
 	matrix = _np.ndarray((2, 2), dtype=complex)
 	if matrix_type == 'a':
@@ -260,23 +288,42 @@ def shunt_admittance_matrix(matrix_type, adm):
 		raise ValueError('Unsupported matrix type.')
 	return matrix
 
+@ _doc_matrix_generator('series', 'admittance')
 def series_admittance_matrix(matrix_type, adm):
 	return series_impedance_matrix(matrix_type, 1 / adm)
+
+@ _doc_matrix_generator('shunt', 'impedance')
 def shunt_impedance_matrix(matrix_type, imp):
 	return shunt_admittance_matrix(matrix_type, 1 / imp)
-def series_capacitor_matrix(matrix_type, cap, freq):
+
+@ _doc_matrix_generator('series', 'capacitance', use_freq=True)
+def series_capacitance_matrix(matrix_type, cap, freq):
 	return series_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
-def shunt_capacitor_matrix(matrix_type, cap, freq):
+
+@ _doc_matrix_generator('shunt', 'capacitance', use_freq=True)
+def shunt_capacitance_matrix(matrix_type, cap, freq):
 	return shunt_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
-def series_inductor_matrix(matrix_type, ind, freq):
+
+@ _doc_matrix_generator('series', 'inductance', use_freq=True)
+def series_inductance_matrix(matrix_type, ind, freq):
 	return series_impedance_matrix(matrix_type, inductor_imp(ind, freq))
-def shunt_inductor_matrix(matrix_type, ind, freq):
+
+@ _doc_matrix_generator('shunt', 'inductance', use_freq=True)
+def shunt_inductance_matrix(matrix_type, ind, freq):
 	return shunt_impedance_matrix(matrix_type, inductor_imp(ind, freq))
-def series_resistor_matrix(matrix_type, res):
+
+@ _doc_matrix_generator('series', 'resistance')
+def series_resistance_matrix(matrix_type, res):
 	return series_impedance_matrix(matrix_type, res)
-def shunt_resistor_matrix(matrix_type, res):
+
+@ _doc_matrix_generator('shunt', 'resistance')
+def shunt_resistance_matrix(matrix_type, res):
 	return shunt_impedance_matrix(matrix_type, res)
-def series_conductor_matrix(matrix_type, con):
+
+@ _doc_matrix_generator('series', 'conductance')
+def series_conductance_matrix(matrix_type, con):
 	return series_admittance_matrix(matrix_type, con)
-def shunt_conductor_matrix(matrix_type, con):
+
+@ _doc_matrix_generator('shunt', 'conductance')
+def shunt_conductance_matrix(matrix_type, con):
 	return shunt_admittance_matrix(matrix_type, con)
