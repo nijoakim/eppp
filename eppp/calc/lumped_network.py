@@ -150,7 +150,7 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
-# Dynamic docstring decorator for 'inductor_imp' and 'capacitor_imp'.
+# Docstring decorator for 'inductor_imp' and 'capacitor_imp'.
 def _doc_reactive_comp_imp(quantity):
 	def decorator(func):
 		func.__doc__ = """

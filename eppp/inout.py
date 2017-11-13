@@ -45,7 +45,7 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
-# Dynamic docstring decorator for 'str_sci' and 'print_sci'.
+# Docstring decorator for 'str_sci' and 'print_sci'.
 def _doc_sci(print_also):
 	def decorator(func):
 		func.__doc__ = """

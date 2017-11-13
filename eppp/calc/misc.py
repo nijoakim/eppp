@@ -27,7 +27,7 @@ import numpy as _np
 # Decibel conversions
 #=====================
 
-# Dynamic docstring decorator for 'convert_to_db' and 'convert_from_db'.
+# Docstring decorator for 'convert_to_db' and 'convert_from_db'.
 def _doc_convert_db(convert_str):
 	def decorator(func):
 		func.__doc__ = """
@@ -86,7 +86,7 @@ def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
 	elif i >= mag.size:
 		raise ValueError("High break frequency is not in interval.") # TODO: Only high?
 
-# Dynamic docstring generator for 'lo_break_freq', 'hi_break_freq' and 'bandwidth'.
+# Docstring decorator for 'lo_break_freq', 'hi_break_freq' and 'bandwidth'.
 def _doc_bandwidth(what_str):
 	def decorator(func):
 		func.__doc__ = """
