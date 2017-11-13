@@ -31,7 +31,15 @@ from .lumped_network import capacitor_imp, inductor_imp
 
 def convert_parameter_matrix(matrix, from_, to):
 	"""
-		TODO
+	Converts between 2-port parameters.
+
+	Args:
+		matrix ([[number]]): Matrix to convert.
+		_from (chr):         2-port parameter type to convert from.
+		to (chr):            2-port parameter type to convert to.
+
+	Returns:
+		([[number]]) Converted matrix.
 	"""
 
 	# Check so that 'from_' and 'to' are valid matrix types
