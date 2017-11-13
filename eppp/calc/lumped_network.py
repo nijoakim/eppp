@@ -274,7 +274,7 @@ def get_avail_vals(
 		freq (float):       Frequency at which impedances for reactive components are calculated.
 
 	Returns:
-		[complex]. Impedances of available components from the specified series.
+		[number]. Impedances of available components from the specified series.
 	"""
 
 	# Component type setting
