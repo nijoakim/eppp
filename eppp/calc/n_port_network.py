@@ -116,6 +116,7 @@ def convert_parameter_matrix(matrix, from_, to):
 
 	raise NotImplementedError()
 
+# TODO: Internal ndarray which is accessed by getters and setters?
 class NPortNetwork:
 	"""
 		TODO
