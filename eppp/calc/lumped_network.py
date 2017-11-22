@@ -215,6 +215,18 @@ def parallel_imp(*vals):
 	except ZeroDivisionError:
 		return inf
 
+def series_adm(*vals):
+	"""
+	Calculates the equivalent admittance of a set of series connected components.
+
+	Args:
+		*vals (number): Series connected admittances.
+
+	Returns:
+		The equivalent admittance for all '*vals' admittances connected in series.
+	"""
+	return parallel_imp(*vals)
+
 def electronic_eval(expr):
 	OPERATORS = {
 		_ast.Add:      _op.add,
