@@ -185,6 +185,8 @@ def capacitor_imp(cap, freq):
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
+# TODO: inductor_adm, capacitor_adm
+
 @_func_str('||')
 def parallel_imp(*vals):
 	"""
