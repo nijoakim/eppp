@@ -173,10 +173,7 @@ def _doc_reactive_comp_imp(quantity):
 
 @ _doc_reactive_comp_imp('inductance')
 def inductor_imp(ind, freq):
-	if ind == inf or freq == inf:
-		return 1j * inf
-	else:
-		return ind * 1j * 2 * _np.pi * freq
+	return ind * 1j * 2 * _np.pi * freq
 
 @ _doc_reactive_comp_imp('capacitance')
 def capacitor_imp(cap, freq):
