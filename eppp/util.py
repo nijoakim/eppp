@@ -243,11 +243,11 @@ if cmd == 'network':
 
 	# Generate list of operations
 	if args.configuration == 'any':
-		ops = [eppp.calc.parallel_imp, op.add]
+		ops = [eppp.calc.parallel_impedance, op.add]
 	elif args.configuration == 'series':
 		ops = [op.add]
 	elif args.configuration == 'parallel':
-		ops = [eppp.calc.parallel_imp]
+		ops = [eppp.calc.parallel_impedance]
 	else:
 		pass
 		# TODO: Error
@@ -288,7 +288,7 @@ if cmd == 'parallel':
 	vals = parser.parse_args().values
 
 	# Do the calculation
-	res = eppp.calc.parallel_imp(*vals)
+	res = eppp.calc.parallel_impedance(*vals)
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')

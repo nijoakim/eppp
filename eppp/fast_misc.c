@@ -6,12 +6,12 @@
 #define OP_SER 2
 
 // Pointers to Python functions
-static PyObject* parallel_imp_func_pointer;
+static PyObject* parallel_impedance_func_pointer;
 static PyObject* add_func_pointer;
 
 // Inititalize Python function pointers
 static PyObject* polish_eval_init(PyObject *self, PyObject *args) {
-	if (!PyArg_ParseTuple(args, "OO", &parallel_imp_func_pointer, &add_func_pointer)) {
+	if (!PyArg_ParseTuple(args, "OO", &parallel_impedance_func_pointer, &add_func_pointer)) {
 		return NULL;
 	}
 
@@ -33,7 +33,7 @@ static PyObject* polish_eval_non_strict(PyObject *self, PyObject *expr) {
 	// Convert Python objects to C types
 	for (i = 0; i < len; i++) {
 		PyObject* el = PyList_GetItem(expr, i);
-		if (el == parallel_imp_func_pointer) {
+		if (el == parallel_impedance_func_pointer) {
 			ops[i] = OP_PAR;
 		} else if (el == add_func_pointer) {
 			ops[i] = OP_SER;

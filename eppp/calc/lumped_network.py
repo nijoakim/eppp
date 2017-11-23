@@ -150,7 +150,7 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
-# Docstring decorator for 'inductor_imp' and 'capacitor_imp'.
+# Docstring decorator for 'inductor_impedance' and 'capacitor_impedance'.
 def _doc_reactive_comp_imp(quantity):
 	def decorator(func):
 		func.__doc__ = """
@@ -172,20 +172,20 @@ def _doc_reactive_comp_imp(quantity):
 	return decorator
 
 @ _doc_reactive_comp_imp('inductance')
-def inductor_imp(ind, freq):
+def inductor_impedance(ind, freq):
 	return ind * 1j * 2 * _np.pi * freq
 
 @ _doc_reactive_comp_imp('capacitance')
-def capacitor_imp(cap, freq):
+def capacitor_impedance(cap, freq):
 	if cap == 0 or freq == 0:
 		return -1j * inf
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
-# TODO: inductor_adm, capacitor_adm
+# TODO: inductor_admittance, capacitor_admittance
 
 @_func_str('||')
-def parallel_imp(*vals):
+def parallel_impedance(*vals):
 	"""
 	Calculates the equivalent impedance of a set of parallel connected components.
 
@@ -224,7 +224,7 @@ def series_adm(*vals):
 	Returns:
 		The equivalent admittance for all '*vals' admittances connected in series.
 	"""
-	return parallel_imp(*vals)
+	return parallel_impedance(*vals)
 
 def electronic_eval(expr):
 	OPERATORS = {
@@ -234,7 +234,7 @@ def electronic_eval(expr):
 		_ast.Mult:     _op.mul,
 		_ast.Div:      _op.truediv,
 		_ast.Pow:      _op.pow,
-		_ast.FloorDiv: parallel_imp,
+		_ast.FloorDiv: parallel_impedance,
 	}
 	# TODO: Docstring
 
@@ -258,7 +258,7 @@ def electronic_eval(expr):
 
 # Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
 @_func_str('||')
-def _parallel_imp_non_strict(z1, z2):
+def _parallel_impedance_non_strict(z1, z2):
 	return z1*z2 / (z1 + z2)
 
 # Sums two numbers (for series impedance calculations)
@@ -369,9 +369,9 @@ def get_avail_vals(
 	if comp_type == 'resistor':
 		comp_specific_func = lambda x: x
 	elif comp_type == 'capacitor':
-		comp_specific_func = lambda x: capacitor_imp(x, freq)
+		comp_specific_func = lambda x: capacitor_impedance(x, freq)
 	elif comp_type == 'inductor':
-		comp_specific_func = lambda x: inductor_imp(x, freq)
+		comp_specific_func = lambda x: inductor_impedance(x, freq)
 	avail_vals = map(comp_specific_func, avail_vals)
 
 	return list(avail_vals)
@@ -403,7 +403,7 @@ def _polish_eval(expr):
 # Same as the above function but with these differences:
 # - Assumes complete evaluation to exactly one element
 # - Does not preserve 'expr'
-# - Assumes the only functions are '_parallel_imp_non_strict' and '_add'
+# - Assumes the only functions are '_parallel_impedance_non_strict' and '_add'
 # - Extra argument for pre-calculated list length
 # def polish_eval_non_strict(expr):
 
@@ -411,7 +411,7 @@ def _polish_eval(expr):
 try:
 	from ..fast_misc import polish_eval_non_strict      as _polish_eval_non_strict
 	from ..fast_misc import polish_eval_non_strict_init as _polish_eval_non_strict_init
-	_polish_eval_non_strict_init(_parallel_imp_non_strict, _add)
+	_polish_eval_non_strict_init(_parallel_impedance_non_strict, _add)
 
 # Fall back to Python version of 'polish_eval_non_strict' if C version can not be imported
 except ImportError:
@@ -426,7 +426,7 @@ except ImportError:
 			el = expr[i]
 
 			# If parallel operator
-			if el == _parallel_imp_non_strict:
+			if el == _parallel_impedance_non_strict:
 				j += 1
 				k = j + 1
 				a = expr[k]
@@ -452,7 +452,7 @@ def lumped_network(
 		max_rel_error = None,
 		max_abs_error = None,
 		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = [parallel_imp, _add],
+		avail_ops     = [parallel_impedance, _add],
 	):
 	"""
 	Finds a network of passive components matching a specified (possibly complex) value.
@@ -465,7 +465,7 @@ def lumped_network(
 		max_rel_error (number): (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		max_abs_error (number): Maximum tolerable absolute error. The absolute error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		avail_vals ([number]):  List of available values of the impedances used in the network.
-		avail_ops ([operator]): (Default: [eppp.calc.parallel_imp, operator.add]) List of operators used for calculating the resulting impedance. The operators are represented by a function that takes to arguments. The operators must be associative and commutative.
+		avail_ops ([operator]): (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting impedance. The operators are represented by a function that takes to arguments. The operators must be associative and commutative.
 
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
@@ -490,17 +490,17 @@ def lumped_network(
 	if 0 in avail_vals \
 	or inf in avail_vals \
 	or may_have_negative_vals:
-		avail_ops = list(map(lambda x: parallel_imp if x == _parallel_imp_non_strict else x, avail_ops))
+		avail_ops = list(map(lambda x: parallel_impedance if x == _parallel_impedance_non_strict else x, avail_ops))
 
 	# Use less general function otherwise
 	else:
-		avail_ops = list(map(lambda x: _parallel_imp_non_strict if x == parallel_imp else x, avail_ops))
+		avail_ops = list(map(lambda x: _parallel_impedance_non_strict if x == parallel_impedance else x, avail_ops))
 
 	# Determine whether a strict polish_eval function must be used
 	polish_eval_func = _polish_eval_non_strict
 	for op in avail_ops:
 		if  op != _add \
-		and op != _parallel_imp_non_strict:
+		and op != _parallel_impedance_non_strict:
 			polish_eval_func = lambda x: _polish_eval(x)[0]
 
 	# Don't display a unit (may change later)
@@ -581,7 +581,7 @@ def lumped_network(
 			if not may_have_negative_vals:
 				if sum(values) < target - best_error:
 					continue
-				# if parallel_imp(*values) > target + best_error:
+				# if parallel_impedance(*values) > target + best_error:
 				# 	continue
 				# Approximation (subset) of the above which is faster to calculate
 				if values[0] > (target + best_error) * num_comps: # 'values[0]' = 'min(values)' since list is sorted
