@@ -21,7 +21,7 @@
 import numpy as _np
 
 # Internal
-from .lumped_network import capacitor_imp, inductor_imp
+from .lumped_network import capacitor_impedance, inductor_impedance
 
 #====================
 # Matrix conversions
@@ -299,19 +299,19 @@ def shunt_impedance_matrix(matrix_type, imp):
 
 @ _doc_matrix_generator('series', 'capacitance', use_freq=True)
 def series_capacitance_matrix(matrix_type, cap, freq):
-	return series_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
+	return series_impedance_matrix(matrix_type, capacitor_impedance(cap, freq))
 
 @ _doc_matrix_generator('shunt', 'capacitance', use_freq=True)
 def shunt_capacitance_matrix(matrix_type, cap, freq):
-	return shunt_impedance_matrix(matrix_type, capacitor_imp(cap, freq))
+	return shunt_impedance_matrix(matrix_type, capacitor_impedance(cap, freq))
 
 @ _doc_matrix_generator('series', 'inductance', use_freq=True)
 def series_inductance_matrix(matrix_type, ind, freq):
-	return series_impedance_matrix(matrix_type, inductor_imp(ind, freq))
+	return series_impedance_matrix(matrix_type, inductor_impedance(ind, freq))
 
 @ _doc_matrix_generator('shunt', 'inductance', use_freq=True)
 def shunt_inductance_matrix(matrix_type, ind, freq):
-	return shunt_impedance_matrix(matrix_type, inductor_imp(ind, freq))
+	return shunt_impedance_matrix(matrix_type, inductor_impedance(ind, freq))
 
 @ _doc_matrix_generator('series', 'resistance')
 def series_resistance_matrix(matrix_type, res):
