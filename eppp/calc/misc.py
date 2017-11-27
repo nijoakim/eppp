@@ -37,7 +37,7 @@ def _doc_convert_db(convert_str):
 				x: number to be converted.
 
 			Kwargs:
-				use_power_db (bool): (Default: True) Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+				use_power_db (bool): (Default: False) Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
 			
 			Returns:
 				'x' %s decibels.
@@ -46,12 +46,12 @@ def _doc_convert_db(convert_str):
 	return decorator
 
 @_doc_convert_db('in')
-def convert_to_db(x, use_power_db=True):
+def convert_to_db(x, use_power_db=False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return factor*_np.log10(x)          # Return converted value
 
 @_doc_convert_db('converted from')
-def convert_from_db(x, use_power_db=True):
+def convert_from_db(x, use_power_db=False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return 10 ** (x/factor)             # Return converted value
 
@@ -60,14 +60,14 @@ def convert_from_db(x, use_power_db=True):
 #===========
 
 # TODO: mag -> mag_data and the like?
-def _breakFreq(freq, mag, di, decibel = 3, is_stop_filter = False):
+def _breakFreq(freq, mag, di, decibel=3, is_stop_filter=False):
 	# Size check
 	if freq.size != mag.size:
 		raise ValueError("'freq' and 'mag' must be of the same size.")
 
 	# Return negated if stop filter
 	if is_stop_filter:
-		return _breakFreq(freq, -mag, di, decibel = decibel, is_stop_filter = False)
+		return _breakFreq(freq, -mag, di, decibel=decibel, is_stop_filter=False)
 
 	# Find out peak and break magnitude
 	peak_index = mag.argmax()
@@ -202,7 +202,7 @@ def phase_180_freq(freq, phase):
 		# There were no 180 frequency
 		return Exception("Phase never intersects 180 + 360*n.")
 
-def gain_margin(freq, mag, phase, use_power_db = False):
+def gain_margin(freq, mag, phase, use_power_db=False):
 	"""
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 
@@ -216,7 +216,7 @@ def gain_margin(freq, mag, phase, use_power_db = False):
 		float. Gain margin in decibel.
 	"""
 
-	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db = use_power_db)
+	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db=use_power_db)
 
 def phase_margin(freq, mag, phase):
 	"""
