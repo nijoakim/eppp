@@ -21,6 +21,7 @@
 import decimal as _dec
 import glob    as _glob
 import numpy   as _np
+from math import nan, inf
 
 # Internal
 from .debug import *
@@ -81,6 +82,13 @@ def str_sci(x,
 	unit           = '',
 	quantity       = None,
 ):
+	# TODO: Handle complex numbers
+	# Non-prefixable values
+	if x ==  inf \
+	or x == -inf \
+	or x ==  nan:
+		return str(x)
+
 	# Round a number to a set number of significant figures
 	def convert_sig_figs(x, sig_figs):
 		# Minimum amount of significant figures
