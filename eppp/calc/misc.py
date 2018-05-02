@@ -1,4 +1,4 @@
-# Copyright 2014-2017 Joakim Nilsson
+# Copyright 2014-2018 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 #=========
 
 # External
-import numpy as _np
+import numpy           as _np
+import scipy.constants as _sp_c
 
 #=====================
 # Decibel conversions
@@ -54,6 +55,18 @@ def convert_to_db(x, use_power_db=False):
 def convert_from_db(x, use_power_db=False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return 10 ** (x/factor)             # Return converted value
+
+#===========
+# Phenomena
+#===========
+
+def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
+	ang_freq     = 2 * _sp_c.pi * freq
+	permittivity = rel_permittivity * _sp_c.epsilon_0
+	permeability = rel_permeability * _sp_c.mu_0
+	a            = resistivity * ang_freq * permittivity
+
+	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a*a) + a)
 
 #===========
 # Bandwidth
