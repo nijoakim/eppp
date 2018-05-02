@@ -61,6 +61,19 @@ def convert_from_db(x, use_power_db=False):
 #===========
 
 def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
+	"""
+	Calculates the skin depth.
+
+	Args:
+		resistivity (float):      Resistivity of the conductor in Ohm/m.
+		freq (float):             Frequency in Hz.
+		rel_permittivity (float): Relative permittivity of the conductor.
+		rel_permeability (float): Relative permeability of the conductor.
+
+	Returns:
+		float. Skin depth.
+	"""
+
 	ang_freq     = 2 * _sp_c.pi * freq
 	permittivity = rel_permittivity * _sp_c.epsilon_0
 	permeability = rel_permeability * _sp_c.mu_0
