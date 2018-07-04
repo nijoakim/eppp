@@ -49,8 +49,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# Do not convert if input matrix type is the same as output matrix type
 	if from_ == to:
-		# TODO: Return copy of matrix
-		return matrix
+		return matrix.copy()
 
 	# Shape checking for a-, b- and t-parameters
 	for params in ('a', 'b', 't'):
