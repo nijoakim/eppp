@@ -1,4 +1,4 @@
-# Copyright 2017 Joakim Nilsson
+# Copyright 2017-2018 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,7 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 # Matrix conversions
 #====================
 
-# TODO: s-parameters, t-parameters (also conversion between power/energy to voltage/current type parameters)
-
-def convert_parameter_matrix(matrix, from_, to):
+def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
 	Converts between 2-port parameters.
 
@@ -37,6 +35,7 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix ([[number]]): Matrix to convert.
 		_from (chr):         2-port parameter type to convert from.
 		to (chr):            2-port parameter type to convert to.
+		char_imp (number):   Characteristic impedance in case of conversion between power and amplitude parameters.
 
 	Returns:
 		([[number]]) Converted matrix.
@@ -50,20 +49,52 @@ def convert_parameter_matrix(matrix, from_, to):
 
 	# Do not convert if input matrix type is the same as output matrix type
 	if from_ == to:
+		# TODO: Return copy of matrix
 		return matrix
+
+	# Shape checking for a-, b- and t-parameters
+	for params in ('a', 'b', 't'):
+		if params in (_from, to):
+			if matrix.shape != (2, 2):
+				raise ValueError('%s-parameters have exactly 2 ports and thus must be a 2x2 matrix.' % params)
+
+	# Convert from t- to s-parameters without intermediate conversion
+	if from_ == 't':
+		# Convert to s-parameters
+		matrix_s       = _np.ndarray((2, 2), dtype=matrix.dtype)
+		matrix_s[0][0] = matrix[1][0]
+		matrix_s[0][1] = _np.linalg.det(matrix)
+		matrix_s[1][0] = 1
+		matrix_s[1][1] = -matrix[0][1]
+		matrix_s /= matrix[0][0]
+
+		# Convert to <to>-parameters and return
+		return convert_parameter_matrix(matrix_s, 's', to, char_imp=char_imp)
+
+	# Convert from s- to t-parameters without intermediate conversion
+	if to == 't':
+		# Convert to s-parameters
+		matrix_t = convert_parameter_matrix(matrix, from_, 's', char_imp=char_imp)
+
+		# Convert to t-parameters and return
+		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
+		matrix_out[0][0] = 1
+		matrix_out[0][1] = -matrix_t[1][1]
+		matrix_out[1][0] = matrix_t[0][0]
+		matrix_out[1][1] = -_np.linalg.det(matrix_t)
+		matrix_out /= matrix[1][0]
+		return matrix_out
 
 	# Use z-parameters as intermediate conversion type
 	if not 'z' in (from_, to):
-		matrix = convert_parameter_matrix(matrix, from_, 'z') # Convert to z-parameters
-		matrix = convert_parameter_matrix(matrix, 'z',   to)  # Convert to 'to'-parameters
+		matrix = convert_parameter_matrix(matrix, from_, 'z', char_imp=char_imp) # Convert to z-parameters
+		matrix = convert_parameter_matrix(matrix, 'z',   to,  char_imp=char_imp) # Convert to <to>-parameters
 		return matrix
 
-	# Symmetric conversions
+	# Symmetric conversions to and from z-parameters
 	if   'y' in (from_, to):
 		return _np.linalg.inv(matrix)
 	elif 'h' in (from_, to):
-		if matrix.shape != (2, 2):
-			raise ValueError('h-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = _np.linalg.det(matrix)
 		matrix_out[0][1] = matrix[0][1]
@@ -72,8 +103,6 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[1][1]
 		return matrix_out
 	elif 'g' in (from_, to):
-		if matrix.shape != (2, 2):
-			raise ValueError('g-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = 1
 		matrix_out[0][1] = -matrix[0][1]
@@ -82,8 +111,6 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[0][0]
 		return matrix_out
 	elif 'a' in (from_, to):
-		if matrix.shape != (2, 2):
-			raise ValueError('a-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = matrix[0][0]
 		matrix_out[0][1] = _np.linalg.det(matrix)
@@ -92,10 +119,8 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[1][0]
 		return matrix_out
 
-	# Asymmetric conversions
+	# Asymmetric conversions to and from z-parameters
 	if   (from_, to) == ('z', 'b'):
-		if matrix.shape != (2, 2):
-			raise ValueError('b-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = matrix[1][1]
 		matrix_out[0][1] = -_np.linalg.det(matrix)
@@ -104,14 +129,20 @@ def convert_parameter_matrix(matrix, from_, to):
 		matrix_out /= matrix[0][1]
 		return matrix_out
 	elif (from_, to) == ('b', 'z'):
-		if matrix.shape != (2, 2):
-			raise ValueError('b-parameters have exactly 2 ports and thus must be a 2x2 matrix.')
 		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
 		matrix_out[0][0] = -matrix[1][1]
 		matrix_out[0][1] = -1
 		matrix_out[1][0] = -_np.linalg.det(matrix)
 		matrix_out[1][1] = -matrix[0][0]
 		matrix_out /= matrix[1][0]
+		return matrix_out
+	elif (from_, to) == ('z', 's'):
+		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
+		matrix_out   = (matrix - (char_imp * matrix_ident)) @ _np.linalg.inv(matrix + (char_imp * matrix_ident))
+		return matrix_out
+	elif (from_, to) == ('s', 'z'):
+		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
+		matrix_out   = char_imp * (matrix_ident + matrix) @ _np.linalg.inv(matrix_ident - matrix)
 		return matrix_out
 
 	raise NotImplementedError()
@@ -197,6 +228,24 @@ class NPortNetwork:
 			'b',
 		)
 
+	@property
+	def s(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			's',
+		)
+
+	@property
+	def t(self):
+		self._check_init()
+		return convert_parameter_matrix(
+			self._get_last_assigned_matrix(),
+			self._last_assigned_as,
+			't',
+		)
+
 	@z.setter
 	def z(self, matrix):
 		self._z = matrix
@@ -226,6 +275,16 @@ class NPortNetwork:
 	def b(self, matrix):
 		self._b = matrix
 		self._last_assigned_as = 'b'
+
+	@s.setter
+	def s(self, matrix):
+		self._s = matrix
+		self._last_assigned_as = 's'
+
+	@t.setter
+	def t(self, matrix):
+		self._t = matrix
+		self._last_assigned_as = 't'
 
 #===========================
 # Cascade matrix generation
