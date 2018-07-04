@@ -151,8 +151,6 @@ class NPortNetwork:
 	"""
 		TODO
 	"""
-	
-	# TODO: s- and t-parameters
 
 	def __init__(self):
 		self._z                = None
