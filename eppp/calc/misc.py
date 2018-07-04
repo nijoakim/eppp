@@ -1,4 +1,4 @@
-# Copyright 2014-2017 Joakim Nilsson
+# Copyright 2014-2018 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 #=========
 
 # External
-import numpy as _np
+import numpy           as _np
+import scipy.constants as _sp_c
 
 #=====================
 # Decibel conversions
@@ -54,6 +55,31 @@ def convert_to_db(x, use_power_db=False):
 def convert_from_db(x, use_power_db=False):
 	factor = 10 if use_power_db else 20 # Power decibels or not
 	return 10 ** (x/factor)             # Return converted value
+
+#===========
+# Phenomena
+#===========
+
+def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
+	"""
+	Calculates the skin depth.
+
+	Args:
+		resistivity (float):      Resistivity of the conductor in Ohm/m.
+		freq (float):             Frequency in Hz.
+		rel_permittivity (float): Relative permittivity of the conductor.
+		rel_permeability (float): Relative permeability of the conductor.
+
+	Returns:
+		float. Skin depth.
+	"""
+
+	ang_freq     = 2 * _sp_c.pi * freq
+	permittivity = rel_permittivity * _sp_c.epsilon_0
+	permeability = rel_permeability * _sp_c.mu_0
+	a            = resistivity * ang_freq * permittivity
+
+	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a*a) + a)
 
 #===========
 # Bandwidth
