@@ -147,6 +147,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	raise NotImplementedError()
 
 # TODO: Internal ndarray which is accessed by getters and setters?
+# TODO: Make a copy each time a matrix is getted and check for modifications?
 class NPortNetwork:
 	"""
 		TODO
