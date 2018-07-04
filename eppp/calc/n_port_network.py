@@ -33,7 +33,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	Args:
 		matrix ([[number]]): Matrix to convert.
-		_from (chr):         2-port parameter type to convert from.
+		from_ (chr):         2-port parameter type to convert from.
 		to (chr):            2-port parameter type to convert to.
 		char_imp (number):   Characteristic impedance in case of conversion between power and amplitude parameters.
 
@@ -53,7 +53,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# Shape checking for a-, b- and t-parameters
 	for params in ('a', 'b', 't'):
-		if params in (_from, to):
+		if params in (from_, to):
 			if matrix.shape != (2, 2):
 				raise ValueError('%s-parameters have exactly 2 ports and thus must be a 2x2 matrix.' % params)
 
@@ -120,29 +120,29 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# Asymmetric conversions to and from z-parameters
 	if   (from_, to) == ('z', 'b'):
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = matrix[1][1]
-		matrix_out[0][1] = -_np.linalg.det(matrix)
-		matrix_out[1][0] = -1
-		matrix_out[1][1] = matrix[0][0]
-		matrix_out /= matrix[0][1]
-		return matrix_out
+		matrix_b       = _np.ndarray((2, 2), dtype=matrix.dtype)
+		matrix_b[0][0] = matrix[1][1]
+		matrix_b[0][1] = -_np.linalg.det(matrix)
+		matrix_b[1][0] = -1
+		matrix_b[1][1] = matrix[0][0]
+		matrix_b /= matrix[0][1]
+		return matrix_b
 	elif (from_, to) == ('b', 'z'):
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = -matrix[1][1]
-		matrix_out[0][1] = -1
-		matrix_out[1][0] = -_np.linalg.det(matrix)
-		matrix_out[1][1] = -matrix[0][0]
-		matrix_out /= matrix[1][0]
-		return matrix_out
+		matrix_z       = _np.ndarray((2, 2), dtype=matrix.dtype)
+		matrix_z[0][0] = -matrix[1][1]
+		matrix_z[0][1] = -1
+		matrix_z[1][0] = -_np.linalg.det(matrix)
+		matrix_z[1][1] = -matrix[0][0]
+		matrix_z /= matrix[1][0]
+		return matrix_z
 	elif (from_, to) == ('z', 's'):
 		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
-		matrix_out   = (matrix - (char_imp * matrix_ident)) @ _np.linalg.inv(matrix + (char_imp * matrix_ident))
-		return matrix_out
+		matrix_s     = (matrix - (char_imp * matrix_ident)) @ _np.linalg.inv(matrix + (char_imp * matrix_ident))
+		return matrix_s
 	elif (from_, to) == ('s', 'z'):
 		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
-		matrix_out   = char_imp * (matrix_ident + matrix) @ _np.linalg.inv(matrix_ident - matrix)
-		return matrix_out
+		matrix_z     = char_imp * (matrix_ident + matrix) @ _np.linalg.inv(matrix_ident - matrix)
+		return matrix_z
 
 	raise NotImplementedError()
 
