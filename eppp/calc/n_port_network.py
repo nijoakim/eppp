@@ -329,7 +329,6 @@ def transformer_matrix(matrix_type, ratio, char_imp=50):
 
 	# Create a-matrix
 	matrix       = _np.ndarray((2, 2), dtype=complex)
-	angle        = prop_const * length
 	matrix[0][0] = ratio
 	matrix[0][1] = 0
 	matrix[1][0] = 0
