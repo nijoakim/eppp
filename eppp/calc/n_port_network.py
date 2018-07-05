@@ -27,6 +27,7 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 # Matrix conversions
 #====================
 
+# TODO: Using Z as intermediate may cause conversions to to infinities unnecessarily. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
 	Converts between 2-port parameters.
