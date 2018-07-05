@@ -290,10 +290,10 @@ class NPortNetwork:
 
 def transmission_line_matrix(matrix_type, char_imp, prop_const, length):
 	"""
-		Yields a transmission line matrix of cascade parameters type.
+		Yields a transmission line matrix.
 
 		Args:
-			matrix_type (chr):   2-port parameter type ('a' or 'b').
+			matrix_type (chr):   2-port parameter type.
 			char_imp (number):   Characteristic impedance of the transmission line.
 			prop_const (number): Propagation constant of the transmission line.
 			length (number):     Length of the transmission line.
@@ -313,14 +313,39 @@ def transmission_line_matrix(matrix_type, char_imp, prop_const, length):
 	# Convert to <matrix type> and return
 	return convert_parameter_matrix(matrix, 'a', matrix_type, char_imp)
 
+def transformer_matrix(matrix_type, ratio, char_imp=50)
+	"""
+		Yields a transformer matrix.
+		Note: Transformer also works for DC.
+
+		Args:
+			matrix_type (chr): 2-port parameter type.
+			ratio (number):    Transformer ratio, N. (from port 1 to port 2, N:1)
+			char_imp (number): Characteristic impedance in case of conversion between power and amplitude parameters.
+
+		Returns:
+			(numpy.ndarray): Transformer cascade matrix.
+	"""
+
+	# Create a-matrix
+	matrix       = _np.ndarray((2, 2), dtype=complex)
+	angle        = prop_const * length
+	matrix[0][0] = ratio
+	matrix[0][1] = 0
+	matrix[1][0] = 0
+	matrix[1][1] = 1/ratio
+
+	# Convert to <matrix type> and return
+	return convert_parameter_matrix(matrix, 'a', matrix_type, char_imp)
+
 # Docstring decorator for cascade matrix generation
 def _doc_matrix_generator(topology, quantity, use_freq=False):
 	def decorator(func):
 		func.__doc__ = """
-			Yields a %s %s matrix of cascade parameters type.
+			Yields a %s %s matrix.
 
 			Args:
-				matrix_type (chr): 2-port parameter type ('a' or 'b').
+				matrix_type (chr): 2-port parameter type.
 				%s (number):      %s.%s
 				char_imp (number): Characteristic impedance in case of conversion between power and amplitude parameters.
 
