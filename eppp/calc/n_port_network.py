@@ -313,7 +313,7 @@ def transmission_line_matrix(matrix_type, char_imp, prop_const, length):
 	# Convert to <matrix type> and return
 	return convert_parameter_matrix(matrix, 'a', matrix_type, char_imp)
 
-def transformer_matrix(matrix_type, ratio, char_imp=50)
+def transformer_matrix(matrix_type, ratio, char_imp=50):
 	"""
 		Yields a transformer matrix.
 		Note: Transformer also works for DC.
