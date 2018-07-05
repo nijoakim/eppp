@@ -288,6 +288,36 @@ class NPortNetwork:
 # Cascade matrix generation
 #===========================
 
+def transmission_line_matrix(matrix_type, char_imp, prop_const, length):
+	"""
+		Yields a transmission line matrix of cascade parameters type.
+
+		Args:
+			matrix_type (chr):   2-port parameter type ('a' or 'b').
+			char_imp (number):   Characteristic impedance of the transmission line.
+			prop_const (number): Propagation constant of the transmission line.
+			length (number):     Length of the transmission line.
+
+		Returns:
+			(numpy.ndarray): Transmission line cascade matrix.
+	"""
+
+	matrix = _np.ndarray((2, 2), dtype=complex)
+	angle = prop_const * length
+	if matrix_type == 'a':
+		matrix[0][0] = _np.cosh(angle)
+		matrix[0][1] = _np.sinh(angle) * char_imp
+		matrix[1][0] = _np.sinh(angle) / char_imp
+		matrix[1][1] = _np.cosh(angle)
+	elif matrix_type == 'b':
+		matrix[0][0] =  _np.cosh(angle)
+		matrix[0][1] = -_np.sinh(angle) * char_imp
+		matrix[1][0] = -_np.sinh(angle) / char_imp
+		matrix[1][1] =  _np.cosh(angle)
+	else:
+		raise ValueError('Unsupported matrix type.')
+	return matrix
+
 # Docstring decorator for cascade matrix generation
 def _doc_matrix_generator(topology, quantity, use_freq=False):
 	def decorator(func):
