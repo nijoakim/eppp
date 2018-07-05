@@ -46,7 +46,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	VALID_MATRIX_TYPES = ['z', 'y', 'g', 'h', 'a', 'b', 's', 't']
 	for matrix_type in from_, to:
 		if not matrix_type in VALID_MATRIX_TYPES:
-			raise ValueError("'"+ matrix_type + "' is not a valid matrix type.")
+			raise ValueError("'"+ matrix_type +"' is not a valid matrix type.")
 
 	# Do not convert if input matrix type is the same as output matrix type
 	if from_ == to:
