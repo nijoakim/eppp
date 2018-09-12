@@ -9,7 +9,7 @@ EPPP comes as a python module but also defines a program, `epppu`, "EPPP utiliti
 	$ epppu network 88120
 	(220.0 k || (47.00 k + 100.0 k)) = 88.12 k
 
-uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.123 kΩ, while
+uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.12 kΩ, while
 
 	$ epppu expression '10e3 || (47 + 2200)'
 	1.835 k
