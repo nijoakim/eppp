@@ -1,4 +1,4 @@
-# Copyright 2014-2018 Joakim Nilsson
+# Copyright 2014-2019 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,6 +80,57 @@ def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	a            = resistivity * ang_freq * permittivity
 
 	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a*a) + a)
+
+#==========
+# Q Factor
+#==========
+
+# TODO: Parallel resistance option? res_type='ser'?
+# TODO: Use in utils
+def solve_q_relation(freq=None, q=None, res=None, cap=None, ind=None):
+	"""
+	TODO
+	"""
+
+	# Error handling
+	if (cap, ind).count(None) == 0:
+		if cap * ind > 0 \
+		or (cap == 0 and ind == 0):
+			raise ValueError("If both 'cap' and 'ind' are specified, exactly one of them must be negative, indicating not to use that argument.")
+	if (freq, q, res, cap, ind).count(None) != 2:
+		raise ValueError("Must specify 3 arguments")
+
+	# Calculate angular frequency
+	if not freq is None:
+		ang_freq = 2 * _np.pi * freq
+
+	# Return frequency
+	if freq is None:
+		if not cap is None:
+			return q * res / (2 * _np.pi / ind)
+		elif not ind is None:
+			return q * res * 2 *_np.pi * cap
+
+	# Return Q factor
+	if q is None:
+		if not cap is None:
+			print('q')
+			return 1 / (ang_freq * cap * res)
+		elif not ind is None:
+			return ang_freq * ind / res
+
+	# Return series resistance
+	if res is None:
+		if not cap is None:
+			return 1 / (ang_freq * cap * q)
+		elif not ind is None:
+			return ang_freq * ind / q
+
+	# Return capacitance or inductance
+	if cap >= 0:
+		return 1 / (ang_freq * res * q)
+	elif ind >= 0:
+		return ang_freq * ind / q
 
 #===========
 # Bandwidth
