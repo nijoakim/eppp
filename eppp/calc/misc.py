@@ -38,7 +38,7 @@ def _doc_convert_db(convert_str):
 				x: number to be converted.
 
 			Kwargs:
-				use_power_db (bool): (Default: False) Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+				db_type (string): (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
 			
 			Returns:
 				'x' %s decibels.
@@ -47,14 +47,18 @@ def _doc_convert_db(convert_str):
 	return decorator
 
 @_doc_convert_db('in')
-def convert_to_db(x, use_power_db=False):
-	factor = 10 if use_power_db else 20 # Power decibels or not
-	return factor*_np.log10(x)          # Return converted value
+def convert_to_db(x, db_type='power'):
+	if not db_type in ('power', 'amplitude'):
+		raise ValueError("'db_type' must be either 'power' or 'amplitude'.")
+	factor = 10 if db_type == 'power' else 20 # Power decibels or not
+	return factor*_np.log10(x)                # Return converted value
 
 @_doc_convert_db('converted from')
-def convert_from_db(x, use_power_db=False):
-	factor = 10 if use_power_db else 20 # Power decibels or not
-	return 10 ** (x/factor)             # Return converted value
+def convert_from_db(x, db_type='power'):
+	if not db_type in ('power', 'amplitude'):
+		raise ValueError("'db_type' must be either 'power' or 'amplitude'.")
+	factor = 10 if db_type == 'power' else 20 # Power decibels or not
+	return 10 ** (x/factor)                   # Return converted value
 
 #===========
 # Phenomena
