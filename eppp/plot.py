@@ -40,7 +40,7 @@ except ImportError:
 
 def bode(
 		freq, mag, phase,
-		use_power_db=False,
+		db_type='power',
 		use_data_cursors=True,
 		title_text='',
 	):
@@ -53,7 +53,7 @@ def bode(
 		phase (numpy.ndArray): Phase data
 	
 	Kwargs:
-		use_power_db (boolean):      Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		db_type (string): (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
 		use_data_cursors (booolean): Whether to use data cursor. (Only has an effect if the 'mpldatacursor' package is available.)
 		title_text (str):            Title text
 	"""
@@ -70,7 +70,7 @@ def bode(
 
 	# Magnitude plot
 	_pyplot.subplot(211)
-	plot(freq, _convert_to_db(mag, use_power_db = use_power_db))
+	plot(freq, _convert_to_db(mag, db_type=db_type))
 	_pyplot.xscale('log')
 	_pyplot.ylabel('Magnitude [convert_db]')
 

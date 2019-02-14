@@ -78,8 +78,8 @@ class TestStringMethods(ut.TestCase):
 		self.assertEqual(eppp.calc.convert_from_db(40), 100) # From dB
 		
 		# Power
-		self.assertEqual(eppp.calc.convert_to_db(100, use_power_db = True), 20)   # To dB
-		self.assertEqual(eppp.calc.convert_from_db(20, use_power_db = True), 100) # From dB
+		self.assertEqual(eppp.calc.convert_to_db(100, db_type='power'), 20)   # To dB
+		self.assertEqual(eppp.calc.convert_from_db(20, db_type='power'), 100) # From dB
 
 	def test_sci_notation(self):
 		# Correct number of significant figures

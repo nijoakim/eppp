@@ -283,7 +283,7 @@ def phase_180_freq(freq, phase):
 		# There were no 180 frequency
 		return Exception("Phase never intersects 180 + 360*n.")
 
-def gain_margin(freq, mag, phase, use_power_db=False):
+def gain_margin(freq, mag, phase, db_type='power'):
 	"""
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 
@@ -291,13 +291,13 @@ def gain_margin(freq, mag, phase, use_power_db=False):
 		freq (numpy.ndarray):  Frequency data.
 		mag (numpy.ndarray):   Magnitude data.
 		phase (numpy.ndarray): Phase data.
-		use_power_db (bool):   Whether to use the power decibel definition. If False, the amplitude decibel definition is used instead.
+		db_type (string): (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
 
 	Returns:
 		float. Gain margin in decibel.
 	"""
 
-	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], use_power_db=use_power_db)
+	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], db_type=db_type)
 
 def phase_margin(freq, mag, phase):
 	"""
