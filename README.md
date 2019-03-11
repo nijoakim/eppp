@@ -14,7 +14,7 @@ uses EPPPs impedance network calculator to generate an E6 resistor network with 
 	$ epppu expression '10e3 // (47 + 2200)'
 	1.835 k
 
-evaluates an expression which includes the parallel impedance operator, '//'. (The quotes in the example are used to avoid having to escape the parentheses. `epppu expression 10e3 // \(47 + 2200\)` would have been equally valid.
+evaluates an expression which includes the parallel impedance operator, '//'. (The quotes in the example are used to avoid having to escape the parentheses. `$ epppu expression 10e3 // \(47 + 2200\)` would have been equally valid.
 
 The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
