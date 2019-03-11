@@ -22,7 +22,7 @@ interpreter: build
 profile: build
 	python3 -m eppp.profiler
 
-unit-test: build
+test: build
 	python3 -m eppp.tests.unit_test
 
 benchmark: build
