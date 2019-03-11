@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Joakim Nilsson
+# Copyright 2015-2019 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,13 +73,13 @@ class TestStringMethods(ut.TestCase):
 		self.assertEqual(eppp.calc.parallel_impedance(1, inf), 1)         # Infinity
 
 	def test_decibel(self):
-		# Amplitude
-		self.assertEqual(eppp.calc.convert_to_db(100), 40)   # To dB
-		self.assertEqual(eppp.calc.convert_from_db(40), 100) # From dB
-		
 		# Power
 		self.assertEqual(eppp.calc.convert_to_db(100, db_type='power'), 20)   # To dB
 		self.assertEqual(eppp.calc.convert_from_db(20, db_type='power'), 100) # From dB
+		
+		# Amplitude
+		self.assertEqual(eppp.calc.convert_to_db(100, db_type='amplitude'), 40)   # To dB
+		self.assertEqual(eppp.calc.convert_from_db(40, db_type='amplitude'), 100) # From dB
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
