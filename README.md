@@ -11,10 +11,10 @@ EPPP comes as a python module but also defines a program, `epppu`, "EPPP utiliti
 
 uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.12 kΩ, while
 
-	$ epppu expression '10e3 || (47 + 2200)'
+	$ epppu expression '10e3 // (47 + 2200)'
 	1.835 k
 
-evaluates an expression which includes the parallel impedance operator, '||'.
+evaluates an expression which includes the parallel impedance operator, '//'.
 
 The library provides, among many other things, functions for plotting Bode diagrams and extracting break frequencies from frequency response data.
 
