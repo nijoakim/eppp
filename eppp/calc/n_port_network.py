@@ -1,4 +1,4 @@
-# Copyright 2017-2018 Joakim Nilsson
+# Copyright 2017-2019 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,17 +36,16 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		matrix ([[number]]): Matrix to convert.
 		from_ (chr):         2-port parameter type to convert from.
 		to (chr):            2-port parameter type to convert to.
-		char_imp (number):   Characteristic impedance in case of conversion between power and amplitude parameters.
+		char_imp (number):   Characteristic impedance in case of conversion between power and amplitude parameters. (Default: 50)
 
 	Returns:
 		([[number]]) Converted matrix.
 	"""
 
 	# Check so that 'from_' and 'to' are valid matrix types
-	VALID_MATRIX_TYPES = ['z', 'y', 'g', 'h', 'a', 'b', 's', 't']
 	for matrix_type in from_, to:
-		if not matrix_type in VALID_MATRIX_TYPES:
-			raise ValueError("'"+ matrix_type +"' is not a valid matrix type.")
+		if not matrix_type in ('z', 'y', 'g', 'h', 'a', 'b', 's', 't'):
+			raise ValueError("'%s' is not a valid matrix type." % matrix_type)
 
 	# Do not convert if input matrix type is the same as output matrix type
 	if from_ == to:
@@ -58,92 +57,117 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 			if matrix.shape != (2, 2):
 				raise ValueError('%s-parameters have exactly 2 ports and thus must be a 2x2 matrix.' % params)
 
-	# Convert from t- to s-parameters without intermediate conversion
-	if from_ == 't':
-		# Convert to s-parameters
-		matrix_s       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_s[0][0] = matrix[1][0]
-		matrix_s[0][1] = _np.linalg.det(matrix)
-		matrix_s[1][0] = 1
-		matrix_s[1][1] = -matrix[0][1]
-		matrix_s /= matrix[0][0]
+	#===================
+	# From s-parameters
+	#===================
+	s = matrix
+	
+	# To z-parameters
+	if (from_, to) == ('s', 'z'):
+		i = _np.identity(len(s), dtype=s.dtype)
+		z     = char_imp * (matrix_ident + s) @ _np.linalg.inv(i - s)
+		return z
 
-		# Convert to <to>-parameters and return
-		return convert_parameter_matrix(matrix_s, 's', to, char_imp=char_imp)
+	# TODO: Verify this extra carefully
+	# To t-parameters
+	if (from_, to) == ('s', 't'):
+		t = _np.ndarray((2, 2), dtype=s.dtype)
+		t[0][0] = 1
+		t[0][1] = -s[1][1]
+		t[1][0] = s[0][0]
+		t[1][1] = -_np.linalg.det(s)
+		t /= s[1][0]
+		return t
 
-	# Convert from s- to t-parameters without intermediate conversion
-	if to == 't':
-		# Convert to s-parameters
-		matrix_t = convert_parameter_matrix(matrix, from_, 's', char_imp=char_imp)
+	#===================
+	# From t-parameters
+	#===================
+	t = matrix
 
-		# Convert to t-parameters and return
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = 1
-		matrix_out[0][1] = -matrix_t[1][1]
-		matrix_out[1][0] = matrix_t[0][0]
-		matrix_out[1][1] = -_np.linalg.det(matrix_t)
-		matrix_out /= matrix[1][0]
-		return matrix_out
+	# To s-parameters
+	if (from_, to) == ('t', 's'):
+		s = _np.ndarray((2, 2), dtype=t.dtype)
+		s[0][0] = t[1][0]
+		s[0][1] = _np.linalg.det(t)
+		s[1][0] = 1
+		s[1][1] = -t[0][1]
+		s /= matrix[0][0]
+		return s
 
-	# Use z-parameters as intermediate conversion type
-	if not 'z' in (from_, to):
-		matrix = convert_parameter_matrix(matrix, from_, 'z', char_imp=char_imp) # Convert to z-parameters
-		matrix = convert_parameter_matrix(matrix, 'z',   to,  char_imp=char_imp) # Convert to <to>-parameters
-		return matrix
+	#===================
+	# From z-parameters
+	#===================
+	z = matrix
 
-	# Symmetric conversions to and from z-parameters
-	if   'y' in (from_, to):
-		return _np.linalg.inv(matrix)
-	elif 'h' in (from_, to):
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = _np.linalg.det(matrix)
-		matrix_out[0][1] = matrix[0][1]
-		matrix_out[1][0] = -matrix[1][0]
-		matrix_out[1][1] = 1
-		matrix_out /= matrix[1][1]
-		return matrix_out
-	elif 'g' in (from_, to):
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = 1
-		matrix_out[0][1] = -matrix[0][1]
-		matrix_out[1][0] = matrix[1][0]
-		matrix_out[1][1] = _np.linalg.det(matrix)
-		matrix_out /= matrix[0][0]
-		return matrix_out
-	elif 'a' in (from_, to):
-		matrix_out       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_out[0][0] = matrix[0][0]
-		matrix_out[0][1] = _np.linalg.det(matrix)
-		matrix_out[1][0] = 1
-		matrix_out[1][1] = matrix[1][1]
-		matrix_out /= matrix[1][0]
-		return matrix_out
+	# To y-parameters
+	if (from_, to) == ('z', 'y'):
+		z = matrix
+		return _np.linalg.inv(z)
 
-	# Asymmetric conversions to and from z-parameters
-	if   (from_, to) == ('z', 'b'):
-		matrix_b       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_b[0][0] = matrix[1][1]
-		matrix_b[0][1] = -_np.linalg.det(matrix)
-		matrix_b[1][0] = -1
-		matrix_b[1][1] = matrix[0][0]
-		matrix_b /= matrix[0][1]
-		return matrix_b
-	elif (from_, to) == ('b', 'z'):
-		matrix_z       = _np.ndarray((2, 2), dtype=matrix.dtype)
-		matrix_z[0][0] = -matrix[1][1]
-		matrix_z[0][1] = -1
-		matrix_z[1][0] = -_np.linalg.det(matrix)
-		matrix_z[1][1] = -matrix[0][0]
-		matrix_z /= matrix[1][0]
-		return matrix_z
-	elif (from_, to) == ('z', 's'):
-		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
-		matrix_s     = (matrix - (char_imp * matrix_ident)) @ _np.linalg.inv(matrix + (char_imp * matrix_ident))
-		return matrix_s
-	elif (from_, to) == ('s', 'z'):
-		matrix_ident = _np.identity(len(matrix), dtype=matrix.dtype)
-		matrix_z     = char_imp * (matrix_ident + matrix) @ _np.linalg.inv(matrix_ident - matrix)
-		return matrix_z
+	# To h-parameters
+	if (from_, to) == ('z', 'h'):
+		h = _np.ndarray((2, 2), dtype=z.dtype)
+		h[0][0] = _np.linalg.det(z)
+		h[0][1] = z[0][1]
+		h[1][0] = -z[1][0]
+		h[1][1] = 1
+		h /= matrix[1][1]
+		return h
+
+	# To g-parameters
+	if (from_, to) == ('z', 'g'):
+		g = _np.ndarray((2, 2), dtype=z.dtype)
+		g[0][0] = 1
+		g[0][1] = -z[0][1]
+		g[1][0] = z[1][0]
+		g[1][1] = _np.linalg.det(z)
+		g /= z[0][0]
+		return g
+
+	# To a-parameters
+	if (from_, to) == ('z', 'a'):
+		a = _np.ndarray((2, 2), dtype=z.dtype)
+		a[0][0] = z[0][0]
+		a[0][1] = _np.linalg.det(z)
+		a[1][0] = 1
+		a[1][1] = z[1][1]
+		a /= z[1][0]
+		return a
+
+	# To b-parameters
+	if (from_, to) == ('z', 'b'):
+		b = _np.ndarray((2, 2), dtype=z.dtype)
+		b[0][0] = z[1][1]
+		b[0][1] = -_np.linalg.det(z)
+		b[1][0] = -1
+		b[1][1] = z[0][0]
+		b /= z[0][1]
+		return b
+
+	# To s-parameters
+	if (from_, to) == ('z', 's'):
+		i = _np.identity(len(z), dtype=z.dtype)
+		s = (z - (char_imp * i)) @ _np.linalg.inv(z + (char_imp * i))
+		return s
+
+	#===================
+	# From b-parameters
+	#===================
+	b = matrix
+
+	# To z-parameters
+	if (from_, to) == ('b', 'z'):
+		z = _np.ndarray((2, 2), dtype=b.dtype)
+		z[0][0] = -b[1][1]
+		z[0][1] = -1
+		z[1][0] = -_np.linalg.det(b)
+		z[1][1] = -b[0][0]
+		z /= b[1][0]
+		return z
+
+	#======================================================
+	# Error if this conversion hasn't been implemented yet
+	#======================================================
 
 	raise NotImplementedError()
 
