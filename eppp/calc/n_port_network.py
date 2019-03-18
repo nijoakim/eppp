@@ -171,11 +171,50 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	#===================
 	h = matrix
 
-	# TODO: To z-parameters
-	# TODO: To y-parameters
-	# TODO: To g-parameters
-	# TODO: To a-parameters
-	# TODO: To b-parameters
+	# To z-parameters
+	if (from_, to) == ('h', 'z'):
+		z = _np.ndarray((2, 2), dtype=h.dtype)
+		z[0][0] = np.linalg.det(h)
+		z[0][1] = h[0][1]
+		z[1][0] = -h[1][0]
+		z[1][1] = 1
+		z /= h[1][1]
+		return z
+
+	# To y-parameters
+	if (from_, to) == ('h', 'y'):
+		y = _np.ndarray((2, 2), dtype=h.dtype)
+		y[0][0] = 1
+		y[0][1] = -h[0][1]
+		y[1][0] = h[1][0]
+		y[1][1] = np.linalg.det(h)
+		y /= h[0][0]
+		return y
+
+	# To g-parameters
+	if (from_, to) == ('h', 'y'):
+		return _np.linalg.inv(h)
+
+	# To a-parameters
+	if (from_, to) == ('h', 'a'):
+		a = _np.ndarray((2, 2), dtype=h.dtype)
+		a[0][0] = -np.linalg.det(h)
+		a[0][1] = -h[0][0]
+		a[1][0] = -h[1][1]
+		a[1][1] = -1
+		a /= h[1][0]
+		return a
+
+	# To b-parameters
+	if (from_, to) == ('h', 'a'):
+		a = _np.ndarray((2, 2), dtype=h.dtype)
+		a[0][0] = 1
+		a[0][1] = -h[0][0]
+		a[1][0] = -h[1][1]
+		a[1][1] = np.linalg.det(h)
+		a /= h[0][1]
+		return a
+
 	# TODO: To s-parameters
 	# TODO: To t-parameters
 
