@@ -58,43 +58,6 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 				raise ValueError('%s-parameters have exactly 2 ports and thus must be a 2x2 matrix.' % params)
 
 	#===================
-	# From s-parameters
-	#===================
-	s = matrix
-	
-	# To z-parameters
-	if (from_, to) == ('s', 'z'):
-		i = _np.identity(len(s), dtype=s.dtype)
-		z     = char_imp * (matrix_ident + s) @ _np.linalg.inv(i - s)
-		return z
-
-	# TODO: Verify this extra carefully
-	# To t-parameters
-	if (from_, to) == ('s', 't'):
-		t = _np.ndarray((2, 2), dtype=s.dtype)
-		t[0][0] = 1
-		t[0][1] = -s[1][1]
-		t[1][0] = s[0][0]
-		t[1][1] = -_np.linalg.det(s)
-		t /= s[1][0]
-		return t
-
-	#===================
-	# From t-parameters
-	#===================
-	t = matrix
-
-	# To s-parameters
-	if (from_, to) == ('t', 's'):
-		s = _np.ndarray((2, 2), dtype=t.dtype)
-		s[0][0] = t[1][0]
-		s[0][1] = _np.linalg.det(t)
-		s[1][0] = 1
-		s[1][1] = -t[0][1]
-		s /= matrix[0][0]
-		return s
-
-	#===================
 	# From z-parameters
 	#===================
 	z = matrix
@@ -150,6 +113,60 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		s = (z - (char_imp * i)) @ _np.linalg.inv(z + (char_imp * i))
 		return s
 
+	# TODO: To t-parameters
+
+	#===================
+	# From y-parameters
+	#===================
+	y = matrix
+
+	# TODO: To z-parameters
+	# TODO: To g-parameters
+	# TODO: To h-parameters
+	# TODO: To a-parameters
+	# TODO: To b-parameters
+	# TODO: To s-parameters
+	# TODO: To t-parameters
+
+	#===================
+	# From h-parameters
+	#===================
+	h = matrix
+
+	# TODO: To z-parameters
+	# TODO: To y-parameters
+	# TODO: To g-parameters
+	# TODO: To a-parameters
+	# TODO: To b-parameters
+	# TODO: To s-parameters
+	# TODO: To t-parameters
+
+	#===================
+	# From g-parameters
+	#===================
+	g = matrix
+
+	# TODO: To z-parameters
+	# TODO: To y-parameters
+	# TODO: To h-parameters
+	# TODO: To a-parameters
+	# TODO: To b-parameters
+	# TODO: To s-parameters
+	# TODO: To t-parameters
+
+	#===================
+	# From a-parameters
+	#===================
+	a = matrix
+
+	# TODO: To z-parameters
+	# TODO: To y-parameters
+	# TODO: To g-parameters
+	# TODO: To h-parameters
+	# TODO: To b-parameters
+	# TODO: To s-parameters
+	# TODO: To t-parameters
+
 	#===================
 	# From b-parameters
 	#===================
@@ -165,10 +182,67 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z /= b[1][0]
 		return z
 
+	# TODO: To z-parameters
+	# TODO: To y-parameters
+	# TODO: To g-parameters
+	# TODO: To h-parameters
+	# TODO: To a-parameters
+	# TODO: To s-parameters
+	# TODO: To t-parameters
+
+	#===================
+	# From s-parameters
+	#===================
+	s = matrix
+	
+	# To z-parameters
+	if (from_, to) == ('s', 'z'):
+		i = _np.identity(len(s), dtype=s.dtype)
+		z     = char_imp * (matrix_ident + s) @ _np.linalg.inv(i - s)
+		return z
+
+	# TODO: To y-parameters
+	# TODO: To g-parameters
+	# TODO: To h-parameters
+	# TODO: To a-parameters
+	# TODO: To b-parameters
+
+	# TODO: Verify this extra carefully
+	# To t-parameters
+	if (from_, to) == ('s', 't'):
+		t = _np.ndarray((2, 2), dtype=s.dtype)
+		t[0][0] = 1
+		t[0][1] = -s[1][1]
+		t[1][0] = s[0][0]
+		t[1][1] = -_np.linalg.det(s)
+		t /= s[1][0]
+		return t
+
+	#===================
+	# From t-parameters
+	#===================
+	t = matrix
+
+	# TODO: To z-parameters
+	# TODO: To y-parameters
+	# TODO: To g-parameters
+	# TODO: To h-parameters
+	# TODO: To a-parameters
+	# TODO: To b-parameters
+
+	# To s-parameters
+	if (from_, to) == ('t', 's'):
+		s = _np.ndarray((2, 2), dtype=t.dtype)
+		s[0][0] = t[1][0]
+		s[0][1] = _np.linalg.det(t)
+		s[1][0] = 1
+		s[1][1] = -t[0][1]
+		s /= matrix[0][0]
+		return s
+
 	#======================================================
 	# Error if this conversion hasn't been implemented yet
 	#======================================================
-
 	raise NotImplementedError()
 
 # TODO: Internal ndarray which is accessed by getters and setters?
