@@ -55,7 +55,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	for params in ('a', 'b', 't'):
 		if params in (from_, to):
 			if matrix.shape != (2, 2):
-				raise ValueError('%s-parameters have exactly 2 ports and thus must be a 2x2 matrix.' % params)
+				raise ValueError('%s-parameters have exactly 2 ports and must thus be a 2x2 matrix.' % params)
 
 	#===================
 	# From z-parameters
@@ -192,7 +192,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		return y
 
 	# To g-parameters
-	if (from_, to) == ('h', 'y'):
+	if (from_, to) == ('h', 'g'):
 		return _np.linalg.inv(h)
 
 	# To a-parameters
