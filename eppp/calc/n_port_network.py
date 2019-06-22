@@ -30,13 +30,13 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 # TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
-	Converts between 2-port parameters.
+	Converts between types of matrices representing 2-port parameters.
 
 	Args:
 		matrix ([[number]]): Matrix to convert.
 		from_ (chr):         2-port parameter type to convert from.
 		to (chr):            2-port parameter type to convert to.
-		char_imp (number):   Characteristic impedance in case of conversion between power and amplitude parameters. (Default: 50)
+		char_imp (number):   Characteristic impedance in ohms in case of conversion between power and amplitude parameters. (Default: 50)
 
 	Returns:
 		([[number]]) Converted matrix.
