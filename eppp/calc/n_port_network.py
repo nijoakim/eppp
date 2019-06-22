@@ -27,7 +27,7 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 # Matrix conversions
 #====================
 
-# TODO: Using Z as intermediate may cause conversions to to infinities unnecessarily. Implement direct conversions between all parameters.
+# TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
 	Converts between 2-port parameters.
@@ -275,11 +275,56 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	#===================
 	a = matrix
 
-	# TODO: To z-parameters
-	# TODO: To y-parameters
-	# TODO: To g-parameters
-	# TODO: To h-parameters
-	# TODO: To b-parameters
+	# To z-parameters
+	if (from_, to) == ('a', 'z'):
+		z = _np.ndarray((2, 2), dtype=a.dtype)
+		z[0][0] = a[0][0]
+		z[0][1] = _np.linalg.det(a)
+		z[1][0] = 1
+		z[1][1] = a[1][1]
+		z /= a[1][0]
+		return z
+
+	# To y-parameters
+	if (from_, to) == ('a', 'y'):
+		y = _np.ndarray((2, 2), dtype=a.dtype)
+		y[0][0] = a[1][1]
+		y[0][1] = -_np.linalg.det(a)
+		y[1][0] = -1
+		y[1][1] = a[0][0]
+		y /= a[0][1]
+		return y
+
+	# To h-parameters
+	if (from_, to) == ('a', 'h'):
+		h = _np.ndarray((2, 2), dtype=a.dtype)
+		h[0][0] = a[0][1]
+		h[0][1] = _np.linalg.det(a)
+		h[1][0] = -1
+		h[1][1] = a[1][0]
+		h /= a[1][1]
+		return h
+
+	# To g-parameters
+	if (from_, to) == ('a', 'g'):
+		g = _np.ndarray((2, 2), dtype=a.dtype)
+		g[0][0] = a[1][0]
+		g[0][1] = -_np.linalg.det(a)
+		g[1][0] = 1
+		g[1][1] = a[0][1]
+		g /= a[0][0]
+		return g
+
+	# To b-parameters
+	if (from_, to) == ('a', 'b'):
+		b = _np.ndarray((2, 2), dtype=a.dtype)
+		b[0][0] = a[1][1]
+		b[0][1] = -a[0][1]
+		b[1][0] = -a[1][0]
+		b[1][1] = a[0][0]
+		b /= _np.linalg.det(a)
+		return b
+
 	# TODO: To s-parameters
 	# TODO: To t-parameters
 
@@ -298,11 +343,46 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z /= b[1][0]
 		return z
 
-	# TODO: To z-parameters
-	# TODO: To y-parameters
-	# TODO: To g-parameters
-	# TODO: To h-parameters
-	# TODO: To a-parameters
+	# To y-parameters
+	if (from_, to) == ('b', 'y'):
+		y = _np.ndarray((2, 2), dtype=b.dtype)
+		y[0][0] = -b[1][1]
+		y[0][1] = 1
+		y[1][0] = _np.linalg.det(b)
+		y[1][1] = -b[1][1]
+		y /= b[0][1]
+		return y
+
+	# To h-parameters
+	if (from_, to) == ('b', 'h'):
+		h = _np.ndarray((2, 2), dtype=b.dtype)
+		h[0][0] = -b[0][1]
+		h[0][1] = 1
+		h[1][0] = -_np.linalg.det(b)
+		h[1][1] = -b[1][0]
+		h /= b[0][0]
+		return h
+
+	# To g-parameters
+	if (from_, to) == ('b', 'g'):
+		g = _np.ndarray((2, 2), dtype=b.dtype)
+		g[0][0] = -b[1][0]
+		g[0][1] = -1
+		g[1][0] = _np.linalg.det(b)
+		g[1][1] = -b[0][1]
+		g /= b[1][1]
+		return g
+
+	# To a-parameters
+	if (from_, to) == ('b', 'a'):
+		a = _np.ndarray((2, 2), dtype=b.dtype)
+		a[0][0] = b[1][1]
+		a[0][1] = -b[0][1]
+		a[1][0] = -b[1][0]
+		a[1][1] = b[0][0]
+		a /= _np.linalg.det(b)
+		return a
+
 	# TODO: To s-parameters
 	# TODO: To t-parameters
 
@@ -318,8 +398,8 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		return z
 
 	# TODO: To y-parameters
-	# TODO: To g-parameters
 	# TODO: To h-parameters
+	# TODO: To g-parameters
 	# TODO: To a-parameters
 	# TODO: To b-parameters
 
@@ -341,8 +421,8 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# TODO: To z-parameters
 	# TODO: To y-parameters
-	# TODO: To g-parameters
 	# TODO: To h-parameters
+	# TODO: To g-parameters
 	# TODO: To a-parameters
 	# TODO: To b-parameters
 
