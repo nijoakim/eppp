@@ -173,10 +173,10 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To b-parameters
 	if (from_, to) == ('y', 'b'):
 		b = _np.ndarray((2, 2), dtype=y.dtype)
-		b[0][0] = -y[1][1]
+		b[0][0] = -y[0][0]
 		b[0][1] = 1
 		b[1][0] = _np.linalg.det(y)
-		b[1][1] = -y[0][0]
+		b[1][1] = -y[1][1]
 		b /= y[0][1]
 		return b
 
