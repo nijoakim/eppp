@@ -29,6 +29,7 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 
 # TODO: Always use dtype=complex?
 
+# TODO: Allow specifying a different 'char_imp' for each port
 # TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
@@ -115,21 +116,22 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		return s
 
 	# TODO: Wrong! Fix!
-	# # To t-parameters
-	# if (from_, to) == ('z', 't'):
-	# 	t = _np.ndarray((2, 2), dtype=z.dtype)
-	# 	t[0][0] = 1
-	# 	t[0][1] = -(
-	# 		 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
-	# 		((z[0][0] + char_imp) * (z[1][1] - char_imp) - z[0][1]*z[1][0])
-	# 	)
-	# 	t[1][0] = (
-	# 		 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
-	# 		((z[0][0] - char_imp) * (z[1][1] + char_imp) - z[0][1]*z[1][0])
-	# 	)
-	# 	t[1][1] = _np.linalg.det(z)**2 - char_imp**2 * (z[0][0]**2 + z[1][1]**2 - 2*z[0][1]*z[1][0] + char_imp**2)
-	# 	t /= 2 * z[1][0] * char_imp
-	# 	return t
+	# To t-parameters
+	if (from_, to) == ('z', 't'):
+		t = _np.ndarray((2, 2), dtype=z.dtype)
+		t[0][0] = 1
+		t[0][1] = -(
+			 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
+			((z[0][0] + char_imp) * (z[1][1] - char_imp) - z[0][1]*z[1][0])
+		)
+		t[1][0] = (
+			 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
+			((z[0][0] - char_imp) * (z[1][1] + char_imp) - z[0][1]*z[1][0])
+		)
+		t[1][1] = _np.linalg.det(z)**2 - char_imp**2 * (z[0][0]**2 + z[1][1]**2 - 2*z[0][1]*z[1][0] + char_imp**2)
+		# t[1][1] = (z[0][0]**2 - char_imp**2)*(z[1][1]**2 - char_imp**2) + z[0][1]*z[1][0] * (z[0][1]*z[1][0] - 2*z[0][0]*z[1][1] - 2*char_imp**2)
+		t /= 2 * z[1][0] * char_imp
+		return t
 
 	#===================
 	# From y-parameters
@@ -420,14 +422,13 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# TODO: To a-parameters
 	# TODO: To b-parameters
 
-	# TODO: Verify this extra carefully
 	# To t-parameters
 	if (from_, to) == ('s', 't'):
 		t = _np.ndarray((2, 2), dtype=s.dtype)
-		t[0][0] = 1
-		t[0][1] = -s[1][1]
-		t[1][0] = s[0][0]
-		t[1][1] = -_np.linalg.det(s)
+		t[0][0] = -_np.linalg.det(s)
+		t[0][1] = s[0][0]
+		t[1][0] = -s[1][1]
+		t[1][1] = 1
 		t /= s[1][0]
 		return t
 
