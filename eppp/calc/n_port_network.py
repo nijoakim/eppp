@@ -447,11 +447,11 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To s-parameters
 	if (from_, to) == ('t', 's'):
 		s = _np.ndarray((2, 2), dtype=t.dtype)
-		s[0][0] = t[1][0]
+		s[0][0] = t[0][1]
 		s[0][1] = _np.linalg.det(t)
 		s[1][0] = 1
-		s[1][1] = -t[0][1]
-		s /= matrix[0][0]
+		s[1][1] = -t[1][0]
+		s /= matrix[1][1]
 		return s
 
 	#======================================================
