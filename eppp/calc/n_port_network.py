@@ -27,6 +27,8 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 # Matrix conversions
 #====================
 
+# TODO: Always use dtype=complex?
+
 # TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
@@ -112,7 +114,22 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		s = (z - (char_imp * i)) @ _np.linalg.inv(z + (char_imp * i))
 		return s
 
-	# TODO: To t-parameters
+	# TODO: Wrong! Fix!
+	# # To t-parameters
+	# if (from_, to) == ('z', 't'):
+	# 	t = _np.ndarray((2, 2), dtype=z.dtype)
+	# 	t[0][0] = 1
+	# 	t[0][1] = -(
+	# 		 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
+	# 		((z[0][0] + char_imp) * (z[1][1] - char_imp) - z[0][1]*z[1][0])
+	# 	)
+	# 	t[1][0] = (
+	# 		 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
+	# 		((z[0][0] - char_imp) * (z[1][1] + char_imp) - z[0][1]*z[1][0])
+	# 	)
+	# 	t[1][1] = _np.linalg.det(z)**2 - char_imp**2 * (z[0][0]**2 + z[1][1]**2 - 2*z[0][1]*z[1][0] + char_imp**2)
+	# 	t /= 2 * z[1][0] * char_imp
+	# 	return t
 
 	#===================
 	# From y-parameters
@@ -129,14 +146,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		h[0][0] = 1
 		h[0][1] = -y[0][1]
 		h[1][0] = y[1][0]
-		h[1][1] = np.linalg.det(y)
+		h[1][1] = _np.linalg.det(y)
 		h /= y[0][0]
 		return h
 
 	# To g-parameters
 	if (from_, to) == ('y', 'g'):
 		g = _np.ndarray((2, 2), dtype=y.dtype)
-		g[0][0] = np.linalg.det(y)
+		g[0][0] = _np.linalg.det(y)
 		g[0][1] = y[0][1]
 		g[1][0] = -y[1][0]
 		g[1][1] = 1
@@ -148,7 +165,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		a = _np.ndarray((2, 2), dtype=y.dtype)
 		a[0][0] = -y[1][1]
 		a[0][1] = -1
-		a[1][0] = -np.linalg.det(y)
+		a[1][0] = -_np.linalg.det(y)
 		a[1][1] = -y[0][0]
 		a /= y[1][0]
 		return a
@@ -158,7 +175,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b = _np.ndarray((2, 2), dtype=y.dtype)
 		b[0][0] = -y[1][1]
 		b[0][1] = 1
-		b[1][0] = np.linalg.det(y)
+		b[1][0] = _np.linalg.det(y)
 		b[1][1] = -y[0][0]
 		b /= y[0][1]
 		return b
@@ -174,7 +191,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To z-parameters
 	if (from_, to) == ('h', 'z'):
 		z = _np.ndarray((2, 2), dtype=h.dtype)
-		z[0][0] = np.linalg.det(h)
+		z[0][0] = _np.linalg.det(h)
 		z[0][1] = h[0][1]
 		z[1][0] = -h[1][0]
 		z[1][1] = 1
@@ -187,7 +204,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		y[0][0] = 1
 		y[0][1] = -h[0][1]
 		y[1][0] = h[1][0]
-		y[1][1] = np.linalg.det(h)
+		y[1][1] = _np.linalg.det(h)
 		y /= h[0][0]
 		return y
 
@@ -211,7 +228,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b[0][0] = 1
 		b[0][1] = -h[0][0]
 		b[1][0] = -h[1][1]
-		b[1][1] = np.linalg.det(h)
+		b[1][1] = _np.linalg.det(h)
 		b /= h[0][1]
 		return b
 
@@ -229,14 +246,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z[0][0] = 1
 		z[0][1] = -g[0][1]
 		z[1][0] = g[1][0]
-		z[1][1] = np.linalg.det(g)
+		z[1][1] = _np.linalg.det(g)
 		z /= g[0][0]
 		return z
 
 	# To y-parameters
 	if (from_, to) == ('g', 'y'):
 		y = _np.ndarray((2, 2), dtype=g.dtype)
-		y[0][0] = np.linalg.det(g)
+		y[0][0] = _np.linalg.det(g)
 		y[0][1] = g[0][1]
 		y[1][0] = -g[1][0]
 		y[1][1] = 1
@@ -253,14 +270,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		a[0][0] = 1
 		a[0][1] = g[1][1]
 		a[1][0] = g[0][0]
-		a[1][1] = np.linalg.det(g)
+		a[1][1] = _np.linalg.det(g)
 		a /= g[1][0]
 		return a
 
 	# To b-parameters
 	if (from_, to) == ('g', 'b'):
 		b = _np.ndarray((2, 2), dtype=g.dtype)
-		b[0][0] = -np.linalg.det(g)
+		b[0][0] = -_np.linalg.det(g)
 		b[0][1] = g[1][1]
 		b[1][0] = g[0][0]
 		b[1][1] = -1
@@ -455,6 +472,8 @@ class NPortNetwork:
 		self._g                = None
 		self._a                = None
 		self._b                = None
+		self._s                = None
+		self._t                = None
 		self._last_assigned_as = None
 
 	def _check_init(self):
