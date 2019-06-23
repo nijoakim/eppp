@@ -115,23 +115,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		s = (z - (char_imp * i)) @ _np.linalg.inv(z + (char_imp * i))
 		return s
 
-	# TODO: Wrong! Fix!
-	# To t-parameters
-	if (from_, to) == ('z', 't'):
-		t = _np.ndarray((2, 2), dtype=z.dtype)
-		t[0][0] = 1
-		t[0][1] = -(
-			 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
-			((z[0][0] + char_imp) * (z[1][1] - char_imp) - z[0][1]*z[1][0])
-		)
-		t[1][0] = (
-			 (z[0][0] + char_imp) * (z[1][1] + char_imp) *
-			((z[0][0] - char_imp) * (z[1][1] + char_imp) - z[0][1]*z[1][0])
-		)
-		t[1][1] = _np.linalg.det(z)**2 - char_imp**2 * (z[0][0]**2 + z[1][1]**2 - 2*z[0][1]*z[1][0] + char_imp**2)
-		# t[1][1] = (z[0][0]**2 - char_imp**2)*(z[1][1]**2 - char_imp**2) + z[0][1]*z[1][0] * (z[0][1]*z[1][0] - 2*z[0][0]*z[1][1] - 2*char_imp**2)
-		t /= 2 * z[1][0] * char_imp
-		return t
+	# TODO: To t-parameters
 
 	#===================
 	# From y-parameters
