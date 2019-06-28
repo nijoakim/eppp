@@ -447,145 +447,196 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	#======================================================
 	raise NotImplementedError()
 
-# TODO: Internal ndarray which is accessed by getters and setters?
-# TODO: Make a copy each time a matrix is getted and check for modifications?
 class NPortNetwork:
 	"""
 		TODO
 	"""
 
 	def __init__(self):
-		self._z                = None
-		self._y                = None
-		self._h                = None
-		self._g                = None
-		self._a                = None
-		self._b                = None
-		self._s                = None
-		self._t                = None
-		self._last_assigned_as = None
+		self._reset_matrices()
+		self._last_assigned_matrix = None
+		self._last_assigned_type   = None
+
+	def _reset_matrices(self):
+		self._z = None
+		self._y = None
+		self._h = None
+		self._g = None
+		self._a = None
+		self._b = None
+		self._s = None
+		self._t = None
 
 	def _check_init(self):
-		if self._last_assigned_as is None:
+		if self._last_assigned_type is None:
 			raise AttributeError('n-port matrix has not been initialized.')
 
-	def _get_last_assigned_matrix(self):
-		return getattr(self, '_'+ self._last_assigned_as)
+	def _get_last_modified_matrix(self):
+		num_modifications    = 0
+		modified_matrix_type = None
 
-	def modify_inplace(self, matrix_type):
-		setattr(self, matrix_type, getattr(self, matrix_type))
+		# Iterate through all matrix types
+		for matrix_type in ('z', 'y', 'h', 'g', 'a', 'b', 's', 't'):
+			# Get old matrix
+			old_matrix = getattr(self, '_'+ matrix_type)
+
+			# Skip uninitialized matrices
+			if old_matrix is None:
+				continue
+
+			# Check and count modifications in matrices
+			if not _np.array_equal(
+					old_matrix,
+					convert_parameter_matrix(
+						self._last_assigned_matrix,
+						self._last_assigned_type,
+						matrix_type,
+					)
+				):
+				modified_matrix_type = matrix_type
+				num_modifications += 1
+
+		# Too many modifications
+		if num_modifications > 1:
+			raise RuntimeError('Modifications to multiple matrix types have been performed since last matrix assignment. Modifications are allowed to at most one matrix type between matrix assignments.')
+
+		# Update modified matrix
+		elif num_modifications == 1:
+			self._last_assigned_matrix = getattr(self, '_'+ modified_matrix_type)
+			self._last_assigned_type   = modified_matrix_type
+			self._reset_matrices()
+			setattr(self, '_'+ modified_matrix_type, self._last_assigned_matrix) # Restore unnecessarily reset matrix
+
+		# Return last assigned matrix
+		return self._last_assigned_matrix
 
 	@property
 	def z(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._z = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'z',
 		)
+		return self._z
 
 	@property
 	def y(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._y = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'y',
 		)
+		return self._y
 
 	@property
 	def h(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._h = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'h',
 		)
+		return self._h
 
 	@property
 	def g(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._g = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'g',
 		)
+		return self._g
 
 	@property
 	def a(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._a = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'a',
 		)
+		return self._a
 
 	@property
 	def b(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._b = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			'b',
 		)
+		return self._b
 
 	@property
 	def s(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._s = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			's',
 		)
+		return self._s
 
 	@property
 	def t(self):
 		self._check_init()
-		return convert_parameter_matrix(
-			self._get_last_assigned_matrix(),
-			self._last_assigned_as,
+		self._t = convert_parameter_matrix(
+			self._get_last_modified_matrix(),
+			self._last_assigned_type,
 			't',
 		)
+		return self._t
 
 	@z.setter
 	def z(self, matrix):
-		self._z = matrix
-		self._last_assigned_as = 'z'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'z'
 
 	@y.setter
 	def y(self, matrix):
-		self._y = matrix
-		self._last_assigned_as = 'y'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'y'
 
 	@h.setter
 	def h(self, matrix):
-		self._h = matrix
-		self._last_assigned_as = 'h'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'h'
 
 	@g.setter
 	def g(self, matrix):
-		self._g = matrix
-		self._last_assigned_as = 'g'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'g'
 
 	@a.setter
 	def a(self, matrix):
-		self._a = matrix
-		self._last_assigned_as = 'a'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'a'
 
 	@b.setter
 	def b(self, matrix):
-		self._b = matrix
-		self._last_assigned_as = 'b'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 'b'
 
 	@s.setter
 	def s(self, matrix):
-		self._s = matrix
-		self._last_assigned_as = 's'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 's'
 
 	@t.setter
 	def t(self, matrix):
-		self._t = matrix
-		self._last_assigned_as = 't'
+		self._reset_matrices()
+		self._last_assigned_matrix = matrix
+		self._last_assigned_type   = 't'
 
 #=======================================================
 # Functions for generation of various types of matrices
