@@ -478,15 +478,15 @@ class NPortNetwork:
 		# Iterate through all matrix types
 		for matrix_type in ('z', 'y', 'h', 'g', 'a', 'b', 's', 't'):
 			# Get old matrix
-			old_matrix = getattr(self, '_'+ matrix_type)
+			matrix = getattr(self, '_'+ matrix_type)
 
 			# Skip uninitialized matrices
-			if old_matrix is None:
+			if matrix is None:
 				continue
 
 			# Check and count modifications in matrices
 			if not _np.array_equal(
-					old_matrix,
+					matrix,
 					convert_parameter_matrix(
 						self._last_assigned_matrix,
 						self._last_assigned_type,
