@@ -55,7 +55,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		return matrix.copy()
 
 	# Verify that matrix is square
-	if matrix.shape[0] != matrix.shape[1]
+	if matrix.shape[0] != matrix.shape[1]:
 		raise ValueError('Matrix must be square.')
 
 	# Shape checking for a-, b- and t-parameters
