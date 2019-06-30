@@ -35,6 +35,16 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
 	Converts between types of matrices representing n-port parameters.
 
+	Valid types of parameter are the following:
+	'z': impedance parameters
+	'y': admittance parameters
+	'h': hybrid parameters
+	'g': inverse hybrid parameters
+	'a': chain parameters, type a
+	'b': chain parameters, type b
+	's': scattering parameters
+	't': scattering transfer parameters
+
 	Args:
 		matrix ([[number]]): Matrix to convert.
 		from_ (chr):         n-port parameter type to convert from.
@@ -449,7 +459,11 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 class NPortNetwork:
 	"""
-		TODO
+	Data structure for automatic conversions between n-port parameter types.
+
+	Different representations of n-port parameters are provided by the attributes, 'z', 'y', 'g', 'h', 'a', 'b', 's', and 't'. Assigning to or modifying a parameter and then accessing another automatically converts from the former to the latter when the latter is accessed.
+	
+	To avoid ambiguities on which parameter type to use in an automatic conversion, only one n-port parameter representation is allowed to be modified between assignments.
 	"""
 
 	def __init__(self):
@@ -512,6 +526,9 @@ class NPortNetwork:
 
 	@property
 	def z(self):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._check_init()
 		self._z = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -522,6 +539,9 @@ class NPortNetwork:
 
 	@property
 	def y(self):
+		"""
+		matrix ([[number]]): y-parameter matrix (admittance parameters)
+		"""
 		self._check_init()
 		self._y = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -532,6 +552,9 @@ class NPortNetwork:
 
 	@property
 	def h(self):
+		"""
+		matrix ([[number]]): h-parameter matrix (hybrid parameters)
+		"""
 		self._check_init()
 		self._h = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -542,6 +565,9 @@ class NPortNetwork:
 
 	@property
 	def g(self):
+		"""
+		matrix ([[number]]): g-parameter matrix (inverse hybrid parameters)
+		"""
 		self._check_init()
 		self._g = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -552,6 +578,9 @@ class NPortNetwork:
 
 	@property
 	def a(self):
+		"""
+		matrix ([[number]]): a-parameter matrix (chain parameters, type a)
+		"""
 		self._check_init()
 		self._a = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -562,6 +591,9 @@ class NPortNetwork:
 
 	@property
 	def b(self):
+		"""
+		matrix ([[number]]): b-parameter matrix (chain parameters, type b)
+		"""
 		self._check_init()
 		self._b = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -572,6 +604,9 @@ class NPortNetwork:
 
 	@property
 	def s(self):
+		"""
+		matrix ([[number]]): s-parameter matrix (scattering parameters)
+		"""
 		self._check_init()
 		self._s = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -582,6 +617,9 @@ class NPortNetwork:
 
 	@property
 	def t(self):
+		"""
+		matrix ([[number]]): t-parameter matrix (scattering transfer parameters)
+		"""
 		self._check_init()
 		self._t = convert_parameter_matrix(
 			self._get_last_modified_matrix(),
@@ -598,42 +636,63 @@ class NPortNetwork:
 
 	@y.setter
 	def y(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 'y'
 
 	@h.setter
 	def h(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 'h'
 
 	@g.setter
 	def g(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 'g'
 
 	@a.setter
 	def a(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 'a'
 
 	@b.setter
 	def b(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 'b'
 
 	@s.setter
 	def s(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 's'
 
 	@t.setter
 	def t(self, matrix):
+		"""
+		matrix ([[number]]): z-parameter matrix (impedance parameters)
+		"""
 		self._reset_matrices()
 		self._last_assigned_matrix = matrix
 		self._last_assigned_type   = 't'
