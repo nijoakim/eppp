@@ -37,7 +37,8 @@ from .log   import *
 from .plot  import *
 
 # Private external
-import types as _t
+# import types as _t
+import inspect as _inspect
 
 # Private internal
 from . import calc  as _calc
@@ -53,15 +54,15 @@ from . import plot  as _plot
 def _format_doc_strings(modules, width, indent):
 	completed = []
 	for module in modules:
-		for attr_str in dir(module):
+		for attr_str in dir(module): # TODO: Include member functions
 			attr = getattr(module, attr_str)
-			if isinstance(attr, _t.FunctionType) \
+			if (_inspect.isfunction(attr) or _inspect.isclass(attr)) \
 			and hasattr(attr, '__doc__') \
 			and not attr.__doc__ is None \
 			and not attr in completed:
 				completed.append(attr)
-				doc = attr.__doc__
-				doc = doc.expandtabs(indent)
+				doc   = attr.__doc__
+				doc   = doc.expandtabs(indent)
 				lines = doc.split('\n')
 				lines.reverse() # Reverse iteration improves list efficiency from O(n) to O(1)
 				doc = ''
