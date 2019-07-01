@@ -23,13 +23,18 @@ import numpy as _np
 # Internal
 from .lumped_network import capacitor_impedance, inductor_impedance
 
+#============
+# Shorthands
+#============
+
+_inv = _np.linalg.inv
+
 #====================
 # Matrix conversions
 #====================
 
 # TODO: Always use dtype=complex?
 
-# TODO: Allow specifying a different 'char_imp' for each port
 # TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
@@ -46,14 +51,26 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	't': scattering transfer parameters
 
 	Args:
-		matrix ([[number]]): Matrix to convert.
-		from_ (chr):         n-port parameter type to convert from.
-		to (chr):            n-port parameter type to convert to.
-		char_imp (number):   Characteristic impedance in ohms in case of conversion between power and amplitude parameters. (Default: 50)
+		matrix ([[number]]):          Matrix to convert.
+		from_ (chr):                  n-port parameter type to convert from.
+		to (chr):                     n-port parameter type to convert to.
+		char_imp (number | [number]): Characteristic impedance in ohms in case of conversion between power and amplitude parameters. If ports have different characteristic impedances, it 'char_imp' can be given as a vector where element n represent the characteristic impedance for port n. (Default: 50)
 
 	Returns:
 		([[number]]) Converted matrix.
 	"""
+
+	# Identity matrix
+	i = _np.identity(len(matrix), dtype=matrix.dtype)
+
+	# Characteristic impedance matrix
+	z0 = _np.asarray(char_imp)
+	if z0.shape == ():
+		z0 = _np.asarray([z0]*matrix.shape[0])
+	z0 = _np.diag(z0)
+
+	# Root characteristic conductance matrix
+	g0 = i / _np.diag(_np.real(z0))
 
 	# Check so that 'from_' and 'to' are valid matrix types
 	for matrix_type in from_, to:
@@ -68,6 +85,10 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if matrix.shape[0] != matrix.shape[1]:
 		raise ValueError('Matrix must be square.')
 
+	# Check shape of z0
+	if z0.shape[0] != matrix.shape[0]:
+		raise ValueError("If non-scalar, 'char_imp' must have the same size as 'matrix'.")
+
 	# Shape checking for a-, b- and t-parameters
 	for params in ('a', 'b', 't'):
 		if params in (from_, to):
@@ -81,7 +102,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To y-parameters
 	if (from_, to) == ('z', 'y'):
-		return _np.linalg.inv(z)
+		return _inv(z)
 
 	# To h-parameters
 	if (from_, to) == ('z', 'h'):
@@ -125,8 +146,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To s-parameters
 	if (from_, to) == ('z', 's'):
-		i = _np.identity(len(z), dtype=z.dtype)
-		s = (z - (char_imp * i)) @ _np.linalg.inv(z + (char_imp * i))
+		s = g0 @ (z - z0) @ _inv(z + z0) @ _inv(g0)
 		return s
 
 	# TODO: To t-parameters
@@ -138,7 +158,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To z-parameters
 	if (from_, to) == ('y', 'z'):
-		return _np.linalg.inv(y)
+		return _inv(y)
 
 	# To h-parameters
 	if (from_, to) == ('y', 'h'):
@@ -210,7 +230,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('h', 'g'):
-		return _np.linalg.inv(h)
+		return _inv(h)
 
 	# To a-parameters
 	if (from_, to) == ('h', 'a'):
@@ -262,7 +282,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('g', 'h'):
-		return _np.linalg.inv(g)
+		return _inv(g)
 
 	# To a-parameters
 	if (from_, to) == ('g', 'a'):
@@ -410,8 +430,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	
 	# To z-parameters
 	if (from_, to) == ('s', 'z'):
-		i = _np.identity(len(s), dtype=s.dtype)
-		z     = char_imp * (i + s) @ _np.linalg.inv(i - s)
+		z = _inv(g0) @ _inv(i - s) @ (i + s) @ z0 @ g0
 		return z
 
 	# TODO: To y-parameters
