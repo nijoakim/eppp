@@ -70,7 +70,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	z0 = _np.diag(z0)
 
 	# Root characteristic conductance matrix
-	g0 = i / _np.diag(_np.real(z0))
+	g0 = i / _np.diag(_np.sqrt(_np.real(z0)))
 
 	# Check so that 'from_' and 'to' are valid matrix types
 	for matrix_type in from_, to:
