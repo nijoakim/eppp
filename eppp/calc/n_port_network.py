@@ -367,7 +367,31 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b /= _det(a)
 		return b
 
-	# TODO: To s-parameters
+	# To s-parameters
+	if (from_, to) == ('a', 's'):
+		s = _np.ndarray((2, 2), dtype=a.dtype)
+		s[0][0] = (
+			a[0][0] * z0[1][1] +
+			a[0][1] -
+			a[1][0] * _np.conj(z0[0][0]) * z0[1][1] -
+			a[1][1] * _np.conj(z0[0][0])
+		)
+		s[0][1] = 2 * _np.sqrt(_np.real(z0[0][0]) * _np.real(z0[1][1])) * _det(a)
+		s[1][0] = 2 * _np.sqrt(_np.real(z0[0][0]) * _np.real(z0[1][1]))
+		s[1][1] = (-
+			a[0][0] * _np.conj(z0[1][1]) +
+			a[0][1] -
+			a[1][0] * z0[0][0] * z0[1][1] +
+			a[1][1] * z0[0][0]
+		)
+		s /= (
+			a[0][0] * z0[1][1] +
+			a[0][1] +
+			a[1][0] * z0[0][0] * z0[1][1] +
+			a[1][1] * z0[0][0]
+		)
+		return s
+
 	# TODO: To t-parameters
 
 	#===================
