@@ -200,7 +200,11 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b /= y[0][1]
 		return b
 
-	# TODO: To s-parameters
+	# To s-parameters
+	if (from_, to) == ('y', 's'):
+		s = g0 @ (i - (z0 @ y)) @ _inv( i + (z0 @ y)) @ _inv(g0)
+		return s
+
 	# TODO: To t-parameters
 
 	#===================
