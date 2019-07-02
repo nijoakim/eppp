@@ -28,6 +28,7 @@ from .lumped_network import capacitor_impedance, inductor_impedance
 #============
 
 _inv = _np.linalg.inv
+_det = _np.linalg.det
 
 #====================
 # Matrix conversions
@@ -107,7 +108,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To h-parameters
 	if (from_, to) == ('z', 'h'):
 		h = _np.ndarray((2, 2), dtype=z.dtype)
-		h[0][0] = _np.linalg.det(z)
+		h[0][0] = _det(z)
 		h[0][1] = z[0][1]
 		h[1][0] = -z[1][0]
 		h[1][1] = 1
@@ -120,7 +121,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		g[0][0] = 1
 		g[0][1] = -z[0][1]
 		g[1][0] = z[1][0]
-		g[1][1] = _np.linalg.det(z)
+		g[1][1] = _det(z)
 		g /= z[0][0]
 		return g
 
@@ -128,7 +129,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('z', 'a'):
 		a = _np.ndarray((2, 2), dtype=z.dtype)
 		a[0][0] = z[0][0]
-		a[0][1] = _np.linalg.det(z)
+		a[0][1] = _det(z)
 		a[1][0] = 1
 		a[1][1] = z[1][1]
 		a /= z[1][0]
@@ -138,7 +139,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('z', 'b'):
 		b = _np.ndarray((2, 2), dtype=z.dtype)
 		b[0][0] = z[1][1]
-		b[0][1] = -_np.linalg.det(z)
+		b[0][1] = -_det(z)
 		b[1][0] = -1
 		b[1][1] = z[0][0]
 		b /= z[0][1]
@@ -166,14 +167,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		h[0][0] = 1
 		h[0][1] = -y[0][1]
 		h[1][0] = y[1][0]
-		h[1][1] = _np.linalg.det(y)
+		h[1][1] = _det(y)
 		h /= y[0][0]
 		return h
 
 	# To g-parameters
 	if (from_, to) == ('y', 'g'):
 		g = _np.ndarray((2, 2), dtype=y.dtype)
-		g[0][0] = _np.linalg.det(y)
+		g[0][0] = _det(y)
 		g[0][1] = y[0][1]
 		g[1][0] = -y[1][0]
 		g[1][1] = 1
@@ -185,7 +186,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		a = _np.ndarray((2, 2), dtype=y.dtype)
 		a[0][0] = -y[1][1]
 		a[0][1] = -1
-		a[1][0] = -_np.linalg.det(y)
+		a[1][0] = -_det(y)
 		a[1][1] = -y[0][0]
 		a /= y[1][0]
 		return a
@@ -195,7 +196,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b = _np.ndarray((2, 2), dtype=y.dtype)
 		b[0][0] = -y[0][0]
 		b[0][1] = 1
-		b[1][0] = _np.linalg.det(y)
+		b[1][0] = _det(y)
 		b[1][1] = -y[1][1]
 		b /= y[0][1]
 		return b
@@ -215,7 +216,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To z-parameters
 	if (from_, to) == ('h', 'z'):
 		z = _np.ndarray((2, 2), dtype=h.dtype)
-		z[0][0] = _np.linalg.det(h)
+		z[0][0] = _det(h)
 		z[0][1] = h[0][1]
 		z[1][0] = -h[1][0]
 		z[1][1] = 1
@@ -228,7 +229,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		y[0][0] = 1
 		y[0][1] = -h[0][1]
 		y[1][0] = h[1][0]
-		y[1][1] = _np.linalg.det(h)
+		y[1][1] = _det(h)
 		y /= h[0][0]
 		return y
 
@@ -252,7 +253,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b[0][0] = 1
 		b[0][1] = -h[0][0]
 		b[1][0] = -h[1][1]
-		b[1][1] = _np.linalg.det(h)
+		b[1][1] = _det(h)
 		b /= h[0][1]
 		return b
 
@@ -270,14 +271,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z[0][0] = 1
 		z[0][1] = -g[0][1]
 		z[1][0] = g[1][0]
-		z[1][1] = _np.linalg.det(g)
+		z[1][1] = _det(g)
 		z /= g[0][0]
 		return z
 
 	# To y-parameters
 	if (from_, to) == ('g', 'y'):
 		y = _np.ndarray((2, 2), dtype=g.dtype)
-		y[0][0] = _np.linalg.det(g)
+		y[0][0] = _det(g)
 		y[0][1] = g[0][1]
 		y[1][0] = -g[1][0]
 		y[1][1] = 1
@@ -294,14 +295,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		a[0][0] = 1
 		a[0][1] = g[1][1]
 		a[1][0] = g[0][0]
-		a[1][1] = _np.linalg.det(g)
+		a[1][1] = _det(g)
 		a /= g[1][0]
 		return a
 
 	# To b-parameters
 	if (from_, to) == ('g', 'b'):
 		b = _np.ndarray((2, 2), dtype=g.dtype)
-		b[0][0] = -_np.linalg.det(g)
+		b[0][0] = -_det(g)
 		b[0][1] = g[1][1]
 		b[1][0] = g[0][0]
 		b[1][1] = -1
@@ -320,7 +321,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('a', 'z'):
 		z = _np.ndarray((2, 2), dtype=a.dtype)
 		z[0][0] = a[0][0]
-		z[0][1] = _np.linalg.det(a)
+		z[0][1] = _det(a)
 		z[1][0] = 1
 		z[1][1] = a[1][1]
 		z /= a[1][0]
@@ -330,7 +331,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('a', 'y'):
 		y = _np.ndarray((2, 2), dtype=a.dtype)
 		y[0][0] = a[1][1]
-		y[0][1] = -_np.linalg.det(a)
+		y[0][1] = -_det(a)
 		y[1][0] = -1
 		y[1][1] = a[0][0]
 		y /= a[0][1]
@@ -340,7 +341,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('a', 'h'):
 		h = _np.ndarray((2, 2), dtype=a.dtype)
 		h[0][0] = a[0][1]
-		h[0][1] = _np.linalg.det(a)
+		h[0][1] = _det(a)
 		h[1][0] = -1
 		h[1][1] = a[1][0]
 		h /= a[1][1]
@@ -350,7 +351,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('a', 'g'):
 		g = _np.ndarray((2, 2), dtype=a.dtype)
 		g[0][0] = a[1][0]
-		g[0][1] = -_np.linalg.det(a)
+		g[0][1] = -_det(a)
 		g[1][0] = 1
 		g[1][1] = a[0][1]
 		g /= a[0][0]
@@ -363,7 +364,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b[0][1] = -a[0][1]
 		b[1][0] = -a[1][0]
 		b[1][1] = a[0][0]
-		b /= _np.linalg.det(a)
+		b /= _det(a)
 		return b
 
 	# TODO: To s-parameters
@@ -379,7 +380,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z = _np.ndarray((2, 2), dtype=b.dtype)
 		z[0][0] = -b[1][1]
 		z[0][1] = -1
-		z[1][0] = -_np.linalg.det(b)
+		z[1][0] = -_det(b)
 		z[1][1] = -b[0][0]
 		z /= b[1][0]
 		return z
@@ -389,7 +390,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		y = _np.ndarray((2, 2), dtype=b.dtype)
 		y[0][0] = -b[1][1]
 		y[0][1] = 1
-		y[1][0] = _np.linalg.det(b)
+		y[1][0] = _det(b)
 		y[1][1] = -b[1][1]
 		y /= b[0][1]
 		return y
@@ -399,7 +400,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		h = _np.ndarray((2, 2), dtype=b.dtype)
 		h[0][0] = -b[0][1]
 		h[0][1] = 1
-		h[1][0] = -_np.linalg.det(b)
+		h[1][0] = -_det(b)
 		h[1][1] = -b[1][0]
 		h /= b[0][0]
 		return h
@@ -409,7 +410,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		g = _np.ndarray((2, 2), dtype=b.dtype)
 		g[0][0] = -b[1][0]
 		g[0][1] = -1
-		g[1][0] = _np.linalg.det(b)
+		g[1][0] = _det(b)
 		g[1][1] = -b[0][1]
 		g /= b[1][1]
 		return g
@@ -421,7 +422,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		a[0][1] = -b[0][1]
 		a[1][0] = -b[1][0]
 		a[1][1] = b[0][0]
-		a /= _np.linalg.det(b)
+		a /= _det(b)
 		return a
 
 	# TODO: To s-parameters
@@ -444,13 +445,34 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# TODO: To h-parameters
 	# TODO: To g-parameters
-	# TODO: To a-parameters
+
+	# To a-parameters
+	if (from_, to) == ('s', 'a'):
+		a = _np.ndarray((2, 2), dtype=s.dtype)
+		a[0][0] = (
+			_np.conj(z0[0][0]) * (1 - s[1][1]) +
+			z0[0][0] * (s[0][0] - _det(s))
+		)
+		a[0][1] = (
+			_np.conj(z0[0][0]) * _np.conj(z0[1][1]) +
+			z0[0][0] * _np.conj(z0[1][1]) * s[0][0] +
+			_np.conj(z0[0][0]) * z0[1][1] * s[1][1] +
+			z0[0][0] * z0[1][1] * _det(s)
+		)
+		a[1][0] = 1 - s[0][0] - s[1][1] + _det(s)
+		a[1][1] = (
+			_np.conj(z0[1][1]) * (1 - s[0][0]) +
+			z0[1][1] * (s[1][1] - _det(s))
+		)
+		a /= 2 * s[1][0] * _np.sqrt(_np.real(z0[0][0]) * _np.real(z0[1][1]))
+		return a
+
 	# TODO: To b-parameters
 
 	# To t-parameters
 	if (from_, to) == ('s', 't'):
 		t = _np.ndarray((2, 2), dtype=s.dtype)
-		t[0][0] = -_np.linalg.det(s)
+		t[0][0] = -_det(s)
 		t[0][1] = s[0][0]
 		t[1][0] = -s[1][1]
 		t[1][1] = 1
@@ -473,7 +495,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	if (from_, to) == ('t', 's'):
 		s = _np.ndarray((2, 2), dtype=t.dtype)
 		s[0][0] = t[0][1]
-		s[0][1] = _np.linalg.det(t)
+		s[0][1] = _det(t)
 		s[1][0] = 1
 		s[1][1] = -t[1][0]
 		s /= matrix[1][1]
