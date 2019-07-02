@@ -433,7 +433,11 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		z = _inv(g0) @ _inv(i - s) @ (i + s) @ z0 @ g0
 		return z
 
-	# TODO: To y-parameters
+	# To y-parameters
+	if (from_, to) == ('s', 'y'):
+		y = _inv(g0) @ _inv(z0) @ _inv(i + s) @ (i - s) @ g0
+		return y
+
 	# TODO: To h-parameters
 	# TODO: To g-parameters
 	# TODO: To a-parameters
