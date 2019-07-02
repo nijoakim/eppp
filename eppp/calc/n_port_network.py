@@ -478,6 +478,14 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		return h
 
 	# TODO: To g-parameters
+	if (from_, to) == ('s', 'g'):
+		g = _np.ndarray((2, 2), dtype=s.dtype)
+		g[0][0] = ((1 - s[0][0]) * (1 - s[1][1]) - s[0][1] * s[1][0]) / z0[0][0]
+		g[0][1] = -2 * s[0][1] * _np.sqrt(z0[1][1] / z0[0][0])
+		g[1][0] = 2 * s[1][0] * _np.sqrt(z0[1][1] / z0[0][0])
+		g[1][1] = ((1 + s[0][0]) * (1 + s[1][1]) - s[0][1] * s[1][0]) * z0[1][1]
+		g /= (1 + s[0][0]) * (1 - s[1][1]) + s[0][1] * s[1][0]
+		return g
 
 	# To a-parameters
 	if (from_, to) == ('s', 'a'):
