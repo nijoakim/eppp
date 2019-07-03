@@ -257,7 +257,16 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		b /= h[0][1]
 		return b
 
-	# TODO: To s-parameters
+	# To s-parameters
+	if (from_, to) == ('h', 's'):
+		s = _np.ndarray((2, 2), dtype=h.dtype)
+		s[0][0] = (h[0][0] - z0[0][0]) * (1 + z0[1][1]*h[1][1]) - z0[1][1]*h[0][1]*h[1][0]
+		s[0][1] = 2 * h[0][1] * _np.sqrt(z0[0][0] * z0[1][1])
+		s[1][0] = -2 * h[1][0] * _np.sqrt(z0[0][0] * z0[1][1])
+		s[1][1] = (h[0][0] + z0[0][0]) * (1 - z0[1][1]*h[1][1]) + z0[1][1]*h[0][1]*h[1][0]
+		s /= (h[0][0] + z0[0][0]) * (1 + z0[1][1]*h[1][1]) - z0[1][1]*h[0][1]*h[1][0]
+		return s
+
 	# TODO: To t-parameters
 
 	#===================
