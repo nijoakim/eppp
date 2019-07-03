@@ -477,7 +477,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		h /= (1 - s[0][0]) * (1 + s[1][1]) + s[0][1] * s[1][0]
 		return h
 
-	# TODO: To g-parameters
+	# To g-parameters
 	if (from_, to) == ('s', 'g'):
 		g = _np.ndarray((2, 2), dtype=s.dtype)
 		g[0][0] = ((1 - s[0][0]) * (1 - s[1][1]) - s[0][1] * s[1][0]) / z0[0][0]
