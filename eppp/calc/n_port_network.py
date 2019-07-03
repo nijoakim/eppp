@@ -610,6 +610,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	#======================================================
 	raise NotImplementedError()
 
+# TODO: Allow characteristic impedance to be specified
 class NPortNetwork:
 	"""
 	Data structure for automatic conversions between n-port parameter types.
