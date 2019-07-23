@@ -113,7 +113,7 @@ def _doc_mobility(carrier_type_str):
 def electron_mobility(carrier_conc, temp=300, substance="Si"):
 	if substance == "Si":
 		if temp == 300:
-			return 13.180e6 / (1 + (carrier_conc / 1.0e23) ** 0.85) + 920e3
+			return 131.8e-3 / (1 + (carrier_conc / 1.0e23) ** 0.85) + 9.2e-3
 		raise NotImplementedError('No implementation for temperatures other than 300 K')
 	else:
 		raise NotImplementedError('Substance '+ substance +' has not been implemented.')
@@ -123,7 +123,7 @@ def electron_mobility(carrier_conc, temp=300, substance="Si"):
 def hole_mobility(carrier_conc, temp=300, substance="Si"):
 	if substance == "Si":
 		if temp == 300:
-			return 4.20e6 / (1 + (carrier_conc / 1.6e23) ** 0.7) + 500e3
+			return 42.0e-3 / (1 + (carrier_conc / 1.6e23) ** 0.7) + 5.0e-3
 		raise NotImplementedError('No implementation for temperatures other than 300 K')
 	else:
 		raise NotImplementedError('Substance '+ substance +' has not been implemented.')
