@@ -334,7 +334,7 @@ def gain_margin(freq, mag, phase, db_type='power'):
 		freq (numpy.ndarray):  Frequency data.
 		mag (numpy.ndarray):   Magnitude data.
 		phase (numpy.ndarray): Phase data.
-		db_type (string): (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
+		db_type (string):      (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
 
 	Returns:
 		float. Gain margin in decibel.
