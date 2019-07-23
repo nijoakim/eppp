@@ -60,9 +60,9 @@ def convert_from_db(x, db_type='power'):
 	factor = 10 if db_type == 'power' else 20 # Power decibels or not
 	return 10 ** (x/factor)                   # Return converted value
 
-#===========
-# Phenomena
-#===========
+#====================
+# Physical phenomena
+#====================
 
 def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	"""
@@ -84,6 +84,49 @@ def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	a            = resistivity * ang_freq * permittivity
 
 	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a*a) + a)
+
+#==============================
+# Empirical physical phenomena
+#==============================
+
+# TODO: More substances and temperatures
+
+# Docstring decorator for 'electron_mobility' and 'hole_mobility'.
+def _doc_mobility(carrier_type_str):
+	def decorator(func):
+		func.__doc__ = """
+			Calculates the %s mobility in a given substance and for a given temperature.
+
+			Args:
+				carrier_conc (number): Total carrier concentration (electrons and holes) in carriers/m³.
+				temp (number):         (Default: 300) Temperature in K.
+				substance (string):    (Default: "Si") Semiconductor substance.
+
+			Returns:
+				float. Mobility in m²/Vs.
+		""" % carrier_type_str
+		return func
+	return decorator
+
+# TODO: Add to 'utils.py'
+@_doc_mobility('electron')
+def electron_mobility(carrier_conc, temp=300, substance="Si"):
+	if substance == "Si":
+		if temp == 300:
+			return 13.180e6 / (1 + (carrier_conc / 1.0e23) ** 0.85) + 920e3
+		raise NotImplementedError('No implementation for temperatures other than 300 K')
+	else:
+		raise NotImplementedError('Substance '+ substance +' has not been implemented.')
+
+# TODO: Add to 'utils.py'
+@_doc_mobility('hole')
+def hole_mobility(carrier_conc, temp=300, substance="Si"):
+	if substance == "Si":
+		if temp == 300:
+			return 4.20e6 / (1 + (carrier_conc / 1.6e23) ** 0.7) + 500e3
+		raise NotImplementedError('No implementation for temperatures other than 300 K')
+	else:
+		raise NotImplementedError('Substance '+ substance +' has not been implemented.')
 
 #==========
 # Q Factor
