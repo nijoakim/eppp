@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2019 Joakim Nilsson
 #
-# This program is free software: you can redistribute it and/or modify
+# This file is part of EPPP.
+#
+# EPPP is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
