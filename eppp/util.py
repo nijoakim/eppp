@@ -1,6 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
-# Copyright 2014-2016 Joakim Nilsson
+# Copyright 2014-2019 Joakim Nilsson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
