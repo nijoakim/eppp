@@ -31,6 +31,8 @@ setup(
 	version      = '0.1.0',
 	author       = 'Joakim Nilsson',
 	author_email = 'nijoakim@gmail.com',
+	license      = 'GPLv3',
+	description  = 'Processing and analysing electronic simulation data.',
 	ext_modules  = [fast_misc_module],
 	packages     = [
 		'eppp',
