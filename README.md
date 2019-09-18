@@ -1,6 +1,6 @@
 # EPPP - Electronics Post-simulation Python Package (E triple-P)
 
-EPPP is a Python 3 package for processing and analysing electronic simulation data.
+EPPP is a Python package for processing and analysing electronic simulation data.
 
 It is very much work in progress and the documentation is currently lacking in many areas. Also, in this early stage of development, everything is subject to change. It is even somewhat likely that some of the current functionality will be stripped away or moved to another project.
 
