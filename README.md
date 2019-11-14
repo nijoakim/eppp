@@ -42,7 +42,9 @@ For doumentation on the different commands use
 
 ### Dependencies
 - python3
+- python3-distutils
 - python3-numpy
+- python3-scipy
 - python3-matplotlib (optional: required by `eppp.plot`)
 - libpython3-dev (optional: performance boost for some functions through C bindings)
 
