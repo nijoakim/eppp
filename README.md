@@ -46,7 +46,7 @@ For doumentation on the different commands use
 - python3-numpy
 - python3-scipy
 - python3-matplotlib (optional: required by `eppp.plot`)
-- libpython3-dev (optional: performance boost for some functions through C bindings)
+- python3-dev (optional: performance boost for some functions through C bindings)
 
 On Debian-based systems,
 
