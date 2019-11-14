@@ -1,5 +1,3 @@
-# TODO: Don't fail to build if 'libpython3-dev is missing'
-
 PREFIX=/usr/local/bin
 INSTALL_EPPPU=1
 INSTALL_EPPPU_COMPLETION=1
@@ -45,7 +43,7 @@ benchmark: build
 build/: $(SOURCE)
 	./setup.py build
 	touch build
-	cp build/*/eppp/*.so eppp/
+	cp build/*/eppp/*.so eppp/ 2>/dev/null || :
 
 LOGFILE=eppp/tests/log/$(shell hostname)_$(shell date +%Y-%m-%d-%H:%M).log
 log-benchmark:

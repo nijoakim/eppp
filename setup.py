@@ -18,6 +18,7 @@
 # along with EPPP.  If not, see <http://www.gnu.org/licenses/>.
 
 from distutils.core import setup, Extension
+import subprocess
 
 fast_misc_module = Extension(
 	'eppp/fast_misc',
@@ -26,6 +27,14 @@ fast_misc_module = Extension(
 	extra_link_args    = ['-O3'],
 )
 
+ext_modules  = [fast_misc_module]
+
+# No external modules if the development files are not installed
+try:
+	subprocess.run(['python3-config'], stdout=subprocess.PIPE)
+except FileNotFoundError:
+	ext_modules=[]
+
 setup(
 	name         = 'eppp',
 	version      = '0.1.0',
@@ -33,7 +42,7 @@ setup(
 	author_email = 'nijoakim@gmail.com',
 	license      = 'GPLv3',
 	description  = 'Processing and analysing electronic simulation data.',
-	ext_modules  = [fast_misc_module],
+	ext_modules  = ext_modules,
 	packages     = [
 		'eppp',
 		'eppp.calc',
