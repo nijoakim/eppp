@@ -27,7 +27,7 @@ import itertools as _it
 import operator  as _op
 import numpy     as _np
 from bisect import bisect
-from math   import inf
+from math   import inf, nan
 
 # Internal
 from ..debug import *
@@ -188,6 +188,33 @@ def capacitor_impedance(cap, freq):
 		return -1j * inf
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
+
+# TODO: Move to proper place
+# TODO: Add to utils
+def voltage_division(voltage, imp_main, *imps):
+	"""
+	Calculates the voltage divided over series connected impedances.
+
+	Args:
+		voltage (number):  Source voltage. [V]
+		imp_main (number): Main impedance. [Ω]
+		*imps (number):    Other series connected impedances. [Ω]
+
+	Returns:
+		The voltage arising over 'imp_main' when 'main_imp' is connected in series with 'imps' with 'voltage' volts over them. [V]
+	"""
+
+	# Total impedance
+	imp_total = imp_main + sum(imps)
+
+	try:
+		return voltage * imp_main / imp_total
+
+	except ZeroDivisionError:
+		if voltage * imp_main == 0:
+			return nan
+		else:
+			return _np.sign(voltage * imp_main) * inf
 
 # TODO: inductor_admittance, capacitor_admittance
 
