@@ -55,6 +55,7 @@ _CMDS = [
 	'impedance',
 	'network',
 	'parallel',
+	'voltage-division',
 ]
 
 # Description
@@ -294,3 +295,38 @@ if cmd == 'parallel':
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
+
+#============================
+# 'voltage-division' command
+#============================
+
+if cmd == 'voltage-division':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
+	)
+	parser.add_argument(
+		'voltage',
+		type = complex,
+		help = 'Source voltage.',
+	)
+	parser.add_argument(
+		'main_impedance',
+		type = complex,
+		help = 'Main impedance.',
+	)
+	parser.add_argument(
+		'impedances',
+		type  = complex,
+		nargs = '+',
+		help = 'List of other series-connected impedances.'
+	)
+	voltage  = parser.parse_args().voltage
+	main_imp = parser.parse_args().main_impedance
+	imps     = parser.parse_args().impedances
+
+	# Do the calculation
+	res_voltage = eppp.calc.voltage_division(voltage, main_imp, *imps)
+
+	# Print the result
+	eppp.print_sci(res_voltage, unit='V')
