@@ -148,6 +148,8 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 # 'expression' command
 #======================
 
+# TODO: Understand metric prefixes
+
 if cmd == 'expression':
 	# Parse
 	parser = ap.ArgumentParser(
