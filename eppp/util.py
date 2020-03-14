@@ -74,9 +74,9 @@ PREFIXES = {
 for i, arg in enumerate(sys.argv):
 	if i > 1: # Skip script name and 'command'
 		try:
-			num         = complex(arg[:-1])
-			multiplier  = PREFIXES[arg[-1]]
-			sys.argv[i] = str(num * multiplier)
+			num         = complex(arg[:-1])     # Parse into complex
+			multiplier  = PREFIXES[arg[-1]]     # Look up prefix
+			sys.argv[i] = str(num * multiplier) # Update argument
 		except (
 				ValueError, # Could not parse initial part into complex
 				KeyError,   # Not ending with valid metric prefix
