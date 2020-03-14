@@ -49,7 +49,7 @@ def _util_print():
 #========
 
 # Availible sub-commands
-_CMDS = [
+CMDS = [
 	'expression',
 	'impedance',
 	'network',
@@ -58,7 +58,7 @@ _CMDS = [
 ]
 
 # Description
-desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
+desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", CMDS))
 
 # Expand metric prefixes from 'argv'
 PREFIXES = {
@@ -126,7 +126,7 @@ eppp.set_default_str_sci_args(
 cmd_in = global_args.command
 pred = re.compile(cmd_in +'.*')
 matches = []
-for matchcmd in _CMDS:
+for matchcmd in CMDS:
 	if pred.match(matchcmd) is not None:
 		matches.append(matchcmd)
 		cmd = matchcmd
