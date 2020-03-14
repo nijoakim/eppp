@@ -72,16 +72,32 @@ PREFIXES = {
 	'Y': 1e24,
 }
 for i, arg in enumerate(sys.argv):
-	if i > 1: # Skip script name and 'command'
-		try:
-			num         = complex(arg[:-1])     # Parse into complex
-			multiplier  = PREFIXES[arg[-1]]     # Look up prefix
-			sys.argv[i] = str(num * multiplier) # Update argument
-		except (
-				ValueError, # Could not parse initial part into complex
-				KeyError,   # Not ending with valid metric prefix
-			):
-			pass
+	# Skip script and command names
+	if i > 1:
+		# String to match on
+		match_str = ''
+		match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
+		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
+
+		# Substitute numbers with metric prefixes with pure floats
+		# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
+		while re.search(match_str, arg):
+			match = re.search(match_str, arg)
+			try:
+				num        = float(arg[match.start() : match.end()-1]) # Parse into float
+				multiplier = PREFIXES[arg[match.end()-1]]              # Look up prefix
+
+				# Expand argument
+				arg = \
+					arg[:match.start()] + \
+					str(num*multiplier) + \
+					arg[match.end():]
+			except (
+					ValueError, # Could not parse initial part into float
+					KeyError,   # Does not end with valid metric prefix
+				):
+				pass
+		sys.argv[i] = arg
 
 # Parse global arguments
 parser = ap.ArgumentParser(description=desc_str)
@@ -104,8 +120,6 @@ parser.add_argument(
 )
 parser.add_argument('command-arguments', nargs=ap.REMAINDER)
 global_args = parser.parse_args()
-
-
 
 # Set default significant figures
 eppp.set_default_str_sci_args(
@@ -138,8 +152,6 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 #======================
 # 'expression' command
 #======================
-
-# TODO: Understand metric prefixes
 
 if cmd == 'expression':
 	# Parse
