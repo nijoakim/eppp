@@ -19,7 +19,6 @@
 
 # TODO: Possibility to read from stdin. (Switch for this?)
 # TODO: Repeated arguments for some commands should repeat the operation.
-# TODO: Parser should understand prefixes?
 # TODO: Possibility to omit unit.
 
 #=========
@@ -36,9 +35,9 @@ import operator as op
 import eppp
 import eppp.calc
 
-#=========
-# Printer
-#=========
+#=================
+# Metric prefixes
+#=================
 
 _print_prefix = True
 
@@ -59,7 +58,39 @@ _CMDS = [
 ]
 
 # Description
-desc_str = 'Executes a command based on the functionality provided by the eppp library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
+desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", _CMDS))
+
+# Expand metric prefixes from 'argv'
+PREFIXES = {
+	'y': 1e-24,
+	'z': 1e-21,
+	'a': 1e-18,
+	'f': 1e-15,
+	'p': 1e-12,
+	'n': 1e-9,
+	'µ': 1e-6,
+	'u': 1e-6,
+	'm': 1e-3,
+	'k': 1e3,
+	'M': 1e6,
+	'G': 1e9,
+	'T': 1e12,
+	'P': 1e15,
+	'E': 1e18,
+	'Z': 1e21,
+	'Y': 1e24,
+}
+for i, arg in enumerate(sys.argv):
+	if i > 1: # Skip script name and 'command'
+		try:
+			num         = complex(arg[:-1])
+			multiplier  = PREFIXES[arg[-1]]
+			sys.argv[i] = str(num * multiplier)
+		except (
+				ValueError, # Could not parse initial part into complex
+				KeyError,   # Not ending with valid metric prefix
+			):
+			pass
 
 # Parse global arguments
 parser = ap.ArgumentParser(description=desc_str)
@@ -82,6 +113,8 @@ parser.add_argument(
 )
 parser.add_argument('command-arguments', nargs=ap.REMAINDER)
 global_args = parser.parse_args()
+
+
 
 # Set default significant figures
 eppp.set_default_str_sci_args(
