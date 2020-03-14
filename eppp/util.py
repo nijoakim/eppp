@@ -83,20 +83,14 @@ for i, arg in enumerate(sys.argv):
 		# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
 		while re.search(match_str, arg):
 			match = re.search(match_str, arg)
-			try:
-				num        = float(arg[match.start() : match.end()-1]) # Parse into float
-				multiplier = PREFIXES[arg[match.end()-1]]              # Look up prefix
+			num        = float(arg[match.start() : match.end()-1]) # Parse into float
+			multiplier = PREFIXES[arg[match.end()-1]]              # Look up prefix
 
-				# Expand argument
-				arg = \
-					arg[:match.start()] + \
-					str(num*multiplier) + \
-					arg[match.end():]
-			except (
-					ValueError, # Could not parse initial part into float
-					KeyError,   # Does not end with valid metric prefix
-				):
-				pass
+			# Expand argument
+			arg = \
+				arg[:match.start()] + \
+				str(num*multiplier) + \
+				arg[match.end():]
 		sys.argv[i] = arg
 
 # Parse global arguments
