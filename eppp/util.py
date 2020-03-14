@@ -35,15 +35,6 @@ import operator as op
 import eppp
 import eppp.calc
 
-#=================
-# Metric prefixes
-#=================
-
-_print_prefix = True
-
-def _util_print():
-	pass
-
 #========
 # Parser
 #========
