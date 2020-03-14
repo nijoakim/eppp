@@ -288,7 +288,7 @@ def electronic_eval(expr):
 	try:
 		return eval_ast(_ast.parse(expr, mode='eval').body)
 	except:
-		raise Exception('Invalid expression.') # TODO: Proper expression type
+		raise Exception('Invalid expression.') # TODO: Proper exception type
 
 # Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
 @_func_str('||')
