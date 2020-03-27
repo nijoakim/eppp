@@ -544,20 +544,27 @@ def _lumped_network_helper(
 	best_val   = None
 	best_expr  = None
 
-	# TODO: Optimize by catching IndexError?
 	# Find closest pre-calculated value and corresponding expression
 	index = bisect(pre_calc_keys, target)
-	if index < len(pre_calc):
+	try:
+		# Update to pre-calculated data
 		best_val   = pre_calc_keys[index]
 		best_expr  = pre_calc[best_val]
 		best_error = abs(target - best_val)
-	if index > 0:
-		val  = pre_calc_keys[index - 1]
+	except IndexError:
+		pass
+	try:
+		# Get pre-calculated data
+		val  = pre_calc_keys[index-1]
 		expr = pre_calc[val]
+
+		# Update if better
 		if abs(target - val) < best_error:
 			best_val   = val
 			best_expr  = expr
 			best_error = abs(target - best_val)
+	except IndexError:
+		pass
 
 	# Return if everything is already calculated or if good enough
 	if num_comps <= pre_calc_depth or best_error <= max_error:
