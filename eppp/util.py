@@ -30,6 +30,7 @@ import argparse as ap
 import re
 import sys
 import operator as op
+from math import inf
 
 # Internal
 import eppp
@@ -216,7 +217,7 @@ if cmd == 'network':
 	)
 	parser.add_argument(
 		'target',
-		type = complex,
+		type = float, # TODO: Change to complex when supported
 		help = 'Target impedance.',
 	)
 	parser.add_argument(
@@ -232,7 +233,7 @@ if cmd == 'network':
 		'--components',
 		type    = float,
 		nargs   = '?',
-		default = None,
+		default = inf,
 		help    = 'Maximum number of components for the resulting network. (default: infinity)',
 	)
 	parser.add_argument(
