@@ -1,4 +1,4 @@
-# Copyright 2015-2019 Joakim Nilsson
+# Copyright 2015-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -58,11 +58,13 @@ def _print_clock():
 
 # Lumped network
 
+_target = 88123.456789
+
 # 3 components
 _print_test('lumped_network, 3 components')
 _reset_clock()
 eppp.calc.lumped_network(
-	88120,
+	_target,
 	max_num_comps = 3,
 	max_rel_error = 0,
 )
@@ -72,7 +74,7 @@ _print_clock()
 _print_test('lumped_network, 4 components')
 _reset_clock()
 eppp.calc.lumped_network(
-	88120,
+	_target,
 	max_num_comps = 4,
 	max_rel_error = 0,
 )
@@ -82,8 +84,18 @@ _print_clock()
 _print_test('lumped_network, 5 components')
 _reset_clock()
 eppp.calc.lumped_network(
-	88120,
+	_target,
 	max_num_comps = 5,
+	max_rel_error = 0,
+)
+_print_clock()
+
+# 6 components
+_print_test('lumped_network, 6 components')
+_reset_clock()
+eppp.calc.lumped_network(
+	_target,
+	max_num_comps = 6,
 	max_rel_error = 0,
 )
 _print_clock()
