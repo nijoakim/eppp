@@ -26,7 +26,7 @@ import functools as _ft
 import itertools as _it
 import operator  as _op
 import numpy     as _np
-from bisect import bisect
+from bisect import bisect, insort
 from math   import inf, nan
 
 # Internal
@@ -482,43 +482,29 @@ def lumped_network(
 		max_rel_error  = None, # TODO: Use
 		max_abs_error  = None,
 		avail_vals     = get_avail_vals('E6'),
-		pre_calc_depth = 0, # TODO: Fails unit tests if > 0
+		avail_ops      = None, # TODO: Not used; Remove
 	):
 	# TODO: Does not work with complex values
 
 	max_abs_error = 0.001 # TODO: Do it properly
 
-	# Pre-calculated equivalent impedances from polish expressions
-	pre_calc = {}
+	# Dynamic programming dictionary
+	results = {}
 
-	# Base case for pre-calculated values
+	# Results for single component
 	for val in avail_vals:
-		pre_calc[val] = [val]
-
-	# Pre-calculate values
-	for i in range(1, min(pre_calc_depth, max_num_comps)):
-		next_pre_calc = {}
-		for val in avail_vals:
-			for pre_calc_val in pre_calc:
-				expr                        = pre_calc[pre_calc_val]
-				series_val                  = val + pre_calc_val
-				next_pre_calc[series_val]   = [_add, val, *expr]
-				parallel_val                = (val * pre_calc_val) / (val + pre_calc_val)
-				next_pre_calc[parallel_val] = [parallel_impedance, val, *expr]
-		next_pre_calc.update(pre_calc)
-		pre_calc = next_pre_calc
-	pre_calc_keys = sorted(pre_calc.keys())
+		results[val] = [val]
+	results_keys = sorted(results.keys())
 
 	# Loop up to maximum number of components
 	for i in _it.count() if max_num_comps == inf else range(max_num_comps):
 		# Calculate impedance for specific number of components
 		res = _lumped_network_helper(
 			avail_vals,
-			i,
+			i+1,
 			target,
-			pre_calc,
-			pre_calc_keys,
-			pre_calc_depth,
+			results,
+			results_keys,
 			max_abs_error,
 		)
 
@@ -533,9 +519,8 @@ def _lumped_network_helper(
 		avail_vals,
 		num_comps,
 		target,
-		pre_calc,
-		pre_calc_keys,
-		pre_calc_depth,
+		results,
+		results_keys,
 		max_error
 	):
 
@@ -545,18 +530,18 @@ def _lumped_network_helper(
 	best_expr  = None
 
 	# Find closest pre-calculated value and corresponding expression
-	index = bisect(pre_calc_keys, target)
+	index = bisect(results_keys, target)
 	try:
 		# Update to pre-calculated data
-		best_val   = pre_calc_keys[index]
-		best_expr  = pre_calc[best_val]
+		best_val   = results_keys[index]
+		best_expr  = results[best_val]
 		best_error = abs(target - best_val)
 	except IndexError:
 		pass
 	try:
 		# Get pre-calculated data
-		val  = pre_calc_keys[index-1]
-		expr = pre_calc[val]
+		val  = results_keys[index-1]
+		expr = results[val]
 
 		# Update if better
 		if abs(target - val) < best_error:
@@ -566,18 +551,14 @@ def _lumped_network_helper(
 	except IndexError:
 		pass
 
-	# Return if everything is already calculated or if good enough
-	if num_comps <= pre_calc_depth or best_error <= max_error:
-		return (best_expr, best_val)
+	# Return if only one component or if good enough
+	if num_comps == 1 or best_error <= max_error:
+		return best_expr, best_val
 
 	# Include one additional impedance
 	for val in avail_vals:
-		# Return immediately if exact match
-		if val == target:
-			return [val], val
-
 		# Recursively add series impedance if undershooting target
-		elif val < target:
+		if val < target:
 			# Needed series impedance to hit target
 			needed = target - val
 
@@ -586,9 +567,8 @@ def _lumped_network_helper(
 				avail_vals,
 				num_comps-1,
 				needed,
-				pre_calc,
-				pre_calc_keys,
-				pre_calc_depth,
+				results,
+				results_keys,
 				max_error,
 			)
 
@@ -599,7 +579,7 @@ def _lumped_network_helper(
 				best_val   = recursive_val + val
 				best_expr  = [_add, val, *expr]
 				if best_error <= max_error:
-					return best_expr, best_val
+					break
 
 		# Recursively add parallel impedance if overshooting target
 		else:
@@ -610,9 +590,8 @@ def _lumped_network_helper(
 			expr, recursive_val = _lumped_network_helper(
 				avail_vals,
 				num_comps-1,
-				needed, pre_calc,
-				pre_calc_keys,
-				pre_calc_depth,
+				needed, results,
+				results_keys,
 				max_error,
 			)
 
@@ -623,7 +602,11 @@ def _lumped_network_helper(
 				best_val   = (val * recursive_val) / (val + recursive_val)
 				best_expr  = [parallel_impedance, val, *expr]
 				if best_error <= max_error:
-					return best_expr, best_val
+					break
+
+	# Store result and return
+	results[best_val] = best_expr
+	insort(results_keys, best_val)
 	return best_expr, best_val
 
 # def lumped_network(
