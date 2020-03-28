@@ -231,7 +231,7 @@ if cmd == 'network':
 	parser.add_argument(
 		'-c',
 		'--components',
-		type    = float,
+		type    = int,
 		nargs   = '?',
 		default = inf,
 		help    = 'Maximum number of components for the resulting network. (default: infinity)',
