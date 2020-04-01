@@ -66,7 +66,7 @@ _reset_clock()
 eppp.calc.lumped_network(
 	_target,
 	max_num_comps = 3,
-	max_rel_error = 0,
+	tolerance = 0,
 )
 _print_clock()
 
@@ -76,7 +76,7 @@ _reset_clock()
 eppp.calc.lumped_network(
 	_target,
 	max_num_comps = 4,
-	max_rel_error = 0,
+	tolerance = 0,
 )
 _print_clock()
 
@@ -86,7 +86,7 @@ _reset_clock()
 eppp.calc.lumped_network(
 	_target,
 	max_num_comps = 5,
-	max_rel_error = 0,
+	tolerance = 0,
 )
 _print_clock()
 
@@ -96,6 +96,6 @@ _reset_clock()
 eppp.calc.lumped_network(
 	_target,
 	max_num_comps = 6,
-	max_rel_error = 0,
+	tolerance = 0,
 )
 _print_clock()

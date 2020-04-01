@@ -1,4 +1,4 @@
-# Copyright 2015-2019 Joakim Nilsson
+# Copyright 2015-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -42,6 +42,18 @@ class TestStringMethods(ut.TestCase):
 	# TODO: Test electronic_eval
 
 	def test_lumped_network(self):
+		# Lower than available values
+		self.assertEqual(
+			str(eppp.calc.lumped_network(5)),
+			'(10.00 || 10.00)'
+		)
+
+		# Higher than available values
+		self.assertEqual(
+			str(eppp.calc.lumped_network(20e6)),
+			'(10.00 M + 10.00 M)'
+		)
+
 		# 1 component
 		self.assertEqual(
 			str(eppp.calc.lumped_network(88120, max_num_comps=1)),
@@ -51,7 +63,7 @@ class TestStringMethods(ut.TestCase):
 		# 2 components
 		self.assertEqual(
 			str(eppp.calc.lumped_network(88120, max_num_comps=2)),
-			'(100.0 k || 680.0 k)'
+			'(680.0 k || 100.0 k)'
 		)
 
 		# 3 components
@@ -62,7 +74,7 @@ class TestStringMethods(ut.TestCase):
 
 		# 3 components, solved by 2
 		self.assertEqual(
-			str(eppp.calc.lumped_network(16800, max_num_comps=3, max_rel_error=0)),
+			str(eppp.calc.lumped_network(16800, max_num_comps=3, tolerance=0)),
 			'(6.800 k + 10.00 k)'
 		)
 

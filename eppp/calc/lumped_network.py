@@ -478,23 +478,21 @@ except ImportError:
 
 def lumped_network(
 		target,
-		max_num_comps  = inf,
-		max_rel_error  = None, # TODO: Use
-		max_abs_error  = None,
-		avail_vals     = get_avail_vals('E6'),
-		avail_ops      = None, # TODO: Not used; Remove
+		max_num_comps = inf,
+		tolerance     = 0.001,
+		avail_vals    = get_avail_vals('E6'),
+		avail_ops     = None, # TODO: Not used; Remove or rework
 	):
 	# TODO: Does not work with complex values
-
-	max_abs_error = 0.001 # TODO: Do it properly
 
 	# Dynamic programming dictionary
 	results = {}
 
+	# TODO: Dynamically add results for more components
 	# Results for single component
 	for val in avail_vals:
 		results[val] = [val]
-	results_keys = sorted(results.keys())
+	results_keyss = [sorted(results.keys())]
 
 	# Loop up to maximum number of components
 	for i in _it.count() if max_num_comps == inf else range(max_num_comps):
@@ -502,14 +500,15 @@ def lumped_network(
 		res = _lumped_network_helper(
 			avail_vals,
 			i+1,
+			i,
 			target,
 			results,
-			results_keys,
-			max_abs_error,
+			results_keyss,
+			tolerance,
 		)
 
 		# Break if good enough
-		if abs(res[-1] - target) < max_abs_error:
+		if abs(target - res[-1]) <= tolerance * target:
 			break
 
 	# Convert to expression tree and return
@@ -518,10 +517,11 @@ def lumped_network(
 def _lumped_network_helper(
 		avail_vals,
 		num_comps,
+		num_comps_searched,
 		target,
 		results,
-		results_keys,
-		max_error
+		results_keyss,
+		tolerance,
 	):
 
 	# Intial values
@@ -530,32 +530,38 @@ def _lumped_network_helper(
 	best_expr  = None
 
 	# Find closest pre-calculated value and corresponding expression
-	index = bisect(results_keys, target)
-	try:
-		# Update to pre-calculated data
-		best_val   = results_keys[index]
-		best_expr  = results[best_val]
-		best_error = abs(target - best_val)
-	except IndexError:
-		pass
-	try:
-		# Get pre-calculated data
-		val  = results_keys[index-1]
-		expr = results[val]
+	for results_keys in results_keyss[:num_comps]:
+		index = bisect(results_keys, target)
+		try:
+			# Get pre-calculated results
+			val  = results_keys[index]
+			expr = results[val]
 
-		# Update if better
-		if abs(target - val) < best_error:
-			best_val   = val
-			best_expr  = expr
-			best_error = abs(target - best_val)
-	except IndexError:
-		pass
+			# Update if better
+			if abs(target - val) < best_error:
+				best_val   = val
+				best_expr  = results[best_val]
+				best_error = abs(target - best_val)
+		except IndexError:
+			pass
+		try:
+			# Get pre-calculated results
+			val  = results_keys[index-1]
+			expr = results[val]
 
-	# Return if only one component or if good enough
-	if num_comps == 1 or best_error <= max_error:
-		return best_expr, best_val
+			# Update if better
+			if abs(target - val) < best_error:
+				best_val   = val
+				best_expr  = expr
+				best_error = abs(target - best_val)
+		except IndexError:
+			pass
 
-	# Include one additional impedance
+		# Return if only one component or if good enough
+		if num_comps == 1 or best_error <= tolerance * target: # TODO: num_comps <= complete_results_depth?
+			return best_expr, best_val
+
+	# Include an additional impedance
 	for val in avail_vals:
 		# Recursively add series impedance if undershooting target
 		if val < target:
@@ -566,10 +572,11 @@ def _lumped_network_helper(
 			expr, recursive_val = _lumped_network_helper(
 				avail_vals,
 				num_comps-1,
+				num_comps_searched,
 				needed,
 				results,
-				results_keys,
-				max_error,
+				results_keyss,
+				tolerance,
 			)
 
 			# Update if better
@@ -578,8 +585,8 @@ def _lumped_network_helper(
 				best_error = error
 				best_val   = recursive_val + val
 				best_expr  = [_add, val, *expr]
-				if best_error <= max_error:
-					break
+				# if best_error <= tolerance * target:
+				# 	break
 
 		# Recursively add parallel impedance if overshooting target
 		else:
@@ -590,9 +597,11 @@ def _lumped_network_helper(
 			expr, recursive_val = _lumped_network_helper(
 				avail_vals,
 				num_comps-1,
-				needed, results,
-				results_keys,
-				max_error,
+				num_comps_searched,
+				needed,
+				results,
+				results_keyss,
+				tolerance,
 			)
 
 			# Update if better
@@ -601,12 +610,9 @@ def _lumped_network_helper(
 				best_error = error
 				best_val   = (val * recursive_val) / (val + recursive_val)
 				best_expr  = [parallel_impedance, val, *expr]
-				if best_error <= max_error:
-					break
+				# if best_error <= tolerance * target:
+				# 	break
 
-	# Store result and return
-	results[best_val] = best_expr
-	insort(results_keys, best_val)
 	return best_expr, best_val
 
 # def lumped_network(
@@ -823,5 +829,5 @@ def _lumped_network_helper(
 # 		_log(3, 'Best network so far: '+ str(ExprTree(best_expr, unit = unit)))
 
 # 		# Return if sufficiently good or maximum number of components have been used
-# 		if abs(best_signed_error) <= max_error or num_comps == max_num_comps:
+# 		if abs(best_signed_error) <= tolerance or num_comps == max_num_comps:
 # 			return ExprTree(best_expr, unit = unit)
