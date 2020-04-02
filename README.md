@@ -31,9 +31,9 @@ Everything provided by the sub-modules are also imported into the root module.
 `epppu` currently provides the following commands:
 
 - `epppu expression`
-- `epppu impedance`
 - `epppu make-impedance`
 - `epppu parallel`
+- `epppu reactance`
 
 For doumentation on the different commands use
 `epppu <command> -h`.

@@ -43,7 +43,7 @@ import eppp.calc
 # Availible sub-commands
 CMDS = [
 	'expression',
-	'impedance',
+	'reactance',
 	'make-impedance',
 	'parallel',
 	'voltage-division',
@@ -168,11 +168,11 @@ if cmd == 'expression':
 	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
 
 #=====================
-# 'impedance' command
+# 'reactance' command
 #=====================
 # TODO: Comment
 
-if cmd == 'impedance':
+if cmd == 'reactance':
 	# Parse
 	parser = ap.ArgumentParser(
 		description = '', # TODO
@@ -202,7 +202,7 @@ if cmd == 'impedance':
 		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
 
 	# Print the result
-	eppp.print_sci(res, unit='Ω')
+	eppp.print_sci(res.imag, unit='Ω')
 
 #==========================
 # 'make-impedance' command
