@@ -1,4 +1,4 @@
-# Copyright 2017-2019 Joakim Nilsson
+# Copyright 2017-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -23,7 +23,7 @@
 import numpy as _np
 
 # Internal
-from .lumped_network import capacitor_impedance, inductor_impedance
+from .circuit import capacitor_impedance, inductor_impedance
 
 #============
 # Shorthands

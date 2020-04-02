@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Joakim Nilsson
+# Copyright 2014-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -15,6 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with EPPP.  If not, see <http://www.gnu.org/licenses/>.
 
-from .lumped_network import *
+from .circuit        import *
 from .misc           import *
 from .n_port_network import *
