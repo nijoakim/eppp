@@ -223,7 +223,7 @@ def voltage_division(voltage, imp_main, *imps):
 		*imps (number):    Other series connected impedances. [Ω]
 
 	Returns:
-		The voltage arising over 'imp_main' when 'main_imp' is connected in series with 'imps' with 'voltage' volts over them. [V]
+		The voltage arising over 'imp_main' when 'imp_main' is connected in series with 'imps' with 'voltage' volts over them. [V]
 	"""
 
 	# Total impedance
@@ -237,6 +237,37 @@ def voltage_division(voltage, imp_main, *imps):
 			return nan
 		else:
 			return _np.sign(voltage * imp_main) * inf
+
+def current_division(current, imp_main, *imps):
+	"""
+	Calculates the current divided over parallel connected impedances.
+
+	Args:
+		voltage (number):  Source current. [A]
+		imp_main (number): Main impedance. [Ω]
+		*imps (number):    Other parallel connected impedances. [A]
+
+	Returns:
+		The current passing through 'imp_main' when 'imp_main' is connected in parallel with 'imps' with 'current' amperes entering the network. [A]
+	"""
+
+	# Equivalent impedance of non-main impedances
+	imp_others = parallel_impedance(*imps)
+
+	if abs(imp_others) == inf:
+		if abs(imp_main) == inf:
+			return nan
+		else:
+			return _np.sign(imp_main) * current
+
+	try:
+		return current * imp_others / (imp_main + imp_others)
+
+	except ZeroDivisionError:
+		if current * imp_others == 0:
+			return nan
+		else:
+			return _np.sign(current * imp_others) * inf
 
 @_func_str('||')
 def parallel_impedance(*vals):
