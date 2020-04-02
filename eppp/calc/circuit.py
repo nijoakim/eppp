@@ -153,33 +153,31 @@ class ExprTree:
 		else:
 			return _ft.reduce(self.operator, map(lambda x: x.evaluate(), self.operands))
 
-# Docstring decorator for 'inductor_impedance' and 'capacitor_impedance'.
-def _doc_reactive_comp_imp(quantity):
-	def decorator(func):
-		func.__doc__ = """
-			Calculates the impedance of an inductor for a given frequency.
-
-			Args:
-				%s (number): %s
-				freq (number):       %sFrequency
-
-			Returns:
-				The impedance for an inductor with the specified %s at the specified frequency.
-		""" % (
-			quantity,
-			quantity[0].upper() + quantity[1:],        # First letter upper-case
-			' ' * (len(quantity) - len('inductance')), # For alignment
-			quantity,
-		)
-		return func
-	return decorator
-
-@ _doc_reactive_comp_imp('inductance')
 def inductor_impedance(ind, freq):
+	"""
+	Calculates the impedance of an inductor for a given frequency.
+
+	Args:
+		inductance (number): Inductance [H]
+		freq (number):       Frequency  [Hz]
+
+	Returns:
+		The impedance for an inductor with the specified capacitance at the specified frequency.
+	"""
 	return ind * 1j * 2 * _np.pi * freq
 
-@ _doc_reactive_comp_imp('capacitance')
 def capacitor_impedance(cap, freq):
+	"""
+	Calculates the impedance of capacitor for a given frequency.
+
+	Args:
+		capacitance (number): Capacitance [F]
+		freq (number):        Frequency   [Hz]
+
+	Returns:
+		The impedance for a capacitor with the specified capacitance at the specified frequency.
+	"""
+
 	if cap == 0 or freq == 0:
 		return -1j * inf
 	else:
