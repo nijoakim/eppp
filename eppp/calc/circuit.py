@@ -39,9 +39,9 @@ from ..log   import _log
 #=======
 
 # String representation for functions decorator
-def _func_str(str_):
+def func_sym_rep(sym_rep):
 	def decorator(func):
-		func.str = str_
+		func.sym_rep = sym_rep
 		return func
 	return decorator
 
@@ -94,11 +94,8 @@ class ExprTree:
 		if self._is_leaf():
 			return _str_sci(self.operands[0], unit = self._unit)
 		else:
-			# Use symbols for some functions
-			if self.operator is _op.add:
-				op_sym = '+'
-			else:
-				op_sym = self.operator.str if hasattr(self.operator, 'str') else str(self.operator)
+			# Use symbol representation if available
+			op_sym = self.operator.sym_rep if hasattr(self.operator, 'sym_rep') else str(self.operator)
 
 			# Form expression
 			ret = ''
@@ -269,7 +266,7 @@ def current_division(current, imp_main, *imps):
 		else:
 			return _np.sign(current * imp_others) * inf
 
-@_func_str('||')
+@func_sym_rep('||')
 def parallel_impedance(*vals):
 	"""
 	Calculates the equivalent impedance of a set of parallel connected components.
@@ -298,6 +295,16 @@ def parallel_impedance(*vals):
 	# Return infinity if total admittance is 0
 	except ZeroDivisionError:
 		return inf
+
+# Same as 'parallel_impedance', but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
+@func_sym_rep('||')
+def _parallel_impedance_non_strict(z1, z2):
+	return z1*z2 / (z1 + z2)
+
+# Sums two numbers (for series impedance calculations)
+@func_sym_rep('+')
+def _add(x1, x2):
+	return x1 + x2
 
 def series_adm(*vals):
 	"""
@@ -340,16 +347,6 @@ def electronic_eval(expr):
 		return eval_ast(_ast.parse(expr, mode='eval').body)
 	except:
 		raise Exception('Invalid expression.') # TODO: Proper exception type
-
-# Same as the above function, but only takes 2 arguments and assumes non-zero, finite impedances and is thus faster
-@_func_str('||')
-def _parallel_impedance_non_strict(z1, z2):
-	return z1*z2 / (z1 + z2)
-
-# Sums two numbers (for series impedance calculations)
-@_func_str('+')
-def _add(x1, x2):
-	return x1 + x2
 
 def get_avail_vals(
 		series    = 'E6',
@@ -485,7 +482,7 @@ def _polish_eval(expr):
 	stack.reverse()
 	return stack
 
-# Same as the above function but with these differences:
+# Same as '_polish_eval' but with these differences:
 # - Assumes complete evaluation to exactly one element
 # - Does not preserve 'expr'
 # - Assumes the only functions are '_parallel_impedance_non_strict' and '_add'
@@ -624,7 +621,7 @@ def _make_impedance_helper(
 			needed = target - val
 
 			# Recursive call
-			expr, recursive_val = _make_impedance_helper(
+			recursive_expr, recursive_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
@@ -633,7 +630,7 @@ def _make_impedance_helper(
 				results,
 				results_keyss,
 			)
-			expr  = [_add, val, *expr]
+			expr  = [_add, val, *recursive_expr]
 
 			# Update if better
 			error = abs(needed - recursive_val)
@@ -651,7 +648,7 @@ def _make_impedance_helper(
 			needed = (val * target) / (val - target)
 
 			# Recursive call
-			expr, recursive_val = _make_impedance_helper(
+			recursive_expr, recursive_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
@@ -660,7 +657,7 @@ def _make_impedance_helper(
 				results,
 				results_keyss,
 			)
-			expr = [parallel_impedance, val, *expr]
+			expr = [parallel_impedance, val, *recursive_expr]
 
 			# Update if better
 			error = abs(needed - recursive_val)
