@@ -499,12 +499,12 @@ def lumped_network(
 		# Calculate impedance for specific number of components
 		res = _lumped_network_helper(
 			avail_vals,
+			target,
 			i+1,
 			i,
-			target,
+			tolerance,
 			results,
 			results_keyss,
-			tolerance,
 		)
 
 		# Break if good enough
@@ -516,12 +516,12 @@ def lumped_network(
 
 def _lumped_network_helper(
 		avail_vals,
+		target,
 		num_comps,
 		num_comps_searched,
-		target,
+		tolerance,
 		results,
 		results_keyss,
-		tolerance,
 	):
 
 	# Intial values
@@ -571,20 +571,22 @@ def _lumped_network_helper(
 			# Recursive call
 			expr, recursive_val = _lumped_network_helper(
 				avail_vals,
+				needed,
 				num_comps-1,
 				num_comps_searched,
-				needed,
+				tolerance,
 				results,
 				results_keyss,
-				tolerance,
 			)
+			expr  = [_add, val, *expr]
 
 			# Update if better
 			error = abs(needed - recursive_val)
 			if error < best_error:
 				best_error = error
 				best_val   = recursive_val + val
-				best_expr  = [_add, val, *expr]
+				best_expr  = expr
+				# TODO: Can the below be used? (it was before)
 				# if best_error <= tolerance * target:
 				# 	break
 
@@ -596,20 +598,22 @@ def _lumped_network_helper(
 			# Recursive call
 			expr, recursive_val = _lumped_network_helper(
 				avail_vals,
+				needed,
 				num_comps-1,
 				num_comps_searched,
-				needed,
+				tolerance,
 				results,
 				results_keyss,
-				tolerance,
 			)
+			expr = [parallel_impedance, val, *expr]
 
 			# Update if better
 			error = abs(needed - recursive_val)
 			if error < best_error:
 				best_error = error
 				best_val   = (val * recursive_val) / (val + recursive_val)
-				best_expr  = [parallel_impedance, val, *expr]
+				best_expr  = expr
+				# TODO: Can the below be used? (it was before)
 				# if best_error <= tolerance * target:
 				# 	break
 
