@@ -71,13 +71,13 @@ def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	Calculates the skin depth.
 
 	Args:
-		resistivity (number):      Resistivity of the conductor in Ohm/m.
-		freq (number):             Frequency in Hz.
+		resistivity (number):      Resistivity of the conductor [Ω/m].
+		freq (number):             Frequency [Hz].
 		rel_permittivity (number): Relative permittivity of the conductor.
 		rel_permeability (number): Relative permeability of the conductor.
 
 	Returns:
-		float. Skin depth.
+		float. Skin depth. [m]
 	"""
 
 	ang_freq     = 2 * _sp_c.pi * freq

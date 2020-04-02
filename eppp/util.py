@@ -49,6 +49,7 @@ CMDS = [
 	'susceptance',
 	'voltage-division',
 	'current-division',
+	'skin-depth',
 ]
 
 # Description
@@ -383,7 +384,7 @@ if cmd == 'voltage-division':
 		help = 'Source voltage.',
 	)
 	parser.add_argument(
-		'main_impedance',
+		'main-impedance',
 		type = complex,
 		help = 'Main impedance.',
 	)
@@ -418,7 +419,7 @@ if cmd == 'current-division':
 		help = 'Source current.',
 	)
 	parser.add_argument(
-		'main_impedance',
+		'main-impedance',
 		type = complex,
 		help = 'Main impedance.',
 	)
@@ -437,3 +438,51 @@ if cmd == 'current-division':
 
 	# Print the result
 	eppp.print_sci(res_current, unit='A')
+
+#======================
+# 'skin-depth' command
+#======================
+
+if cmd == 'skin-depth':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = 'Calculates the skin depth.'
+	)
+	parser.add_argument(
+		'resistivity',
+		type = float,
+		help = 'Resistivity of the conductor. [Ω/m]',
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency [Hz].',
+	)
+	parser.add_argument(
+		'-rpi',
+		'--relative-permittivity',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permittivity of the conductor.'
+	)
+	parser.add_argument(
+		'-rpe',
+		'--relative-permeability',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permeability of the conductor.'
+	)
+	args = parser.parse_args()
+
+	# Do the calculation
+	depth = eppp.calc.skin_depth(
+		args.resistivity,
+		args.frequency,
+		rel_permittivity = args.relative_permittivity,
+		rel_permeability = args.relative_permeability,
+	)
+
+	# Print the result
+	eppp.print_sci(depth, unit='m')
