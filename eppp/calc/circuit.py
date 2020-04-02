@@ -185,8 +185,6 @@ def capacitor_impedance(cap, freq):
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
-# TODO: Move to proper place
-# TODO: Add to utils
 def voltage_division(voltage, imp_main, *imps):
 	"""
 	Calculates the voltage divided over series connected impedances.
