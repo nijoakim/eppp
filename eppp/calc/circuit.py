@@ -162,7 +162,7 @@ def inductor_impedance(ind, freq):
 		freq (number):       Frequency  [Hz]
 
 	Returns:
-		The impedance for an inductor with the specified capacitance at the specified frequency.
+		The impedance for an inductor with the specified inductance at the specified frequency.
 	"""
 	return ind * 1j * 2 * _np.pi * freq
 
@@ -183,7 +183,35 @@ def capacitor_impedance(cap, freq):
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
-# TODO: inductor_admittance, capacitor_admittance
+def inductor_admittance(ind, freq):
+	"""
+	Calculates the admittance of an inductor for a given frequency.
+
+	Args:
+		inductance (number): Inductance [H]
+		freq (number):       Frequency  [Hz]
+
+	Returns:
+		The admittance for an inductor with the specified inductance at the specified frequency.
+	"""
+	if cap == 0 or freq == 0:
+		return -1j * inf
+	else
+		return 1 / (ind * 1j * 2 * _np.pi * freq)
+
+def capacitor_admittance(cap, freq):
+	"""
+	Calculates the admittance of capacitor for a given frequency.
+
+	Args:
+		capacitance (number): Capacitance [F]
+		freq (number):        Frequency   [Hz]
+
+	Returns:
+		The admittance for a capacitor with the specified capacitance at the specified frequency.
+	"""
+
+	return cap * 1j * 2 * _np.pi * freq
 
 def voltage_division(voltage, imp_main, *imps):
 	"""
