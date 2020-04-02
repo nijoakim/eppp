@@ -34,6 +34,7 @@ Everything provided by the sub-modules are also imported into the root module.
 - `epppu make-impedance`
 - `epppu parallel`
 - `epppu reactance`
+- `epppu susceptance`
 - `epppu voltage-division`
 
 For doumentation on the different commands use

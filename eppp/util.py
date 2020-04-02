@@ -43,9 +43,10 @@ import eppp.calc
 # Availible sub-commands
 CMDS = [
 	'expression',
-	'reactance',
 	'make-impedance',
 	'parallel',
+	'reactance',
+	'susceptance',
 	'voltage-division',
 ]
 
@@ -166,43 +167,6 @@ if cmd == 'expression':
 
 	# Print the result
 	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
-
-#=====================
-# 'reactance' command
-#=====================
-
-if cmd == 'reactance':
-	# Parse
-	parser = ap.ArgumentParser(
-		description = '', # TODO
-	)
-	parser.add_argument(
-		'type',
-		type = str,
-		help = "Type of component. ('inductor or capacitor')",
-	)
-	parser.add_argument(
-		'value',
-		type = float,
-		help = 'Component value. (Henry or Farad)',
-	)
-	parser.add_argument(
-		'frequency',
-		type = float,
-		help = 'Frequency. (Hertz)',
-	)
-	args = parser.parse_args()
-
-	# Determine type of reactive component
-	if args.type == 'inductor'[:len(args.type)]:
-		res = eppp.calc.inductor_impedance(args.value, args.frequency)
-	elif args.type == 'capacitor'[:len(args.type)]:
-		res = eppp.calc.capacitor_impedance(args.value, args.frequency)
-	else:
-		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
-
-	# Print the result
-	eppp.print_sci(res.imag, unit='Ω')
 
 #==========================
 # 'make-impedance' command
@@ -328,6 +292,80 @@ if cmd == 'parallel':
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
+
+#=====================
+# 'reactance' command
+#=====================
+
+if cmd == 'reactance':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = '', # TODO
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help = "Type of component. ('inductor or capacitor')",
+	)
+	parser.add_argument(
+		'value',
+		type = float,
+		help = 'Component value. (Henry or Farad)',
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency. (Hertz)',
+	)
+	args = parser.parse_args()
+
+	# Determine type of reactive component
+	if args.type == 'inductor'[:len(args.type)]:
+		res = eppp.calc.inductor_impedance(args.value, args.frequency)
+	elif args.type == 'capacitor'[:len(args.type)]:
+		res = eppp.calc.capacitor_impedance(args.value, args.frequency)
+	else:
+		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
+
+	# Print the result
+	eppp.print_sci(res.imag, unit='Ω')
+
+#=======================
+# 'susceptance' command
+#=======================
+
+if cmd == 'susceptance':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = '', # TODO
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help = "Type of component. ('inductor or capacitor')",
+	)
+	parser.add_argument(
+		'value',
+		type = float,
+		help = 'Component value. (Henry or Farad)',
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency. (Hertz)',
+	)
+	args = parser.parse_args()
+
+	# Determine type of reactive component
+	if args.type == 'inductor'[:len(args.type)]:
+		res = eppp.calc.inductor_admittance(args.value, args.frequency)
+	elif args.type == 'capacitor'[:len(args.type)]:
+		res = eppp.calc.capacitor_admittance(args.value, args.frequency)
+	else:
+		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
+
+	# Print the result
+	eppp.print_sci(res.imag, unit='S')
 
 #============================
 # 'voltage-division' command
