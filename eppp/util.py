@@ -170,7 +170,6 @@ if cmd == 'expression':
 #=====================
 # 'reactance' command
 #=====================
-# TODO: Comment
 
 if cmd == 'reactance':
 	# Parse
@@ -194,6 +193,7 @@ if cmd == 'reactance':
 	)
 	args = parser.parse_args()
 
+	# Determine type of reactive component
 	if args.type == 'inductor'[:len(args.type)]:
 		res = eppp.calc.inductor_impedance(args.value, args.frequency)
 	elif args.type == 'capacitor'[:len(args.type)]:
