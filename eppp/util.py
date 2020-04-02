@@ -384,7 +384,7 @@ if cmd == 'voltage-division':
 		help = 'Source voltage.',
 	)
 	parser.add_argument(
-		'main-impedance',
+		'main_impedance',
 		type = complex,
 		help = 'Main impedance.',
 	)
@@ -394,12 +394,16 @@ if cmd == 'voltage-division':
 		nargs = '*',
 		help = 'List of other series-connected impedances.'
 	)
-	voltage  = parser.parse_args().voltage
+	args = parser.parse_args()
 	main_imp = parser.parse_args().main_impedance
 	imps     = parser.parse_args().impedances
 
 	# Do the calculation
-	res_voltage = eppp.calc.voltage_division(voltage, main_imp, *imps)
+	res_voltage = eppp.calc.voltage_division(
+		args.voltage,
+		args.main_impedance,
+		*args.impedances,
+	)
 
 	# Print the result
 	eppp.print_sci(res_voltage, unit='V')
@@ -419,7 +423,7 @@ if cmd == 'current-division':
 		help = 'Source current.',
 	)
 	parser.add_argument(
-		'main-impedance',
+		'main_impedance',
 		type = complex,
 		help = 'Main impedance.',
 	)
@@ -429,15 +433,17 @@ if cmd == 'current-division':
 		nargs = '*',
 		help = 'List of other parallel-connected impedances.'
 	)
-	current  = parser.parse_args().current
-	main_imp = parser.parse_args().main_impedance
-	imps     = parser.parse_args().impedances
+	args = parser.parse_args()
 
 	# Do the calculation
-	res_current = eppp.calc.current_division(current, main_imp, *imps)
+	current = eppp.calc.current_division(
+		args.current,
+		args.main_impedance,
+		*args.impedances,
+	)
 
 	# Print the result
-	eppp.print_sci(res_current, unit='A')
+	eppp.print_sci(current, unit='A')
 
 #======================
 # 'skin-depth' command
