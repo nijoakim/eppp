@@ -158,8 +158,8 @@ def inductor_impedance(ind, freq):
 	Calculates the impedance of an inductor for a given frequency.
 
 	Args:
-		inductance (number): Inductance [H]
-		freq (number):       Frequency  [Hz]
+		ind (number):  Inductance [H]
+		freq (number): Frequency  [Hz]
 
 	Returns:
 		The impedance for an inductor with the specified inductance at the specified frequency.
@@ -171,8 +171,8 @@ def capacitor_impedance(cap, freq):
 	Calculates the impedance of capacitor for a given frequency.
 
 	Args:
-		capacitance (number): Capacitance [F]
-		freq (number):        Frequency   [Hz]
+		cap (number):  Capacitance [F]
+		freq (number): Frequency   [Hz]
 
 	Returns:
 		The impedance for a capacitor with the specified capacitance at the specified frequency.
@@ -188,15 +188,15 @@ def inductor_admittance(ind, freq):
 	Calculates the admittance of an inductor for a given frequency.
 
 	Args:
-		inductance (number): Inductance [H]
-		freq (number):       Frequency  [Hz]
+		ind (number):  Inductance [H]
+		freq (number): Frequency  [Hz]
 
 	Returns:
 		The admittance for an inductor with the specified inductance at the specified frequency.
 	"""
-	if cap == 0 or freq == 0:
+	if ind == 0 or freq == 0:
 		return -1j * inf
-	else
+	else:
 		return 1 / (ind * 1j * 2 * _np.pi * freq)
 
 def capacitor_admittance(cap, freq):
@@ -204,8 +204,8 @@ def capacitor_admittance(cap, freq):
 	Calculates the admittance of capacitor for a given frequency.
 
 	Args:
-		capacitance (number): Capacitance [F]
-		freq (number):        Frequency   [Hz]
+		cap (number):  Capacitance [F]
+		freq (number): Frequency   [Hz]
 
 	Returns:
 		The admittance for a capacitor with the specified capacitance at the specified frequency.
