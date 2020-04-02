@@ -48,6 +48,7 @@ CMDS = [
 	'reactance',
 	'susceptance',
 	'voltage-division',
+	'current-division',
 ]
 
 # Description
@@ -374,7 +375,7 @@ if cmd == 'susceptance':
 if cmd == 'voltage-division':
 	# Parse
 	parser = ap.ArgumentParser(
-		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
+		description = 'Calculates the voltage divided over series-connected impedances.'
 	)
 	parser.add_argument(
 		'voltage',
@@ -389,7 +390,7 @@ if cmd == 'voltage-division':
 	parser.add_argument(
 		'impedances',
 		type  = complex,
-		nargs = '+',
+		nargs = '*',
 		help = 'List of other series-connected impedances.'
 	)
 	voltage  = parser.parse_args().voltage
@@ -401,3 +402,38 @@ if cmd == 'voltage-division':
 
 	# Print the result
 	eppp.print_sci(res_voltage, unit='V')
+
+#============================
+# 'current-division' command
+#============================
+
+if cmd == 'current-division':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = 'Calculates the current divided between parallel-connected impedances.'
+	)
+	parser.add_argument(
+		'current',
+		type = complex,
+		help = 'Source current.',
+	)
+	parser.add_argument(
+		'main_impedance',
+		type = complex,
+		help = 'Main impedance.',
+	)
+	parser.add_argument(
+		'impedances',
+		type  = complex,
+		nargs = '*',
+		help = 'List of other parallel-connected impedances.'
+	)
+	current  = parser.parse_args().current
+	main_imp = parser.parse_args().main_impedance
+	imps     = parser.parse_args().impedances
+
+	# Do the calculation
+	res_current = eppp.calc.current_division(current, main_imp, *imps)
+
+	# Print the result
+	eppp.print_sci(res_current, unit='A')
