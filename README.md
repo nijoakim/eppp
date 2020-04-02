@@ -6,10 +6,10 @@ It is very much work in progress and the documentation is currently lacking in m
 
 EPPP comes as a python module but also defines a program, `epppu`, "EPPP utilities", that uses the module to provide a convenient command-line interface to some of the EPPP functionality. For example:
 
-	$ epppu network 88120
+	$ epppu make-impedance 88120
 	(220.0 k || (47.00 k + 100.0 k)) = 88.12 k
 
-uses EPPPs impedance network calculator to generate an E6 resistor network with an equivalent resistance of 88.12 kΩ, while
+uses EPPPs impedance maker to generate an E6 resistor network with an equivalent resistance of 88.12 kΩ, while
 
 	$ epppu expression '10e3 // (47 + 2200)'
 	1.835 k
@@ -32,7 +32,7 @@ Everything provided by the sub-modules are also imported into the root module.
 
 - `epppu expression`
 - `epppu impedance`
-- `epppu network`
+- `epppu make-impedance`
 - `epppu parallel`
 
 For doumentation on the different commands use

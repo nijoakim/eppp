@@ -476,7 +476,7 @@ except ImportError:
 		# Return the stack (no stack reversal since a complete evaluation is assumed)
 		return expr[j+1]
 
-def lumped_network(
+def make_impedance(
 		target,
 		max_num_comps = inf,
 		tolerance     = 0.001,
@@ -497,7 +497,7 @@ def lumped_network(
 	# Loop up to maximum number of components
 	for i in _it.count() if max_num_comps == inf else range(max_num_comps):
 		# Calculate impedance for specific number of components
-		res = _lumped_network_helper(
+		res = _make_impedance_helper(
 			avail_vals,
 			target,
 			i+1,
@@ -514,7 +514,7 @@ def lumped_network(
 	# Convert to expression tree and return
 	return ExprTree(res[0])
 
-def _lumped_network_helper(
+def _make_impedance_helper(
 		avail_vals,
 		target,
 		num_comps,
@@ -569,7 +569,7 @@ def _lumped_network_helper(
 			needed = target - val
 
 			# Recursive call
-			expr, recursive_val = _lumped_network_helper(
+			expr, recursive_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
@@ -596,7 +596,7 @@ def _lumped_network_helper(
 			needed = (val * target) / (val - target)
 
 			# Recursive call
-			expr, recursive_val = _lumped_network_helper(
+			expr, recursive_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,

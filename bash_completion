@@ -7,7 +7,7 @@ _epppu()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	opts="expression impedance network parallel voltage-division"
+	opts="expression impedance make-impedance parallel voltage-division"
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 	return 0

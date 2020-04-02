@@ -44,7 +44,7 @@ import eppp.calc
 CMDS = [
 	'expression',
 	'impedance',
-	'network',
+	'make-impedance',
 	'parallel',
 	'voltage-division',
 ]
@@ -204,13 +204,13 @@ if cmd == 'impedance':
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
 
-#===================
-# 'network' command
-#===================
+#==========================
+# 'make-impedance' command
+#==========================
 # TODO: Add frequency and support for inductors and capacitors?
 # TODO: Switches for what to print
 
-if cmd == 'network':
+if cmd == 'make-impedance':
 	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
@@ -221,8 +221,8 @@ if cmd == 'network':
 		help = 'Target impedance.',
 	)
 	parser.add_argument(
-		'-e',
-		'--error',
+		'-t',
+		'--tolerance',
 		type    = float,
 		nargs   = '?',
 		default = 0.01,
@@ -289,10 +289,10 @@ if cmd == 'network':
 		# TODO: Error
 
 	# Get the expression
-	expr = eppp.calc.lumped_network(
+	expr = eppp.calc.make_impedance(
 		args.target,
 		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
-		tolerance     = args.error,
+		tolerance     = args.tolerance,
 		max_num_comps = args.components,
 		avail_ops     = ops,
 	)
