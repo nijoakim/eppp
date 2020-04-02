@@ -185,6 +185,8 @@ def capacitor_impedance(cap, freq):
 	else:
 		return 1 / (cap * 1j * 2 * _np.pi * freq)
 
+# TODO: inductor_admittance, capacitor_admittance
+
 def voltage_division(voltage, imp_main, *imps):
 	"""
 	Calculates the voltage divided over series connected impedances.
@@ -209,8 +211,6 @@ def voltage_division(voltage, imp_main, *imps):
 			return nan
 		else:
 			return _np.sign(voltage * imp_main) * inf
-
-# TODO: inductor_admittance, capacitor_admittance
 
 @_func_str('||')
 def parallel_impedance(*vals):
