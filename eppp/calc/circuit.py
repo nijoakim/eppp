@@ -545,8 +545,8 @@ def make_resistance(
 
 	Kwargs:
 		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
-		tolerance (number):              (Default 0.001) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
-		avail_vals ([number]):           (Default: get_avail_vals('E6')) List of available values of the resistances used in the network.
+		tolerance (float):               (Default 0.001) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
+		avail_vals ([float]):            (Default: get_avail_vals('E6')) List of available values of the resistances used in the network.
 		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting resistance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
 		num_comps_full_search (int):     (Default: 3) Maximum number of components to do a full search on. Affects performance only. A higher value consumes more memory but may be faster.
 		num_comps_full_search_lag (int): (Default: 3) How many components should be search for before starting with the full searches. Affects performance only. A higher value increases performance for small number of components with the trade-off that the performance for large number of components is slightly reduced (assuming that 'num_comps_full_search' is configured for a efficient searches).
