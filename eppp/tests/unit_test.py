@@ -63,7 +63,7 @@ class TestStringMethods(ut.TestCase):
 		# 2 components
 		self.assertEqual(
 			str(eppp.calc.make_impedance(88120, max_num_comps=2)),
-			'(680.0 k || 100.0 k)'
+			'(100.0 k || 680.0 k)'
 		)
 
 		# 3 components

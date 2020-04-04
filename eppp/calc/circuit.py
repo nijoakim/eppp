@@ -530,30 +530,57 @@ except ImportError:
 
 def make_impedance(
 		target,
-		max_num_comps = inf,
-		tolerance     = 0.001,
-		avail_vals    = get_avail_vals('E6'),
-		avail_ops     = None, # TODO: Not used; Remove or rework
+		max_num_comps             = inf,
+		tolerance                 = 0.001,
+		avail_vals                = get_avail_vals('E6'),
+		avail_ops                 = None, # TODO: Not used; Remove or rework
+		num_comps_full_search     = 3,
+		num_comps_full_search_lag = 3,
 	):
 	# TODO: Does not work with complex values
 
 	# Dynamic programming dictionary
 	results = {}
 
-	# TODO: Dynamically add results for more components
 	# Results for single component
 	for val in avail_vals:
 		results[val] = [val]
 	results_keyss = [sorted(results.keys())]
 
 	# Loop up to maximum number of components
-	for i in _it.count() if max_num_comps == inf else range(max_num_comps):
+	for num_comps in _it.count(1) if max_num_comps == inf else range(1, max_num_comps+1):
+		# Extend results keys list
+		if num_comps > 1:
+			results_keyss.append([])
+
+		# Fully search for lower number of components
+		num_comps_fully_searched = num_comps - num_comps_full_search_lag
+		if 1 < num_comps_fully_searched <= num_comps_full_search:
+			for val in avail_vals:
+				for old_val in results_keyss[num_comps_fully_searched-1-1]:
+					expr = results[old_val]
+
+					# Store series result
+					new_val = val + old_val
+					if not new_val in results:
+						results[new_val] = [_add, val, *expr]
+						insort(results_keyss[num_comps_fully_searched-1], new_val)
+
+					# Store parallel result
+					new_val = (val * old_val) / (val + old_val)
+					if not new_val in results:
+						results[new_val] = [parallel_impedance, val, *expr]
+						insort(results_keyss[num_comps_fully_searched-1], new_val)
+
+		# When not doing more full searches, limit 'num_comps_fully_searched'
+		num_comps_fully_searched = min(num_comps_fully_searched, num_comps_full_search)
+
 		# Calculate impedance for specific number of components
 		res = _make_impedance_helper(
 			avail_vals,
 			target,
-			i+1,
-			i,
+			num_comps,
+			max(num_comps_fully_searched, 1),
 			tolerance,
 			results,
 			results_keyss,
@@ -570,7 +597,7 @@ def _make_impedance_helper(
 		avail_vals,
 		target,
 		num_comps,
-		num_comps_searched,
+		num_comps_fully_searched,
 		tolerance,
 		results,
 		results_keyss,
@@ -609,8 +636,9 @@ def _make_impedance_helper(
 		except IndexError:
 			pass
 
+		# TODO: Fix comment
 		# Return if only one component or if good enough
-		if num_comps == 1 or best_error <= tolerance * target: # TODO: num_comps <= complete_results_depth?
+		if num_comps == 1 or num_comps <= num_comps_fully_searched:
 			return best_expr, best_val
 
 	# Include an additional impedance
@@ -621,26 +649,30 @@ def _make_impedance_helper(
 			needed = target - val
 
 			# Recursive call
-			recursive_expr, recursive_val = _make_impedance_helper(
+			rec_expr, rec_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
-				num_comps_searched,
+				num_comps_fully_searched,
 				tolerance,
 				results,
 				results_keyss,
 			)
-			expr  = [_add, val, *recursive_expr]
+			new_expr = [_add, val, *rec_expr]
+			new_val  = rec_val + val
+
+			# Save new expression if truly new
+			if not new_val in results:
+				results[new_val] = new_expr
+				new_num_comps = len(new_expr) // 2 + 1
+				insort(results_keyss[new_num_comps-1], new_val)
 
 			# Update if better
-			error = abs(needed - recursive_val)
+			error = abs(target - new_val)
 			if error < best_error:
 				best_error = error
-				best_val   = recursive_val + val
-				best_expr  = expr
-				# TODO: Can the below be used? (it was before)
-				# if best_error <= tolerance * target:
-				# 	break
+				best_val   = new_val
+				best_expr  = new_expr
 
 		# Recursively add parallel impedance if overshooting target
 		else:
@@ -648,26 +680,30 @@ def _make_impedance_helper(
 			needed = (val * target) / (val - target)
 
 			# Recursive call
-			recursive_expr, recursive_val = _make_impedance_helper(
+			rec_expr, rec_val = _make_impedance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
-				num_comps_searched,
+				num_comps_fully_searched,
 				tolerance,
 				results,
 				results_keyss,
 			)
-			expr = [parallel_impedance, val, *recursive_expr]
+			new_expr = [parallel_impedance, val, *rec_expr]
+			new_val  = rec_val * val / (rec_val + val)
+
+			# Save new expression if truly new
+			if not new_val in results:
+				results[new_val] = new_expr
+				new_num_comps = len(new_expr) // 2 + 1
+				insort(results_keyss[new_num_comps-1], new_val)
 
 			# Update if better
-			error = abs(needed - recursive_val)
+			error = abs(target - new_val)
 			if error < best_error:
 				best_error = error
-				best_val   = (val * recursive_val) / (val + recursive_val)
-				best_expr  = expr
-				# TODO: Can the below be used? (it was before)
-				# if best_error <= tolerance * target:
-				# 	break
+				best_val   = new_val
+				best_expr  = new_expr
 
 	return best_expr, best_val
 
