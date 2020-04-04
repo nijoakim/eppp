@@ -33,11 +33,8 @@ import eppp.calc
 _t = 0
 
 def _print_test(s):
-	print()
 	print('-' * len(s))
-	print()
 	print(s)
-	print()
 
 def _reset_clock():
 	global _t
