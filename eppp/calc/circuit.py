@@ -530,7 +530,7 @@ except ImportError:
 
 def make_impedance(
 		target,
-		max_num_comps             = inf,
+		max_num_comps             = -1,
 		tolerance                 = 0.001,
 		avail_vals                = get_avail_vals('E6'),
 		avail_ops                 = None, # TODO: Not used; Remove or rework
@@ -544,7 +544,7 @@ def make_impedance(
 		target (number): Target impedance for the network.
 
 	Kwargs:
-		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value.
+		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
 		tolerance (number):              (Default 0.001) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		avail_vals ([number]):           (Default: get_avail_vals('E6')) List of available values of the impedances used in the network.
 		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting impedance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
@@ -566,7 +566,7 @@ def make_impedance(
 	results_keyss = [sorted(results.keys())]
 
 	# Loop up to maximum number of components
-	for num_comps in _it.count(1) if max_num_comps == inf else range(1, max_num_comps+1):
+	for num_comps in _it.count(1) if max_num_comps <= 0 else range(1, max_num_comps+1):
 		# Extend results keys list
 		if num_comps > 1:
 			results_keyss.append([])
