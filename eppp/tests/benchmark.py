@@ -60,13 +60,24 @@ def _print_clock():
 
 _target = 88123.456789
 
+# 2 components
+_print_test('make_resistance, 2 components')
+_reset_clock()
+eppp.calc.make_resistance(
+	_target,
+	max_num_comps = 2,
+	tolerance     = 0,
+)
+_print_clock()
+
+
 # 3 components
 _print_test('make_resistance, 3 components')
 _reset_clock()
 eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 3,
-	tolerance = 0,
+	tolerance     = 0,
 )
 _print_clock()
 
@@ -76,7 +87,7 @@ _reset_clock()
 eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 4,
-	tolerance = 0,
+	tolerance     = 0,
 )
 _print_clock()
 
@@ -86,7 +97,7 @@ _reset_clock()
 eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 5,
-	tolerance = 0,
+	tolerance     = 0,
 )
 _print_clock()
 
@@ -96,6 +107,26 @@ _reset_clock()
 eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 6,
-	tolerance = 0,
+	tolerance     = 0,
+)
+_print_clock()
+
+# 7 components
+_print_test('make_resistance, 7 components')
+_reset_clock()
+eppp.calc.make_resistance(
+	_target,
+	max_num_comps = 7,
+	tolerance     = 0,
+)
+_print_clock()
+
+# 6 components
+_print_test('make_resistance, 8 components')
+_reset_clock()
+eppp.calc.make_resistance(
+	_target,
+	max_num_comps = 8,
+	tolerance     = 0,
 )
 _print_clock()
