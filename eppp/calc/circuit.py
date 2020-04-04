@@ -652,8 +652,7 @@ def _make_resistance_helper(
 		except IndexError:
 			pass
 
-		# TODO: Fix comment
-		# Return if only one component or if good enough
+		# Return if only one component or if the search is full
 		if num_comps == 1 or num_comps <= num_comps_fully_searched:
 			return best_expr, best_val
 
