@@ -528,7 +528,7 @@ except ImportError:
 		# Return the stack (no stack reversal since a complete evaluation is assumed)
 		return expr[j+1]
 
-def make_impedance(
+def make_resistance(
 		target,
 		max_num_comps             = -1,
 		tolerance                 = 0.001,
@@ -538,16 +538,16 @@ def make_impedance(
 		num_comps_full_search_lag = 3,
 	):
 	"""
-	Finds a network of impedances approximating a target value.
+	Finds a network of resistances approximating a target value.
 
 	Args:
-		target (number): Target impedance for the network.
+		target (number): Target resistance for the network.
 
 	Kwargs:
 		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
 		tolerance (number):              (Default 0.001) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
-		avail_vals ([number]):           (Default: get_avail_vals('E6')) List of available values of the impedances used in the network.
-		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting impedance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
+		avail_vals ([number]):           (Default: get_avail_vals('E6')) List of available values of the resistances used in the network.
+		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting resistance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
 		num_comps_full_search (int):     (Default: 3) Maximum number of components to do a full search on. Affects performance only. A higher value consumes more memory but may be faster.
 		num_comps_full_search_lag (int): (Default: 3) How many components should be search for before starting with the full searches. Affects performance only. A higher value increases performance for small number of components with the trade-off that the performance for large number of components is slightly reduced (assuming that 'num_comps_full_search' is configured for a efficient searches).
 
@@ -593,8 +593,8 @@ def make_impedance(
 		# When not doing more full searches, limit 'num_comps_fully_searched'
 		num_comps_fully_searched = min(num_comps_fully_searched, num_comps_full_search)
 
-		# Calculate impedance for specific number of components
-		res = _make_impedance_helper(
+		# Calculate resistance for specific number of components
+		res = _make_resistance_helper(
 			avail_vals,
 			target,
 			num_comps,
@@ -611,7 +611,7 @@ def make_impedance(
 	# Convert to expression tree and return
 	return ExprTree(res[0])
 
-def _make_impedance_helper(
+def _make_resistance_helper(
 		avail_vals,
 		target,
 		num_comps,
@@ -659,15 +659,15 @@ def _make_impedance_helper(
 		if num_comps == 1 or num_comps <= num_comps_fully_searched:
 			return best_expr, best_val
 
-	# Include an additional impedance
+	# Include an additional resistance
 	for val in avail_vals:
-		# Recursively add series impedance if undershooting target
+		# Recursively add series resistance if undershooting target
 		if val < target:
-			# Needed series impedance to hit target
+			# Needed series resistance to hit target
 			needed = target - val
 
 			# Recursive call
-			rec_expr, rec_val = _make_impedance_helper(
+			rec_expr, rec_val = _make_resistance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,
@@ -692,13 +692,13 @@ def _make_impedance_helper(
 				best_val   = new_val
 				best_expr  = new_expr
 
-		# Recursively add parallel impedance if overshooting target
+		# Recursively add parallel resistance if overshooting target
 		else:
-			# Needed parallel impedance to hit target
+			# Needed parallel resistance to hit target
 			needed = (val * target) / (val - target)
 
 			# Recursive call
-			rec_expr, rec_val = _make_impedance_helper(
+			rec_expr, rec_val = _make_resistance_helper(
 				avail_vals,
 				needed,
 				num_comps-1,

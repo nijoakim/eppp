@@ -61,9 +61,9 @@ def _print_clock():
 _target = 88123.456789
 
 # 3 components
-_print_test('make_impedance, 3 components')
+_print_test('make_resistance, 3 components')
 _reset_clock()
-eppp.calc.make_impedance(
+eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 3,
 	tolerance = 0,
@@ -71,9 +71,9 @@ eppp.calc.make_impedance(
 _print_clock()
 
 # 4 components
-_print_test('make_impedance, 4 components')
+_print_test('make_resistance, 4 components')
 _reset_clock()
-eppp.calc.make_impedance(
+eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 4,
 	tolerance = 0,
@@ -81,9 +81,9 @@ eppp.calc.make_impedance(
 _print_clock()
 
 # 5 components
-_print_test('make_impedance, 5 components')
+_print_test('make_resistance, 5 components')
 _reset_clock()
-eppp.calc.make_impedance(
+eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 5,
 	tolerance = 0,
@@ -91,9 +91,9 @@ eppp.calc.make_impedance(
 _print_clock()
 
 # 6 components
-_print_test('make_impedance, 6 components')
+_print_test('make_resistance, 6 components')
 _reset_clock()
-eppp.calc.make_impedance(
+eppp.calc.make_resistance(
 	_target,
 	max_num_comps = 6,
 	tolerance = 0,

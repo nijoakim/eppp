@@ -43,7 +43,7 @@ import eppp.calc
 # Availible sub-commands
 CMDS = [
 	'expression',
-	'make-impedance',
+	'make-resistance',
 	'parallel',
 	'reactance',
 	'susceptance',
@@ -171,12 +171,12 @@ if cmd == 'expression':
 	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
 
 #==========================
-# 'make-impedance' command
+# 'make-resistance' command
 #==========================
 # TODO: Add frequency and support for inductors and capacitors?
 # TODO: Switches for what to print
 
-if cmd == 'make-impedance':
+if cmd == 'make-resistance':
 	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
@@ -184,7 +184,7 @@ if cmd == 'make-impedance':
 	parser.add_argument(
 		'target',
 		type = float, # TODO: Change to complex when supported
-		help = 'Target impedance.',
+		help = 'Target resistance.',
 	)
 	parser.add_argument(
 		'-t',
@@ -255,7 +255,7 @@ if cmd == 'make-impedance':
 		# TODO: Error
 
 	# Get the expression
-	expr = eppp.calc.make_impedance(
+	expr = eppp.calc.make_resistance(
 		args.target,
 		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		tolerance     = args.tolerance,

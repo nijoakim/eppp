@@ -41,40 +41,40 @@ eppp.set_log_level(0)
 class TestStringMethods(ut.TestCase):
 	# TODO: Test electronic_eval
 
-	def test_make_impedance(self):
+	def test_make_resistance(self):
 		# Lower than available values
 		self.assertEqual(
-			str(eppp.calc.make_impedance(5)),
+			str(eppp.calc.make_resistance(5)),
 			'(10.00 || 10.00)'
 		)
 
 		# Higher than available values
 		self.assertEqual(
-			str(eppp.calc.make_impedance(20e6)),
+			str(eppp.calc.make_resistance(20e6)),
 			'(10.00 M + 10.00 M)'
 		)
 
 		# 1 component
 		self.assertEqual(
-			str(eppp.calc.make_impedance(88120, max_num_comps=1)),
+			str(eppp.calc.make_resistance(88120, max_num_comps=1)),
 			'100.0 k'
 		)
 
 		# 2 components
 		self.assertEqual(
-			str(eppp.calc.make_impedance(88120, max_num_comps=2)),
+			str(eppp.calc.make_resistance(88120, max_num_comps=2)),
 			'(100.0 k || 680.0 k)'
 		)
 
 		# 3 components
 		self.assertEqual(
-			str(eppp.calc.make_impedance(88120, max_num_comps=3)),
+			str(eppp.calc.make_resistance(88120, max_num_comps=3)),
 			'(220.0 k || (47.00 k + 100.0 k))'
 		)
 
 		# 3 components, solved by 2
 		self.assertEqual(
-			str(eppp.calc.make_impedance(16800, max_num_comps=3, tolerance=0)),
+			str(eppp.calc.make_resistance(16800, max_num_comps=3, tolerance=0)),
 			'(6.800 k + 10.00 k)'
 		)
 
