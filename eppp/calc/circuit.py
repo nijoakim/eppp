@@ -669,7 +669,7 @@ def _make_resistance_helper(
 				needed,
 				num_comps-1,
 				num_comps_fully_searched,
-				tolerance,
+				tolerance, # TODO: New tolerance?
 				results,
 				results_keyss,
 			)
@@ -700,7 +700,7 @@ def _make_resistance_helper(
 				needed,
 				num_comps-1,
 				num_comps_fully_searched,
-				tolerance,
+				tolerance, # TODO: New tolerance?
 				results,
 				results_keyss,
 			)
