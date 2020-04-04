@@ -195,12 +195,12 @@ if cmd == 'make-resistance':
 		help    = 'Maximum relative error for the resulting network. (default: %(default)s)',
 	)
 	parser.add_argument(
-		'-c',
-		'--components',
+		'-n',
+		'--num_components',
 		type    = int,
 		nargs   = '?',
-		default = inf,
-		help    = 'Maximum number of components for the resulting network. (default: infinity)',
+		default = -1,
+		help    = 'Maximum number of components for the resulting network. Negative values yield no limit. (default: -1)',
 	)
 	parser.add_argument(
 		'-s',
