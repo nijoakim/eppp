@@ -555,8 +555,6 @@ def make_resistance(
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
 
-	# TODO: Does not work with complex values
-
 	# Dynamic programming dictionary
 	results = {}
 
