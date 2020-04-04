@@ -259,7 +259,7 @@ if cmd == 'make-resistance':
 		args.target,
 		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		tolerance     = args.tolerance,
-		max_num_comps = args.components,
+		max_num_comps = args.num_components,
 		avail_ops     = ops,
 	)
 	res = expr.evaluate()
