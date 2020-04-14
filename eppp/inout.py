@@ -58,12 +58,12 @@ def print_sci(
 	"""
 	Convert a number to scientific notation and print it.
 
-    Args:
+	Args:
 		x (number/str): Number to convert. If a string is given, the variable represented by the string will be used and 'name' will be assigned that string.
 
-    Kwargs:
-        name (str): Name of quantity to be printed.
-        unit (str): Unit of number to be converted.
+	Kwargs:
+		name (str): Name of quantity to be printed.
+		unit (str): Unit of number to be converted.
 	"""
 
 	# Allow specifying 'x' as variable name string
@@ -92,14 +92,14 @@ def str_sci(x,
 	# TODO: Document all arguments
 	"""
 	Convert a number to scientific notation.
-	
+
 	Args:
 		x (number/str): Number to convert. If a string is given, the variable represented by the string will be used and 'name' will be assigned that string.
-	
+
 	Kwargs:
 		name (str): Name of quantity to be added to resulting string.
 		unit (str): Unit of number to be converted.
-	
+
 	Returns:
 		str. String representation of the converted number.
 	"""
