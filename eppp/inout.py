@@ -23,6 +23,7 @@
 import decimal as _dec
 import glob    as _glob
 import numpy   as _np
+from inspect import currentframe as _currentframe
 from math import nan, inf
 
 # Internal
@@ -48,17 +49,36 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
-def print_sci(x, name = None, unit = '', num_sig_figs = None):
+def print_sci(
+		x,
+		name         = None,
+		unit         = '',
+		num_sig_figs = None
+	):
 	"""
 	Convert a number to scientific notation and print it.
 
     Args:
-        x (number): Number to convert.
+		x (number/str): Number to convert. If a string is given, the variable represented by the string will be used and 'name' will be assigned that string.
 
     Kwargs:
         name (str): Name of quantity to be printed.
         unit (str): Unit of number to be converted.
 	"""
+
+	# Allow specifying 'x' as variable name string
+	# This must be done here even if it is done inside 'str_sci' since the local local scope is not visible to callees
+	if isinstance(x, str):
+		if not name is None:
+			raise ValueError("'name' must be None if 'x' is string.")
+
+		context = dict(list(globals().items()) + list(_currentframe().f_back.f_locals.items()))
+		if x in context:
+			name = x
+			x    = context[x]
+		else:
+			raise ValueError("Variable '%s' does not exist." % x)
+
 	print(str_sci(x, name = name, unit = unit, num_sig_figs = num_sig_figs))
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
@@ -74,15 +94,28 @@ def str_sci(x,
 	Convert a number to scientific notation.
 	
 	Args:
-		x (number): Number to convert.
+		x (number/str): Number to convert. If a string is given, the variable represented by the string will be used and 'name' will be assigned that string.
 	
 	Kwargs:
-		Name (str): Name of quantity to be added to resulting string.
+		name (str): Name of quantity to be added to resulting string.
 		unit (str): Unit of number to be converted.
 	
 	Returns:
 		str. String representation of the converted number.
 	"""
+
+	# Allow specifying 'x' as variable name string
+	if isinstance(x, str):
+		if not name is None:
+			raise ValueError("'name' must be None if 'x' is string.")
+
+		context = dict(list(globals().items()) + list(_currentframe().f_back.f_locals.items()))
+		if x in context:
+			name = x
+			x    = context[x]
+		else:
+			raise ValueError("Variable '%s' does not exist." % x)
+
 	# Non-prefixable values
 	if x ==  inf \
 	or x == -inf \
