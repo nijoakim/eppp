@@ -48,7 +48,7 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
-def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
+def print_sci(x, name = None, unit = '', num_sig_figs = None):
 	"""
 	Convert a number to scientific notation and print it.
 
@@ -59,7 +59,7 @@ def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
         name (str): Name of quantity to be printed.
         unit (str): Unit of number to be converted.
 	"""
-	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
+	print(str_sci(x, name = name, unit = unit, num_sig_figs = num_sig_figs))
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(x,
@@ -67,8 +67,9 @@ def str_sci(x,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 	strict_style   = None,
 	unit           = '',
-	quantity       = None,
+	name           = None,
 ):
+	# TODO: Document all arguments
 	"""
 	Convert a number to scientific notation.
 	
@@ -240,7 +241,7 @@ def str_sci(x,
 						notation_style = 'engineering',
 						strict_style   = strict_style,
 						unit           = unit,
-						quantity       = quantity,
+						name           = name,
 					)
 
 				# Add prefix to unit
@@ -279,9 +280,9 @@ def str_sci(x,
 	if unit != '':
 		ret += ' '+ unit
 
-	# Add quantity
-	if not quantity is None:
-		ret = '%s =\n\t%s' % (quantity, ret)
+	# Add quantity name
+	if not name is None:
+		ret = '%s =\n\t%s' % (name, ret)
 
 	return ret
 
