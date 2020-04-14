@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Joakim Nilsson
+# Copyright 2014-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -48,35 +48,20 @@ def set_default_str_sci_args(**kwargs):
 	for name, value in kwargs.items():
 		_default_str_sci_args[name] = value
 
-# Docstring decorator for 'str_sci' and 'print_sci'.
-def _doc_sci(print_also):
-	def decorator(func):
-		func.__doc__ = """
-			Convert a number to scientific notation%s.
-
-			Args:
-				x (number): Number to convert
-
-			Kwargs:
-				quantity (str): Quantity to add to string
-				unit (str):     Unit of number to be converted%s
-		""" % (
-			' and print it' if print_also else '',
-			"""
-
-			Returns:
-				str. String representation of the converted number.
-			""" if not print_also else ''
-		)
-		return func
-	return decorator
-
-@_doc_sci(True)
 def print_sci(x, quantity = None, unit = '', num_sig_figs = None):
+	"""
+	Convert a number to scientific notation and print it.
+
+    Args:
+        x (number): Number to convert.
+
+    Kwargs:
+        name (str): Name of quantity to be printed.
+        unit (str): Unit of number to be converted.
+	"""
 	print(str_sci(x, quantity = quantity, unit = unit, num_sig_figs = num_sig_figs))
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
-@_doc_sci(False)
 def str_sci(x,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
@@ -84,6 +69,19 @@ def str_sci(x,
 	unit           = '',
 	quantity       = None,
 ):
+	"""
+	Convert a number to scientific notation.
+	
+	Args:
+		x (number): Number to convert.
+	
+	Kwargs:
+		Name (str): Name of quantity to be added to resulting string.
+		unit (str): Unit of number to be converted.
+	
+	Returns:
+		str. String representation of the converted number.
+	"""
 	# TODO: Handle complex numbers
 	# Non-prefixable values
 	if x ==  inf \
