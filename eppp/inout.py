@@ -51,10 +51,13 @@ def set_default_str_sci_args(**kwargs):
 
 def print_sci(
 		x,
-		name         = None,
-		unit         = '',
-		num_sig_figs = None
+		name           = None,
+		unit           = '',
+		num_sig_figs   = None,
+		notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
+		strict_style   = None,
 	):
+	# TODO: Document all arguments
 	"""
 	Convert a number to scientific notation and print it.
 
@@ -79,15 +82,24 @@ def print_sci(
 		else:
 			raise ValueError("Variable '%s' does not exist." % x)
 
-	print(str_sci(x, name = name, unit = unit, num_sig_figs = num_sig_figs))
+	print(
+		str_sci(
+			x,
+			name           = name,
+			unit           = unit,
+			num_sig_figs   = num_sig_figs,
+			notation_style = notation_style,
+			strict_style   = strict_style,
+		)
+	)
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(x,
+	name           = None,
+	unit           = '',
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 	strict_style   = None,
-	unit           = '',
-	name           = None,
 ):
 	# TODO: Document all arguments
 	"""
