@@ -82,7 +82,6 @@ def str_sci(x,
 	Returns:
 		str. String representation of the converted number.
 	"""
-	# TODO: Handle complex numbers
 	# Non-prefixable values
 	if x ==  inf \
 	or x == -inf \
