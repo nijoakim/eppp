@@ -51,8 +51,8 @@ def set_default_str_sci_args(**kwargs):
 
 def print_sci(
 		x,
-		name           = None,
 		unit           = '',
+		name           = None,
 		num_sig_figs   = None,
 		notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 		strict_style   = None,
@@ -95,8 +95,8 @@ def print_sci(
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(x,
-	name           = None,
 	unit           = '',
+	name           = None,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 	strict_style   = None,
