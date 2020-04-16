@@ -82,11 +82,13 @@ for i, arg in enumerate(sys.argv):
 		match_str = ''
 		match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
 		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
+		print(match_str)
 
 		# Substitute numbers with metric prefixes with pure floats
+		# TODO: Bug: '1||1' gives error; '1 || 1' does not
 		# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
 		while re.search(match_str, arg):
-			match = re.search(match_str, arg)
+			match      = re.search(match_str, arg)
 			num        = float(arg[match.start() : match.end()-1]) # Parse into float
 			multiplier = PREFIXES[arg[match.end()-1]]              # Look up prefix
 
