@@ -30,9 +30,9 @@ from bisect import bisect, insort
 from math   import inf, nan
 
 # Internal
-from ..debug import *
-from ..inout import str_sci as _str_sci
-from ..log   import _log
+from .debug import *
+from .inout import str_sci as _str_sci
+from .log   import _log
 
 #=======
 # Other
@@ -491,8 +491,8 @@ def _polish_eval(expr):
 
 # Import and initialize C version of '_polish_eval_non_strict'
 try:
-	from ..fast_misc import polish_eval_non_strict      as _polish_eval_non_strict
-	from ..fast_misc import polish_eval_non_strict_init as _polish_eval_non_strict_init
+	from .fast_misc import polish_eval_non_strict      as _polish_eval_non_strict
+	from .fast_misc import polish_eval_non_strict_init as _polish_eval_non_strict_init
 	_polish_eval_non_strict_init(_parallel_impedance_non_strict, _add)
 
 # Fall back to Python version of 'polish_eval_non_strict' if C version can not be imported

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2016-2019 Joakim Nilsson
+# Copyright 2016-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -45,6 +45,5 @@ setup(
 	ext_modules  = ext_modules,
 	packages     = [
 		'eppp',
-		'eppp.calc',
 	],
 )

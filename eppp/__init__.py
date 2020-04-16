@@ -33,10 +33,12 @@ TODO: Document properlier!
 #=========
 
 # Import everything into root module
-from .calc  import *
-from .inout import *
-from .log   import *
-from .plot  import *
+from .calc           import *
+from .circuit        import *
+from .inout          import *
+from .log            import *
+from .n_port_network import *
+from .plot           import *
 
 # Private external
 # import types as _t
