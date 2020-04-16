@@ -270,7 +270,7 @@ if cmd == 'make-resistance':
 	if args.print_error:
 		eppp.print_sci(
 			(res - args.target) / args.target,
-			quantity = 'relative error',
+			name = 'relative error',
 		)
 
 #====================
