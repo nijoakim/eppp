@@ -34,9 +34,9 @@ from .debug import *
 from .inout import str_sci as _str_sci
 from .log   import _log
 
-#=======
-# Other
-#=======
+#================
+# Implementation
+#================
 
 # String representation for functions decorator
 def func_sym_rep(sym_rep):
@@ -174,7 +174,6 @@ def capacitor_impedance(cap, freq):
 	Returns:
 		The impedance for a capacitor with the specified capacitance at the specified frequency.
 	"""
-
 	if cap == 0 or freq == 0:
 		return -1j * inf
 	else:
