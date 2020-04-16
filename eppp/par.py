@@ -32,14 +32,14 @@ class _InfixPar(object):
 	Infix parallel impedance operator helper class.
 
 	Example usage:
-	>>> 1 |par| 3
+	>>> 1 *par* 3
 	0.75
 	"""
-	def __init__(self, function):
-		self.function = function
-	def __ror__(self, other):
-		return _InfixPar(lambda x: self.function(other, x))
-	def __or__(self, other):
-		return self.function(other)
+	def __init__(self, func):
+		self._func = func
+	def __rmul__(self, other):
+		return _InfixPar(lambda x: self._func(other, x))
+	def __mul__(self, other):
+		return self._func(other)
 
 par = _InfixPar(_parallel_impedance)
