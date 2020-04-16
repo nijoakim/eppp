@@ -305,7 +305,7 @@ def _parallel_impedance_non_strict(z1, z2):
 def _add(x1, x2):
 	return x1 + x2
 
-def series_adm(*vals):
+def series_admittance(*vals):
 	"""
 	Calculates the equivalent admittance of a set of series connected components.
 
