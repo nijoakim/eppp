@@ -44,14 +44,16 @@ from .plot           import *
 import inspect as _inspect
 
 # Private internal
-from . import calc  as _calc
-from . import inout as _inout
-from . import log   as _log
-from . import plot  as _plot
+from . import calc           as _calc
+from . import circuit        as _circuit
+from . import inout          as _inout
+from . import log            as _log
+from . import n_port_network as _n_port_network
+from . import plot           as _plot
 
-#===================================================
-# Linebreak long lines in all functions' docstrings
-#===================================================
+#====================================================
+# Linebreak long lines in all functions' doc-strings
+#====================================================
 
 # Function to do this
 def _format_doc_strings(modules, width, indent):
@@ -93,4 +95,4 @@ def _format_doc_strings(modules, width, indent):
 				attr.__doc__ = doc
 
 # Call the function
-_format_doc_strings([_calc, _inout, _log, _plot], 79, 4)
+_format_doc_strings([_calc, _circuit, _inout, _n_port_network, _log, _plot], 79, 4)
