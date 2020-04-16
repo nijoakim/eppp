@@ -82,7 +82,6 @@ for i, arg in enumerate(sys.argv):
 		match_str = ''
 		match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
 		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
-		print(match_str)
 
 		# Substitute numbers with metric prefixes with pure floats
 		# TODO: Bug: '1||1' gives error; '1 || 1' does not
