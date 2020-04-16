@@ -25,7 +25,6 @@ from math import inf
 
 # Internal
 import eppp
-import eppp.calc
 
 #=========
 # Logging
@@ -44,56 +43,56 @@ class TestStringMethods(ut.TestCase):
 	def test_make_resistance(self):
 		# Lower than available values
 		self.assertEqual(
-			str(eppp.calc.make_resistance(5)),
+			str(eppp.make_resistance(5)),
 			'(10.00 || 10.00)'
 		)
 
 		# Higher than available values
 		self.assertEqual(
-			str(eppp.calc.make_resistance(20e6)),
+			str(eppp.make_resistance(20e6)),
 			'(10.00 M + 10.00 M)'
 		)
 
 		# 1 component
 		self.assertEqual(
-			str(eppp.calc.make_resistance(88120, max_num_comps=1)),
+			str(eppp.make_resistance(88120, max_num_comps=1)),
 			'100.0 k'
 		)
 
 		# 2 components
 		self.assertEqual(
-			str(eppp.calc.make_resistance(88120, max_num_comps=2)),
+			str(eppp.make_resistance(88120, max_num_comps=2)),
 			'(100.0 k || 680.0 k)'
 		)
 
 		# 3 components
 		self.assertEqual(
-			str(eppp.calc.make_resistance(88120, max_num_comps=3)),
+			str(eppp.make_resistance(88120, max_num_comps=3)),
 			'(220.0 k || (47.00 k + 100.0 k))'
 		)
 
 		# 3 components, solved by 2
 		self.assertEqual(
-			str(eppp.calc.make_resistance(16800, max_num_comps=3, tolerance=0)),
+			str(eppp.make_resistance(16800, max_num_comps=3, tolerance=0)),
 			'(6.800 k + 10.00 k)'
 		)
 
 	def test_parallel_impedance(self):
-		self.assertEqual(eppp.calc.parallel_impedance(3, 3, 3), 1)        # Three elements
-		self.assertEqual(eppp.calc.parallel_impedance(1), 1)              # One element
-		self.assertEqual(eppp.calc.parallel_impedance(1, 1j), 0.5 + 0.5j) # Complex numbers
-		self.assertEqual(eppp.calc.parallel_impedance(1, 2), 2/3)         # Floating point
-		self.assertEqual(eppp.calc.parallel_impedance(1, 0), 0)           # Zero
-		self.assertEqual(eppp.calc.parallel_impedance(1, inf), 1)         # Infinity
+		self.assertEqual(eppp.parallel_impedance(3, 3, 3), 1)        # Three elements
+		self.assertEqual(eppp.parallel_impedance(1), 1)              # One element
+		self.assertEqual(eppp.parallel_impedance(1, 1j), 0.5 + 0.5j) # Complex numbers
+		self.assertEqual(eppp.parallel_impedance(1, 2), 2/3)         # Floating point
+		self.assertEqual(eppp.parallel_impedance(1, 0), 0)           # Zero
+		self.assertEqual(eppp.parallel_impedance(1, inf), 1)         # Infinity
 
 	def test_decibel(self):
 		# Power
-		self.assertEqual(eppp.calc.convert_to_db(100, db_type='power'), 20)   # To dB
-		self.assertEqual(eppp.calc.convert_from_db(20, db_type='power'), 100) # From dB
+		self.assertEqual(eppp.convert_to_db(100, db_type='power'), 20)   # To dB
+		self.assertEqual(eppp.convert_from_db(20, db_type='power'), 100) # From dB
 		
 		# Amplitude
-		self.assertEqual(eppp.calc.convert_to_db(100, db_type='amplitude'), 40)   # To dB
-		self.assertEqual(eppp.calc.convert_from_db(40, db_type='amplitude'), 100) # From dB
+		self.assertEqual(eppp.convert_to_db(100, db_type='amplitude'), 40)   # To dB
+		self.assertEqual(eppp.convert_from_db(40, db_type='amplitude'), 100) # From dB
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
