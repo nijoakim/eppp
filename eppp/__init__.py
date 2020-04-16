@@ -41,7 +41,6 @@ from .n_port_network import *
 from .plot           import *
 
 # Private external
-# import types as _t
 import inspect as _inspect
 
 # Private internal
