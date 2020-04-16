@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Joakim Nilsson
+# Copyright 2014-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -24,7 +24,7 @@ __version__ = '0.1.0'
 
 # Docstring
 """
-Electronics in python.
+Electronics in Python.
 TODO: Document properlier!
 """
 
