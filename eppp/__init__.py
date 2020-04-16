@@ -38,6 +38,7 @@ from .circuit        import *
 from .inout          import *
 from .log            import *
 from .n_port_network import *
+from .par            import *
 from .plot           import *
 
 # Private external
