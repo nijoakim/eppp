@@ -330,8 +330,7 @@ def electronic_eval(expr):
 	# TODO: Docstring
 
 	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
-	expr = expr.replace('**', 'a')  # Will result in error (which is intended)
-	expr = expr.replace('^', '**')  # Use '^' for exponentiation
+	expr = expr.replace('^', '**')  # Allow '^' for exponentiation
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
