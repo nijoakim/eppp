@@ -344,7 +344,7 @@ def electronic_eval(expr):
 	try:
 		return eval_ast(_ast.parse(expr, mode='eval').body)
 	except:
-		raise Exception('Invalid expression.') # TODO: Proper exception type
+		raise SyntaxError('Invalid expression.')
 
 def get_avail_vals(
 		series    = 'E6',
