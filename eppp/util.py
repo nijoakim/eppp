@@ -34,7 +34,6 @@ from math import inf
 
 # Internal
 import eppp
-import eppp.calc
 
 #========
 # Parser
@@ -169,7 +168,7 @@ if cmd == 'expression':
 	expr_str = ' '.join(args.expression)
 
 	# Print the result
-	eppp.inout.print_sci(eppp.calc.electronic_eval(expr_str))
+	eppp.inout.print_sci(eppp.electronic_eval(expr_str))
 
 #==========================
 # 'make-resistance' command
@@ -246,19 +245,19 @@ if cmd == 'make-resistance':
 
 	# Generate list of operations
 	if args.configuration == 'any':
-		ops = [eppp.calc.parallel_impedance, op.add]
+		ops = [eppp.parallel_impedance, op.add]
 	elif args.configuration == 'series':
 		ops = [op.add]
 	elif args.configuration == 'parallel':
-		ops = [eppp.calc.parallel_impedance]
+		ops = [eppp.parallel_impedance]
 	else:
 		pass
 		# TODO: Error
 
 	# Get the expression
-	expr = eppp.calc.make_resistance(
+	expr = eppp.make_resistance(
 		args.target,
-		avail_vals    = eppp.calc.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
+		avail_vals    = eppp.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		tolerance     = args.tolerance,
 		max_num_comps = args.num_components,
 		avail_ops     = ops,
@@ -291,7 +290,7 @@ if cmd == 'parallel':
 	vals = parser.parse_args().values
 
 	# Do the calculation
-	res = eppp.calc.parallel_impedance(*vals)
+	res = eppp.parallel_impedance(*vals)
 
 	# Print the result
 	eppp.print_sci(res, unit='Ω')
@@ -324,9 +323,9 @@ if cmd == 'reactance':
 
 	# Determine type of reactive component
 	if args.type == 'inductor'[:len(args.type)]:
-		res = eppp.calc.inductor_impedance(args.value, args.frequency)
+		res = eppp.inductor_impedance(args.value, args.frequency)
 	elif args.type == 'capacitor'[:len(args.type)]:
-		res = eppp.calc.capacitor_impedance(args.value, args.frequency)
+		res = eppp.capacitor_impedance(args.value, args.frequency)
 	else:
 		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
 
@@ -361,9 +360,9 @@ if cmd == 'susceptance':
 
 	# Determine type of reactive component
 	if args.type == 'inductor'[:len(args.type)]:
-		res = eppp.calc.inductor_admittance(args.value, args.frequency)
+		res = eppp.inductor_admittance(args.value, args.frequency)
 	elif args.type == 'capacitor'[:len(args.type)]:
-		res = eppp.calc.capacitor_admittance(args.value, args.frequency)
+		res = eppp.capacitor_admittance(args.value, args.frequency)
 	else:
 		raise ValueError("Argument 2 must be either 'inductor' or 'capacitor'.")
 
@@ -400,7 +399,7 @@ if cmd == 'voltage-division':
 	imps     = parser.parse_args().impedances
 
 	# Do the calculation
-	res_voltage = eppp.calc.voltage_division(
+	res_voltage = eppp.voltage_division(
 		args.voltage,
 		args.main_impedance,
 		*args.impedances,
@@ -437,7 +436,7 @@ if cmd == 'current-division':
 	args = parser.parse_args()
 
 	# Do the calculation
-	current = eppp.calc.current_division(
+	current = eppp.current_division(
 		args.current,
 		args.main_impedance,
 		*args.impedances,
@@ -484,7 +483,7 @@ if cmd == 'skin-depth':
 	args = parser.parse_args()
 
 	# Do the calculation
-	depth = eppp.calc.skin_depth(
+	depth = eppp.skin_depth(
 		args.resistivity,
 		args.frequency,
 		rel_permittivity = args.relative_permittivity,
