@@ -93,7 +93,7 @@ for i, arg in enumerate(sys.argv):
 			# Expand argument
 			arg = \
 				arg[:match.start()] + \
-				str(num*multiplier) + \
+				str(num*multiplier) +' '+ \
 				arg[match.end():]
 		sys.argv[i] = arg
 
