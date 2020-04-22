@@ -329,6 +329,9 @@ def electronic_eval(expr):
 	}
 	# TODO: Docstring
 
+	# Remove whitespace at beginning and end
+	expr = expr.strip()
+
 	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
 	expr = expr.replace('^', '**')  # Allow '^' for exponentiation
 
