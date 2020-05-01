@@ -23,7 +23,7 @@
 import matplotlib.pyplot as _pyplot
 
 # Internal
-from .calc import convert_to_db as _convert_to_db
+from .calc import to_db as _to_db
 
 # Create a special version of '_pyplot.plot()' if 'mpldatacursor' is available
 _old_pyplot_plot = _pyplot.plot
@@ -72,7 +72,7 @@ def bode(
 
 	# Magnitude plot
 	_pyplot.subplot(211)
-	plot(freq, _convert_to_db(mag, db_type=db_type))
+	plot(freq, _to_db(mag, db_type))
 	_pyplot.xscale('log')
 	_pyplot.ylabel('Magnitude [convert_db]')
 

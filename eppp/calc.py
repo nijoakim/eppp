@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Joakim Nilsson
+# Copyright 2014-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -30,37 +30,45 @@ import scipy.constants as _sp_c
 # Decibel conversions
 #=====================
 
-# Docstring decorator for 'convert_to_db' and 'convert_from_db'.
-def _doc_convert_db(convert_str):
-	def decorator(func):
-		func.__doc__ = """
-			Converts a number to and from its decibel form.
+def from_db(x, db_type):
+	"""
+	Converts a number from its decibel form.
+	
+	Args:
+		x:                Decibel value to convert from. [dB]
+		db_type (string): Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
+	
+	Returns:
+		'x' converted from decibels.
+	"""
 
-			Args:
-				x: number to be converted.
-
-			Kwargs:
-				db_type (string): (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
-			
-			Returns:
-				'x' %s decibels.
-		""" % convert_str
-		return func
-	return decorator
-
-@_doc_convert_db('in')
-def convert_to_db(x, db_type='power'):
+	# Error checking
 	if not db_type in ('power', 'amplitude'):
 		raise ValueError("'db_type' must be either 'power' or 'amplitude'.")
-	factor = 10 if db_type == 'power' else 20 # Power decibels or not
-	return factor*_np.log10(x)                # Return converted value
 
-@_doc_convert_db('converted from')
-def convert_from_db(x, db_type='power'):
-	if not db_type in ('power', 'amplitude'):
-		raise ValueError("'db_type' must be either 'power' or 'amplitude'.")
+	# Conversion
 	factor = 10 if db_type == 'power' else 20 # Power decibels or not
 	return 10 ** (x/factor)                   # Return converted value
+
+def to_db(x, db_type):
+	"""
+	Converts a number to its decibel form.
+	
+	Args:
+		x:                Number to be converted.
+		db_type (string): Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
+	
+	Returns:
+		'x' in decibels.
+	"""
+
+	# Error checking
+	if not db_type in ('power', 'amplitude'):
+		raise ValueError("'db_type' must be either 'power' or 'amplitude'.")
+
+	# Conversion
+	factor = 10 if db_type == 'power' else 20 # Power decibels or not
+	return factor*_np.log10(x)                # Return converted value
 
 #====================
 # Physical phenomena
