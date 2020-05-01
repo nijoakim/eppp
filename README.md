@@ -30,6 +30,8 @@ Everything provided by the sub-modules are also imported into the root module.
 ## EPPP utilities
 `epppu` currently provides the following commands:
 
+- `epppu from-db`
+- `epppu to-db`
 - `epppu expression`
 - `epppu parallel`
 - `epppu make-impedance`
