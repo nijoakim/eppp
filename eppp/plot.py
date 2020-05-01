@@ -1,4 +1,4 @@
-# Copyright 2014-2019 Joakim Nilsson
+# Copyright 2014-2020 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
