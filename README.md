@@ -41,7 +41,7 @@ Everything provided by the sub-modules are also imported into the root module.
 - `epppu current-division`
 - `epppu skin-depth`
 
-For doumentation on the different commands use
+For documentation on the different commands use
 `epppu <command> -h`.
 
 ## Installation
