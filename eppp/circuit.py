@@ -332,8 +332,9 @@ def electronic_eval(expr):
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
 
-	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
-	expr = expr.replace('^', '**')  # Allow '^' for exponentiation
+	expr = expr.replace('pi', str(_np.pi)) # Evaluate pi
+	expr = expr.replace('||', '//')        # Accept both kinds of parallel connection symbols
+	expr = expr.replace('^', '**')         # Allow '^' for exponentiation
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
