@@ -53,8 +53,11 @@ CMDS = [
 	'skin-depth',
 ]
 
+def make_cmds_str(cmds):
+	return ', '.join(map(lambda x: "'"+ x +"'", cmds))
+
 # Description
-desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % ', '.join(map(lambda x: "'"+ x +"'", CMDS))
+desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % make_cmds_str(CMDS)
 
 # Expand metric prefixes from 'argv'
 PREFIXES = {
