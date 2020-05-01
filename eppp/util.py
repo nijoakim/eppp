@@ -20,6 +20,7 @@
 # TODO: Possibility to read from stdin. (Switch for this?)
 # TODO: Repeated arguments for some commands should repeat the operation.
 # TODO: Possibility to omit unit.
+# TODO: Usage string omits sub-command.
 
 #=========
 # Imports
