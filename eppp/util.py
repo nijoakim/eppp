@@ -41,6 +41,8 @@ import eppp
 
 # Availible sub-commands
 CMDS = [
+	'from-db',
+	'to-db',
 	'expression',
 	'make-resistance',
 	'parallel',
@@ -146,6 +148,54 @@ elif num_matches == 2:
 
 # Remove global arguments for argv
 sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
+
+#===================
+# 'from-db' command
+#===================
+
+if cmd == 'from-db':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = "Converts a number from its decibel form.",
+	)
+	parser.add_argument(
+		"x",
+		type = float,
+		help = "Decibel value to convert from.",
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help  = "Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'."
+	)
+	args = parser.parse_args()
+
+	# Print the result
+	eppp.inout.print_sci(eppp.from_db(args.x, args.type))
+
+#=================
+# 'to-db' command
+#=================
+
+if cmd == 'to-db':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = "Converts a number to its decibel form.",
+	)
+	parser.add_argument(
+		"x",
+		type = float,
+		help = "Number to be converted.",
+	)
+	parser.add_argument(
+		'type',
+		type = str,
+		help  = "Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'."
+	)
+	args = parser.parse_args()
+
+	# Print the result
+	eppp.inout.print_sci(eppp.to_db(args.x, args.type), 'dB')
 
 #======================
 # 'expression' command
