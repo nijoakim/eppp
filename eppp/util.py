@@ -85,7 +85,6 @@ for i, arg in enumerate(sys.argv):
 		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
 
 		# Substitute numbers with metric prefixes with pure floats
-		# TODO: Bug: '1||1' gives error; '1 || 1' does not
 		# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
 		while re.search(match_str, arg):
 			match      = re.search(match_str, arg)
