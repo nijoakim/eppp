@@ -354,6 +354,7 @@ def electronic_eval(expr):
 		elif isinstance(node, _ast.UnaryOp):
 			return OPERATORS[type(node.op)](eval_ast(node.operand))
 
+	# TODO: More elaborate error checking.
 	try:
 		return eval_ast(_ast.parse(expr, mode='eval').body)
 	except:
