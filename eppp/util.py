@@ -207,13 +207,13 @@ if cmd == 'to-db':
 if cmd == 'expression':
 	# Parse
 	parser = ap.ArgumentParser(
-		description = "Evaluates an expression. Electronic operators, such as the parallel operator, '||' are supported.",
+		description = "Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. The mathematical constant, 'pi', is also supported.",
 	)
 	parser.add_argument(
 		'expression',
 		type  = str,
 		nargs = '+',
-		help  = "Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^'.",
+		help  = "Expression to evaluate.",
 	)
 	args = parser.parse_args()
 
