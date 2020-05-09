@@ -86,6 +86,7 @@ for i, arg in enumerate(sys.argv):
 		# String to match on
 		match_str = ''
 		match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
+		match_str += r'\s*'                                                   # Optional whitespace
 		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
 
 		# Substitute numbers with metric prefixes with pure floats
