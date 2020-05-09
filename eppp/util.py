@@ -36,6 +36,34 @@ from math import inf
 # Internal
 import eppp
 
+#===========
+# Functions
+#===========
+
+def make_cmds_str(cmds):
+	return ', '.join(map(lambda x: "'"+ x +"'", cmds))
+
+def expand_metric_prefixes(string):
+	# String to match on
+	match_str = ''
+	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
+	match_str += r'\s*'                                                   # Optional whitespace
+	match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
+
+	# Substitute numbers with metric prefixes with pure floats
+	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
+	while re.search(match_str, string):
+		match      = re.search(match_str, string)
+		num        = float(string[match.start() : match.end()-1]) # Parse into float
+		multiplier = PREFIXES[string[match.end()-1]]              # Look up prefix
+
+		# Expand string
+		string = \
+			string[:match.start()] + \
+			str(num*multiplier) +' '+ \
+			string[match.end():]
+	return string
+
 #========
 # Parser
 #========
@@ -53,9 +81,6 @@ CMDS = [
 	'current-division',
 	'skin-depth',
 ]
-
-def make_cmds_str(cmds):
-	return ', '.join(map(lambda x: "'"+ x +"'", cmds))
 
 # Description
 desc_str = 'Executes a command based on the functionality provided by the EPPP library. Available commands are: %s.' % make_cmds_str(CMDS)
@@ -83,25 +108,7 @@ PREFIXES = {
 for i, arg in enumerate(sys.argv):
 	# Skip script and command names
 	if i > 1:
-		# String to match on
-		match_str = ''
-		match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
-		match_str += r'\s*'                                                   # Optional whitespace
-		match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
-
-		# Substitute numbers with metric prefixes with pure floats
-		# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
-		while re.search(match_str, arg):
-			match      = re.search(match_str, arg)
-			num        = float(arg[match.start() : match.end()-1]) # Parse into float
-			multiplier = PREFIXES[arg[match.end()-1]]              # Look up prefix
-
-			# Expand argument
-			arg = \
-				arg[:match.start()] + \
-				str(num*multiplier) +' '+ \
-				arg[match.end():]
-		sys.argv[i] = arg
+		sys.argv[i] = expand_metric_prefixes(arg)
 
 # Parse global arguments
 parser = ap.ArgumentParser(description=desc_str)
@@ -220,6 +227,9 @@ if cmd == 'expression':
 
 	# Make string from arguments
 	expr_str = ' '.join(args.expression)
+
+	# Expand prefixes again (since additional spaces where introduced)
+	expr_str = expand_metric_prefixes(expr_str)
 
 	# Print the result
 	eppp.inout.print_sci(eppp.electronic_eval(expr_str))
