@@ -327,7 +327,16 @@ def electronic_eval(expr):
 		_ast.Pow:      _op.pow,
 		_ast.FloorDiv: parallel_impedance,
 	}
-	# TODO: Docstring
+	"""
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. The mathematical constant, 'pi', is also supported.
+
+	Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^' or '**'.
+	Args:
+		expr (string): Expression to evaluate.
+
+	Returns:
+		[number]. The result of the evaluation.
+	"""
 
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
@@ -359,7 +368,6 @@ def get_avail_vals(
 	):
 	"""
 	Generates a list of resistors based on a standard series.
-
 
 	Kwargs:
 		series (string):    (Default: 'E6') Series to generate from. ('E3', 'E6', 'E12', 'E24', 'E48', 'E96' or 'E192')
