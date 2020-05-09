@@ -318,15 +318,6 @@ def series_admittance(*vals):
 	return parallel_impedance(*vals)
 
 def electronic_eval(expr):
-	OPERATORS = {
-		_ast.Add:      _op.add,
-		_ast.Sub:      _op.sub,
-		_ast.USub:     _op.neg,
-		_ast.Mult:     _op.mul,
-		_ast.Div:      _op.truediv,
-		_ast.Pow:      _op.pow,
-		_ast.FloorDiv: parallel_impedance,
-	}
 	"""
 	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. The mathematical constant, 'pi', is also supported.
 
@@ -337,6 +328,15 @@ def electronic_eval(expr):
 	Returns:
 		[number]. The result of the evaluation.
 	"""
+	OPERATORS = {
+		_ast.Add:      _op.add,
+		_ast.Sub:      _op.sub,
+		_ast.USub:     _op.neg,
+		_ast.Mult:     _op.mul,
+		_ast.Div:      _op.truediv,
+		_ast.Pow:      _op.pow,
+		_ast.FloorDiv: parallel_impedance,
+	}
 
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
