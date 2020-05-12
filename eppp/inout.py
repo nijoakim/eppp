@@ -80,7 +80,7 @@ def print_sci(
 			name = x
 			x    = context[x]
 		else:
-			raise ValueError("Variable '%s' does not exist." % x)
+			raise ValueError(f"Variable '{x}' does not exist.")
 
 	print(
 		str_sci(
@@ -126,7 +126,7 @@ def str_sci(x,
 			name = x
 			x    = context[x]
 		else:
-			raise ValueError("Variable '%s' does not exist." % x)
+			raise ValueError(f"Variable '{x}' does not exist.")
 
 	# Non-prefixable values
 	if x ==  inf \
@@ -247,7 +247,7 @@ def str_sci(x,
 
 		# Scientific or engineering style
 		if notation_style == 'scientific' or notation_style == 'engineering':
-			to_append = '%se%i' % (significand_str, exponent)
+			to_append = f'{significand_str}e{exponent}'
 
 			# Remove trailing 'e0' if not strict
 			if not strict_style:
@@ -315,7 +315,7 @@ def str_sci(x,
 				operator_str = '-'
 
 		# Assemble string
-		ret = (' %s ' % operator_str).join(ret_strs)
+		ret = (f' {operator_str} ').join(ret_strs)
 
 		# Parenthesize if complex
 		if len(ret_strs) == 2:
@@ -327,7 +327,7 @@ def str_sci(x,
 
 	# Add quantity name
 	if not name is None:
-		ret = '%s =\n\t%s' % (name, ret)
+		ret = '{name} =\n\t{ret}'
 
 	return ret
 
