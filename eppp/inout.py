@@ -222,7 +222,7 @@ def str_sci(x,
 		exponent     = highness * digit_group_size
 		digit_offset = int(_np.floor(_np.log10(abs(significand))))
 
-		# Number of fractional zeroes needed for metric style
+		# Number of fractional zeros needed for metric style
 		if notation_style == 'metric':
 			num_frac_zeros = max(-int(_np.floor(_np.log10(abs(significand)))), 0)
 		else:
