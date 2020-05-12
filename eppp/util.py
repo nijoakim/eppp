@@ -59,16 +59,16 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
-	match_str += r'\s*'                                                   # Optional whitespace
-	match_str += '['+ ''.join(PREFIXES.keys()) +']'                      # Metric prefix
+	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
+	match_str += r'\s*'                                                     # Optional whitespace
+	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefix
 
 	# Substitute numbers with metric prefixes with pure floats
 	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
 	while re.search(match_str, string):
 		match      = re.search(match_str, string)
-		num        = float(string[match.start() : match.end()-1]) # Parse into float
-		multiplier = PREFIXES[string[match.end()-1]]              # Look up prefix
+		num        = complex(string[match.start() : match.end()-1]) # Parse into complex
+		multiplier = PREFIXES[string[match.end()-1]]                # Look up prefix
 
 		# Expand string
 		string = \
