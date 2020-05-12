@@ -238,7 +238,7 @@ def str_sci(x,
 		# Add 'j'-postfix if complex
 		significand_str = significand_str + complex_postfix
 
-		# Put minus in front of j
+		# Put minus in front of number
 		if len(significand_str) > 1 and significand_str[1] == '-':
 			significand_str = \
 				significand_str[1 ] + \
