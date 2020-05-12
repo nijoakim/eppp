@@ -195,7 +195,7 @@ def str_sci(x,
 	original_x = x     # Remember 'x' before converting
 	ret_strs   = []    # String representations of real and imaginary part
 	has_prefix = False # Whether a prefix for unit has been added
-	for xx, complex_prefix in zip((x.real, x.imag), ('', 'j')):
+	for xx, complex_postfix in zip((x.real, x.imag), ('', 'j')):
 		# Don't convert if 0
 		if  xx == 0:
 			continue
@@ -235,8 +235,8 @@ def str_sci(x,
 		if  float(significand_str) == 0:
 			continue
 
-		# Add 'j'-prefix if complex
-		significand_str = complex_prefix + significand_str
+		# Add 'j'-postfix if complex
+		significand_str = significand_str + complex_postfix
 
 		# Put minus in front of j
 		if len(significand_str) > 1 and significand_str[1] == '-':
