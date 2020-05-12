@@ -22,6 +22,19 @@
 # TODO: Possibility to omit unit.
 # TODO: Usage string omits sub-command.
 
+#==============
+# Bash hacking
+#==============
+
+UNUSED_VAR=0
+UNUSED_VAR=0 \
+<< UNUSED_VAR
+# Running 'source epppu' or 'bash epppu' executes the below bash code
+'''UNUSED_VAR
+echo 123
+return
+'''
+
 #=========
 # Imports
 #=========
@@ -48,7 +61,7 @@ def expand_metric_prefixes(string):
 	match_str = ''
 	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?' # Floating point number
 	match_str += r'\s*'                                                   # Optional whitespace
-	match_str += '['+ '|'.join(PREFIXES.keys()) +']'                      # Metric prefix
+	match_str += '['+ ''.join(PREFIXES.keys()) +']'                      # Metric prefix
 
 	# Substitute numbers with metric prefixes with pure floats
 	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
