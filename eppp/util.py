@@ -59,9 +59,9 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
-	match_str += r'\s*'                                                     # Optional whitespace
-	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefix
+	match_str += r'-?(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
+	match_str += r'\s*'                                                       # Optional whitespace
+	match_str += '['+ ''.join(PREFIXES.keys()) +']'                           # Metric prefix
 
 	# Substitute numbers with metric prefixes with pure floats
 	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
@@ -119,8 +119,7 @@ PREFIXES = {
 	'Y': 1e24,
 }
 for i, arg in enumerate(sys.argv):
-	# Skip script and command names
-	if i > 1:
+	if i > 1: # Skip script and command names
 		sys.argv[i] = expand_metric_prefixes(arg)
 
 # Parse global arguments
