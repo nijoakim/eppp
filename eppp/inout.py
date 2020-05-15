@@ -327,7 +327,7 @@ def str_sci(x,
 
 	# Add quantity name
 	if not name is None:
-		ret = '{name} =\n\t{ret}'
+		ret = f'{name} =\n\t{ret}'
 
 	return ret
 
