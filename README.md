@@ -40,6 +40,7 @@ Everything provided by the sub-modules are also imported into the root module.
 - `epppu voltage-division`
 - `epppu current-division`
 - `epppu skin-depth`
+- `epppu wavelength`
 
 For documentation on the different commands use
 `epppu <command> -h`.
