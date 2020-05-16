@@ -82,17 +82,19 @@ def expand_metric_prefixes(string):
 #========
 
 # Availible sub-commands
+# Indentation denotes grouping of related commands while maintaining approximate alphabetical sorting
 CMDS = [
 	'from-db',
-	'to-db',
+		'to-db',
 	'expression',
 	'make-resistance',
 	'parallel',
 	'reactance',
 	'susceptance',
 	'voltage-division',
-	'current-division',
+		'current-division',
 	'skin-depth',
+	'wavelength',
 ]
 
 # Description
@@ -568,3 +570,45 @@ if cmd == 'skin-depth':
 
 	# Print the result
 	eppp.print_sci(depth, unit='m')
+
+#======================
+# 'wavelength' command
+#======================
+
+if cmd == 'wavelength':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = 'Calculates the wavelength of an electromagnetic wave.'
+	)
+	parser.add_argument(
+		'frequency',
+		type = float,
+		help = 'Frequency [Hz].',
+	)
+	parser.add_argument(
+		'-rpi',
+		'--relative-permittivity',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permittivity of the medium.'
+	)
+	parser.add_argument(
+		'-rpe',
+		'--relative-permeability',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permeability of the medium.'
+	)
+	args = parser.parse_args()
+
+	# Do the calculation
+	length = eppp.wavelength(
+		args.frequency,
+		rel_permittivity = args.relative_permittivity,
+		rel_permeability = args.relative_permeability,
+	)
+
+	# Print the result
+	eppp.print_sci(length, unit='m')
