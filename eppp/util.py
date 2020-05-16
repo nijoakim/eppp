@@ -547,7 +547,7 @@ if cmd == 'skin-depth':
 		help = 'Frequency [Hz].',
 	)
 	parser.add_argument(
-		'-rpi',
+		'-reps',
 		'--relative-permittivity',
 		type    = float,
 		default = 1,
@@ -555,7 +555,7 @@ if cmd == 'skin-depth':
 		help    = 'Relative permittivity of the conductor.'
 	)
 	parser.add_argument(
-		'-rpe',
+		'-rmu',
 		'--relative-permeability',
 		type    = float,
 		default = 1,
@@ -590,7 +590,7 @@ if cmd == 'wavelength':
 		help = 'Frequency [Hz].',
 	)
 	parser.add_argument(
-		'-rpi',
+		'-reps',
 		'--relative-permittivity',
 		type    = float,
 		default = 1,
@@ -598,7 +598,7 @@ if cmd == 'wavelength':
 		help    = 'Relative permittivity of the medium.'
 	)
 	parser.add_argument(
-		'-rpe',
+		'-rmu',
 		'--relative-permeability',
 		type    = float,
 		default = 1,
