@@ -101,26 +101,20 @@ def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 
 # TODO: More substances and temperatures
 
-# Docstring decorator for 'electron_mobility' and 'hole_mobility'.
-def _doc_mobility(carrier_type_str):
-	def decorator(func):
-		func.__doc__ = """
-			Calculates the %s mobility in a given substance and for a given temperature.
-
-			Args:
-				carrier_conc (number): Total carrier concentration (electrons and holes) in carriers/m³.
-				temp (number):         (Default: 300) Temperature in K.
-				substance (string):    (Default: "Si") Semiconductor substance.
-
-			Returns:
-				float. Mobility in m²/Vs.
-		""" % carrier_type_str
-		return func
-	return decorator
-
 # TODO: Add to 'utils.py'
-@_doc_mobility('electron')
 def electron_mobility(carrier_conc, temp=300, substance="Si"):
+	"""
+	Calculates the electron mobility in a given substance and for a given temperature.
+
+	Args:
+		carrier_conc (number): Total electron concentration. [carriers/m³]
+		temp (number):         (Default: 300) Temperature. [K]
+		substance (string):    (Default: "Si") Semiconductor substance.
+
+	Returns:
+		float. Electron mobility. [m²/Vs]
+	"""
+
 	if substance == "Si":
 		if temp == 300:
 			return 131.8e-3 / (1 + (carrier_conc / 1.0e23) ** 0.85) + 9.2e-3
@@ -129,8 +123,19 @@ def electron_mobility(carrier_conc, temp=300, substance="Si"):
 		raise NotImplementedError('Substance '+ substance +' has not been implemented.')
 
 # TODO: Add to 'utils.py'
-@_doc_mobility('hole')
 def hole_mobility(carrier_conc, temp=300, substance="Si"):
+	"""
+	Calculates the hole mobility in a given substance and for a given temperature.
+
+	Args:
+		carrier_conc (number): Total hole concentration. [carriers/m³]
+		temp (number):         (Default: 300) Temperature. [K]
+		substance (string):    (Default: "Si") Semiconductor substance.
+
+	Returns:
+		float. Hole mobility. [m²/Vs]
+	"""
+
 	if substance == "Si":
 		if temp == 300:
 			return 42.0e-3 / (1 + (carrier_conc / 1.6e23) ** 0.7) + 5.0e-3
