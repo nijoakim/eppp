@@ -28,7 +28,7 @@ endif
 
 .PHONY: interpreter
 interpreter: build
-	python3
+	python3 -i -c 'from eppp import *'
 
 .PHONY: profile
 profile: build
