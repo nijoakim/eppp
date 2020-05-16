@@ -70,6 +70,10 @@ def expand_metric_prefixes(string):
 		num        = complex(string[match.start() : match.end()-1]) # Parse into complex
 		multiplier = PREFIXES[string[match.end()-1]]                # Look up prefix
 
+		# Convert to float if imaginary part is zero
+		if num.imag == 0:
+			num = num.real
+
 		# Expand string
 		string = \
 			string[:match.start()] + \
