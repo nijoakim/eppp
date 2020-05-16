@@ -74,6 +74,22 @@ def to_db(x, db_type):
 # Physical phenomena
 #====================
 
+def speed_of_light(rel_permittivity=1, rel_permeability=1):
+	"""
+	Calculates the speed of light in a medium with given permittivity and permeability.
+
+	Args:
+		rel_permittivity (number): Relative permittivity of the medium.
+		rel_permeability (number): Relative permeability of the medium.
+
+	Returns:
+		float. Speed of light. [m/s²]
+	"""
+
+	permittivity = rel_permittivity * _sp_c.epsilon_0
+	permeability = rel_permeability * _sp_c.mu_0
+	return 1/_np.sqrt(permittivity * permeability)
+
 def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	"""
 	Calculates the skin depth.
