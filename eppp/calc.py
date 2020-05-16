@@ -90,6 +90,25 @@ def speed_of_light(rel_permittivity=1, rel_permeability=1):
 	permeability = rel_permeability * _sp_c.mu_0
 	return 1/_np.sqrt(permittivity * permeability)
 
+def wavelength(freq, rel_permittivity=1, rel_permeability=1):
+	"""
+	Calculates the wavelength of an electromagnetic wave in a medium with given permittivity and permeability.
+
+	Args:
+		freq (number):             Frequency [Hz].
+		rel_permittivity (number): Relative permittivity of the medium.
+		rel_permeability (number): Relative permeability of the medium.
+
+	Returns:
+		float. Wavelength. [m]
+	"""
+
+	c = speed_of_light(
+		rel_permittivity = rel_permittivity,
+		rel_permeability = rel_permeability,
+	)
+	return c / freq
+
 def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	"""
 	Calculates the skin depth.
