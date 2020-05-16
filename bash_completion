@@ -7,7 +7,19 @@ _epppu()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	opts="from-db to-db expression make-resistance parallel reactance susceptance voltage-division current-division skin-depth wavelength"
+	opts="\
+		from-db \
+			to-db \
+		expression \
+		make-resistance \
+		parallel \
+		reactance \
+		susceptance \
+		voltage-division \
+		current-division \
+		skin-depth \
+			wavelength \
+	"
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 	return 0
