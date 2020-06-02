@@ -25,17 +25,6 @@ import matplotlib.pyplot as _pyplot
 # Internal
 from .calc import to_db as _to_db
 
-# Create a special version of '_pyplot.plot()' if 'mpldatacursor' is available
-_old_pyplot_plot = _pyplot.plot
-try:
-	from mpldatacursor import datacursor as _datacursor
-	def _new_pyplot_plot(*args, **kwargs):
-		ret = _old_pyplot_plot(*args, **kwargs)
-		_datacursor(ret)
-		return ret
-except ImportError:
-	_new_pyplot_plot = _pyplot.plot
-
 #==========
 # Plotting
 #==========
@@ -59,12 +48,6 @@ def bode(
 		use_data_cursors (booolean): Whether to use data cursor. (Only has an effect if the 'mpldatacursor' package is available.)
 		title_text (str):            Title text
 	"""
-
-	# Which plotting function to use
-	if use_data_cursors:
-		plot = _new_pyplot_plot
-	else:
-		plot = _old_pyplot_plot
 
 	# Size check
 	if freq.size != mag.size != phase.size:
