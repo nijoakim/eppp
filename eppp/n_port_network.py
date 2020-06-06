@@ -798,7 +798,7 @@ class NPortNetwork:
 	@z.setter
 	def z(self, matrix):
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'z'
 
 	@y.setter
@@ -807,7 +807,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'y'
 
 	@h.setter
@@ -816,7 +816,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'h'
 
 	@g.setter
@@ -825,7 +825,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'g'
 
 	@a.setter
@@ -834,7 +834,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'a'
 
 	@b.setter
@@ -843,7 +843,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 'b'
 
 	@s.setter
@@ -852,7 +852,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 's'
 
 	@t.setter
@@ -861,7 +861,7 @@ class NPortNetwork:
 		matrix ([[number]]): z-parameter matrix (impedance parameters)
 		"""
 		self._reset_matrices()
-		self._last_assigned_matrix = matrix
+		self._last_assigned_matrix = matrix.copy()
 		self._last_assigned_type   = 't'
 
 #=======================================================
