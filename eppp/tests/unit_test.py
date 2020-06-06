@@ -87,12 +87,12 @@ class TestStringMethods(ut.TestCase):
 
 	def test_decibel(self):
 		# Power
-		self.assertEqual(eppp.convert_to_db(100, db_type='power'), 20)   # To dB
-		self.assertEqual(eppp.convert_from_db(20, db_type='power'), 100) # From dB
+		self.assertEqual(eppp.to_db(100, db_type='power'), 20)   # To dB
+		self.assertEqual(eppp.from_db(20, db_type='power'), 100) # From dB
 		
 		# Amplitude
-		self.assertEqual(eppp.convert_to_db(100, db_type='amplitude'), 40)   # To dB
-		self.assertEqual(eppp.convert_from_db(40, db_type='amplitude'), 100) # From dB
+		self.assertEqual(eppp.to_db(100, db_type='amplitude'), 40)   # To dB
+		self.assertEqual(eppp.from_db(40, db_type='amplitude'), 100) # From dB
 
 	def test_sci_notation(self):
 		# Correct number of significant figures
@@ -120,13 +120,13 @@ class TestStringMethods(ut.TestCase):
 		# TODO: Engineering style
 
 		# Complex numbers
-		self.assertEqual(eppp.str_sci(   1 +    1j),  '(1.00 + j1.00)')
-		self.assertEqual(eppp.str_sci(   1 -    1j),  '(1.00 - j1.00)')
-		self.assertEqual(eppp.str_sci(  -1 -    1j), '(-1.00 - j1.00)')
-		self.assertEqual(eppp.str_sci(          1j),          'j1.00')
-		self.assertEqual(eppp.str_sci(         -1j),         '-j1.00')
-		self.assertEqual(eppp.str_sci(1000 +   10j),  '(1.00 + j0.01) k')
-		self.assertEqual(eppp.str_sci(  10 + 1000j),  '(0.01 + j1.00) k')
+		self.assertEqual(eppp.str_sci(   1 +    1j),  '(1.00 + 1.00j)')
+		self.assertEqual(eppp.str_sci(   1 -    1j),  '(1.00 - 1.00j)')
+		self.assertEqual(eppp.str_sci(  -1 -    1j), '(-1.00 - 1.00j)')
+		self.assertEqual(eppp.str_sci(          1j),          '1.00j')
+		self.assertEqual(eppp.str_sci(         -1j),         '-1.00j')
+		self.assertEqual(eppp.str_sci(1000 +   10j),  '(1.00 + 0.01j) k')
+		self.assertEqual(eppp.str_sci(  10 + 1000j),  '(0.01 + 1.00j) k')
 		self.assertEqual(eppp.str_sci(1000 +    1j),          '1.00 k')
 
 ut.main(exit = False)
