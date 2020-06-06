@@ -36,8 +36,6 @@ _det = _np.linalg.det
 # Matrix conversions
 #====================
 
-# TODO: Always use dtype=complex?
-
 # TODO: Using Z as intermediate may cause conversions to infinities/NaNs. Implement direct conversions between all parameters.
 def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
@@ -64,7 +62,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	"""
 
 	# Identity matrix
-	i = _np.identity(len(matrix), dtype=matrix.dtype)
+	i = _np.identity(len(matrix), dtype=complex)
 
 	# Characteristic impedance matrix
 	z0 = _np.asarray(char_imp)
@@ -109,7 +107,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('z', 'h'):
-		h = _np.ndarray((2, 2), dtype=z.dtype)
+		h = _np.ndarray((2, 2), dtype=complex)
 		h[0][0] = _det(z)
 		h[0][1] = z[0][1]
 		h[1][0] = -z[1][0]
@@ -119,7 +117,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('z', 'g'):
-		g = _np.ndarray((2, 2), dtype=z.dtype)
+		g = _np.ndarray((2, 2), dtype=complex)
 		g[0][0] = 1
 		g[0][1] = -z[0][1]
 		g[1][0] = z[1][0]
@@ -129,7 +127,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('z', 'a'):
-		a = _np.ndarray((2, 2), dtype=z.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = z[0][0]
 		a[0][1] = _det(z)
 		a[1][0] = 1
@@ -139,7 +137,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('z', 'b'):
-		b = _np.ndarray((2, 2), dtype=z.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = z[1][1]
 		b[0][1] = -_det(z)
 		b[1][0] = -1
@@ -165,7 +163,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('y', 'h'):
-		h = _np.ndarray((2, 2), dtype=y.dtype)
+		h = _np.ndarray((2, 2), dtype=complex)
 		h[0][0] = 1
 		h[0][1] = -y[0][1]
 		h[1][0] = y[1][0]
@@ -175,7 +173,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('y', 'g'):
-		g = _np.ndarray((2, 2), dtype=y.dtype)
+		g = _np.ndarray((2, 2), dtype=complex)
 		g[0][0] = _det(y)
 		g[0][1] = y[0][1]
 		g[1][0] = -y[1][0]
@@ -185,7 +183,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('y', 'a'):
-		a = _np.ndarray((2, 2), dtype=y.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = -y[1][1]
 		a[0][1] = -1
 		a[1][0] = -_det(y)
@@ -195,7 +193,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('y', 'b'):
-		b = _np.ndarray((2, 2), dtype=y.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = -y[0][0]
 		b[0][1] = 1
 		b[1][0] = _det(y)
@@ -217,7 +215,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To z-parameters
 	if (from_, to) == ('h', 'z'):
-		z = _np.ndarray((2, 2), dtype=h.dtype)
+		z = _np.ndarray((2, 2), dtype=complex)
 		z[0][0] = _det(h)
 		z[0][1] = h[0][1]
 		z[1][0] = -h[1][0]
@@ -227,7 +225,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To y-parameters
 	if (from_, to) == ('h', 'y'):
-		y = _np.ndarray((2, 2), dtype=h.dtype)
+		y = _np.ndarray((2, 2), dtype=complex)
 		y[0][0] = 1
 		y[0][1] = -h[0][1]
 		y[1][0] = h[1][0]
@@ -241,7 +239,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('h', 'a'):
-		a = _np.ndarray((2, 2), dtype=h.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = -np.linalg.det(h)
 		a[0][1] = -h[0][0]
 		a[1][0] = -h[1][1]
@@ -251,7 +249,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('h', 'b'):
-		b = _np.ndarray((2, 2), dtype=h.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = 1
 		b[0][1] = -h[0][0]
 		b[1][0] = -h[1][1]
@@ -261,7 +259,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To s-parameters
 	if (from_, to) == ('h', 's'):
-		s = _np.ndarray((2, 2), dtype=h.dtype)
+		s = _np.ndarray((2, 2), dtype=complex)
 		s[0][0] = (h[0][0] - z0[0][0]) * (1 + z0[1][1]*h[1][1]) - z0[1][1]*h[0][1]*h[1][0]
 		s[0][1] = 2 * h[0][1] * _np.sqrt(z0[0][0] * z0[1][1])
 		s[1][0] = -2 * h[1][0] * _np.sqrt(z0[0][0] * z0[1][1])
@@ -278,7 +276,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To z-parameters
 	if (from_, to) == ('g', 'z'):
-		z = _np.ndarray((2, 2), dtype=g.dtype)
+		z = _np.ndarray((2, 2), dtype=complex)
 		z[0][0] = 1
 		z[0][1] = -g[0][1]
 		z[1][0] = g[1][0]
@@ -288,7 +286,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To y-parameters
 	if (from_, to) == ('g', 'y'):
-		y = _np.ndarray((2, 2), dtype=g.dtype)
+		y = _np.ndarray((2, 2), dtype=complex)
 		y[0][0] = _det(g)
 		y[0][1] = g[0][1]
 		y[1][0] = -g[1][0]
@@ -302,7 +300,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('g', 'a'):
-		a = _np.ndarray((2, 2), dtype=g.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = 1
 		a[0][1] = g[1][1]
 		a[1][0] = g[0][0]
@@ -312,7 +310,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('g', 'b'):
-		b = _np.ndarray((2, 2), dtype=g.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = -_det(g)
 		b[0][1] = g[1][1]
 		b[1][0] = g[0][0]
@@ -322,7 +320,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To s-parameters
 	if (from_, to) == ('g', 's'):
-		s = _np.ndarray((2, 2), dtype=g.dtype)
+		s = _np.ndarray((2, 2), dtype=complex)
 		s[0][0] = (1 - g[0][0] + z0[0][0]) * (g[1][1] + z0[1][1]) + z0[1][1]*g[0][1]*g[1][0]
 		s[0][1] = -2 * g[0][1] * _np.sqrt(z0[0][0] * z0[1][1])
 		s[1][0] = 2 * g[1][0] * _np.sqrt(z0[0][0] * z0[1][1])
@@ -339,7 +337,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To z-parameters
 	if (from_, to) == ('a', 'z'):
-		z = _np.ndarray((2, 2), dtype=a.dtype)
+		z = _np.ndarray((2, 2), dtype=complex)
 		z[0][0] = a[0][0]
 		z[0][1] = _det(a)
 		z[1][0] = 1
@@ -349,7 +347,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To y-parameters
 	if (from_, to) == ('a', 'y'):
-		y = _np.ndarray((2, 2), dtype=a.dtype)
+		y = _np.ndarray((2, 2), dtype=complex)
 		y[0][0] = a[1][1]
 		y[0][1] = -_det(a)
 		y[1][0] = -1
@@ -359,7 +357,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('a', 'h'):
-		h = _np.ndarray((2, 2), dtype=a.dtype)
+		h = _np.ndarray((2, 2), dtype=complex)
 		h[0][0] = a[0][1]
 		h[0][1] = _det(a)
 		h[1][0] = -1
@@ -369,7 +367,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('a', 'g'):
-		g = _np.ndarray((2, 2), dtype=a.dtype)
+		g = _np.ndarray((2, 2), dtype=complex)
 		g[0][0] = a[1][0]
 		g[0][1] = -_det(a)
 		g[1][0] = 1
@@ -379,7 +377,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('a', 'b'):
-		b = _np.ndarray((2, 2), dtype=a.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = a[1][1]
 		b[0][1] = -a[0][1]
 		b[1][0] = -a[1][0]
@@ -389,7 +387,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To s-parameters
 	if (from_, to) == ('a', 's'):
-		s = _np.ndarray((2, 2), dtype=a.dtype)
+		s = _np.ndarray((2, 2), dtype=complex)
 		s[0][0] = (
 			a[0][0] * z0[1][1] +
 			a[0][1] -
@@ -421,7 +419,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To z-parameters
 	if (from_, to) == ('b', 'z'):
-		z = _np.ndarray((2, 2), dtype=b.dtype)
+		z = _np.ndarray((2, 2), dtype=complex)
 		z[0][0] = -b[1][1]
 		z[0][1] = -1
 		z[1][0] = -_det(b)
@@ -431,7 +429,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To y-parameters
 	if (from_, to) == ('b', 'y'):
-		y = _np.ndarray((2, 2), dtype=b.dtype)
+		y = _np.ndarray((2, 2), dtype=complex)
 		y[0][0] = -b[1][1]
 		y[0][1] = 1
 		y[1][0] = _det(b)
@@ -441,7 +439,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('b', 'h'):
-		h = _np.ndarray((2, 2), dtype=b.dtype)
+		h = _np.ndarray((2, 2), dtype=complex)
 		h[0][0] = -b[0][1]
 		h[0][1] = 1
 		h[1][0] = -_det(b)
@@ -451,7 +449,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('b', 'g'):
-		g = _np.ndarray((2, 2), dtype=b.dtype)
+		g = _np.ndarray((2, 2), dtype=complex)
 		g[0][0] = -b[1][0]
 		g[0][1] = -1
 		g[1][0] = _det(b)
@@ -461,7 +459,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('b', 'a'):
-		a = _np.ndarray((2, 2), dtype=b.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = b[1][1]
 		a[0][1] = -b[0][1]
 		a[1][0] = -b[1][0]
@@ -473,7 +471,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	# To s-parameters
 	if (from_, to) == ('b', 's'):
 		b /= b[0][0]*b[1][1] - b[0][1]*b[1][0]
-		s = _np.ndarray((2, 2), dtype=a.dtype)
+		s = _np.ndarray((2, 2), dtype=complex)
 		s[0][0] = (
 			b[1][1] * z0[1][1] +
 			-b[0][1] -
@@ -515,7 +513,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To h-parameters
 	if (from_, to) == ('s', 'h'):
-		h = _np.ndarray((2, 2), dtype=s.dtype)
+		h = _np.ndarray((2, 2), dtype=complex)
 		h[0][0] = ((1 + s[0][0]) * (1 + s[1][1]) - s[0][1] * s[1][0]) * z0[0][0]
 		h[0][1] = 2 * s[0][1] * _np.sqrt(z0[0][0] / z0[1][1])
 		h[1][0] = -2 * s[1][0] * _np.sqrt(z0[0][0] / z0[1][1])
@@ -525,7 +523,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To g-parameters
 	if (from_, to) == ('s', 'g'):
-		g = _np.ndarray((2, 2), dtype=s.dtype)
+		g = _np.ndarray((2, 2), dtype=complex)
 		g[0][0] = ((1 - s[0][0]) * (1 - s[1][1]) - s[0][1] * s[1][0]) / z0[0][0]
 		g[0][1] = -2 * s[0][1] * _np.sqrt(z0[1][1] / z0[0][0])
 		g[1][0] = 2 * s[1][0] * _np.sqrt(z0[1][1] / z0[0][0])
@@ -535,7 +533,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To a-parameters
 	if (from_, to) == ('s', 'a'):
-		a = _np.ndarray((2, 2), dtype=s.dtype)
+		a = _np.ndarray((2, 2), dtype=complex)
 		a[0][0] = (
 			_np.conj(z0[0][0]) * (1 - s[1][1]) +
 			z0[0][0] * (s[0][0] - _det(s))
@@ -556,7 +554,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To b-parameters
 	if (from_, to) == ('s', 'b'):
-		b = _np.ndarray((2, 2), dtype=s.dtype)
+		b = _np.ndarray((2, 2), dtype=complex)
 		b[0][0] = (
 			_np.conj(z0[1][1]) * (1 - s[0][0]) +
 			z0[1][1] * (s[1][1] - _det(s))
@@ -577,7 +575,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To t-parameters
 	if (from_, to) == ('s', 't'):
-		t = _np.ndarray((2, 2), dtype=s.dtype)
+		t = _np.ndarray((2, 2), dtype=complex)
 		t[0][0] = -_det(s)
 		t[0][1] = s[0][0]
 		t[1][0] = -s[1][1]
@@ -599,7 +597,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 
 	# To s-parameters
 	if (from_, to) == ('t', 's'):
-		s = _np.ndarray((2, 2), dtype=t.dtype)
+		s = _np.ndarray((2, 2), dtype=complex)
 		s[0][0] = t[0][1]
 		s[0][1] = _det(t)
 		s[1][0] = 1
