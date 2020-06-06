@@ -55,7 +55,7 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 		matrix ([[number]]):          Matrix to convert.
 		from_ (chr):                  n-port parameter type to convert from.
 		to (chr):                     n-port parameter type to convert to.
-		char_imp (number | [number]): Characteristic impedance in ohms in case of conversion between power and amplitude parameters. If ports have different characteristic impedances, it 'char_imp' can be given as a vector where element n represent the characteristic impedance for port n. (Default: 50)
+		char_imp (number | [number]): (Default: 50) Characteristic impedance in case of conversion between power and amplitude parameters. If ports have different characteristic impedances, 'char_imp' can be given as a vector where element n represent the characteristic impedance for port n. [Ω]
 
 	Returns:
 		([[number]]) Converted matrix.
@@ -65,9 +65,9 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	i = _np.identity(len(matrix), dtype=complex)
 
 	# Characteristic impedance matrix
-	z0 = _np.asarray(char_imp)
+	z0 = _np.asarray(char_imp, dtype=complex)
 	if z0.shape == ():
-		z0 = _np.asarray([z0]*matrix.shape[0])
+		z0 = _np.asarray([z0]*matrix.shape[0], dtype=complex)
 	z0 = _np.diag(z0)
 
 	# Root characteristic conductance matrix
@@ -610,7 +610,6 @@ def convert_parameter_matrix(matrix, from_, to, char_imp=50):
 	#======================================================
 	raise NotImplementedError()
 
-# TODO: Allow characteristic impedance to be specified
 class NPortNetwork:
 	"""
 	Data structure for automatic conversions between n-port parameter types.
@@ -618,9 +617,14 @@ class NPortNetwork:
 	Different representations of n-port parameters are provided by the attributes, 'z', 'y', 'g', 'h', 'a', 'b', 's', and 't'. Assigning to or modifying a parameter and then accessing another automatically converts from the former to the latter when the latter is accessed.
 	
 	To avoid ambiguities on which parameter type to use in an automatic conversion, only one n-port parameter representation is allowed to be modified between assignments.
+
+	Args:
+		char_imp (number | [number]): (Default: 50) Characteristic impedance in case of conversion between power and amplitude parameters. If ports have different characteristic impedances, 'char_imp' can be given as a vector where element n represent the characteristic impedance for port n. [Ω]
 	"""
 
-	def __init__(self):
+	def __init__(self, char_imp=50):
+		self.char_imp = char_imp
+
 		self._reset_matrices()
 		self._last_assigned_matrix = None
 		self._last_assigned_type   = None
@@ -659,6 +663,7 @@ class NPortNetwork:
 						self._last_assigned_matrix,
 						self._last_assigned_type,
 						matrix_type,
+						char_imp = self.char_imp,
 					)
 				):
 				modified_matrix_type = matrix_type
@@ -688,6 +693,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'z',
+			char_imp = self.char_imp,
 		)
 		return self._z
 
@@ -701,6 +707,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'y',
+			char_imp = self.char_imp,
 		)
 		return self._y
 
@@ -714,6 +721,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'h',
+			char_imp = self.char_imp,
 		)
 		return self._h
 
@@ -727,6 +735,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'g',
+			char_imp = self.char_imp,
 		)
 		return self._g
 
@@ -740,6 +749,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'a',
+			char_imp = self.char_imp,
 		)
 		return self._a
 
@@ -753,6 +763,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			'b',
+			char_imp = self.char_imp,
 		)
 		return self._b
 
@@ -766,6 +777,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			's',
+			char_imp = self.char_imp,
 		)
 		return self._s
 
@@ -779,6 +791,7 @@ class NPortNetwork:
 			self._get_last_modified_matrix(),
 			self._last_assigned_type,
 			't',
+			char_imp = self.char_imp,
 		)
 		return self._t
 
