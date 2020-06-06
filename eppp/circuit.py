@@ -271,7 +271,7 @@ def parallel_impedance(*vals):
 	Calculates the equivalent impedance of a set of parallel connected components.
 
 	Args:
-		*vals (number): Parallel connected impedances.
+		*vals (number): Parallel connected impedances. [Ω]
 
 	Returns:
 		The equivalent impedance for all '*vals' impedances connected in parallel.
