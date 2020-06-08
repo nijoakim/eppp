@@ -90,24 +90,44 @@ def speed_of_light(rel_permittivity=1, rel_permeability=1):
 	permeability = rel_permeability * _sp_c.mu_0
 	return 1/_np.sqrt(permittivity * permeability)
 
-def wavelength(freq, rel_permittivity=1, rel_permeability=1):
+def wavelength(
+		freq,
+		rel_permittivity = None,
+		rel_permeability = None,
+		speed            = None,
+	):
 	"""
-	Calculates the wavelength of an electromagnetic wave in a medium with given permittivity and permeability.
+	Calculates the wavelength of an electromagnetic wave in a medium with given permittivity and permeability. Alternatively, the speed of the wave in the medium can be specified.
 
 	Args:
 		freq (number):             Frequency [Hz].
-		rel_permittivity (number): Relative permittivity of the medium.
-		rel_permeability (number): Relative permeability of the medium.
+		rel_permittivity (number): (default: 1) Relative permittivity of the medium.
+		rel_permeability (number): (default: 1) Relative permeability of the medium.
+		speed (number):            Speed of the wave in medium. [m/s]
 
 	Returns:
 		float. Wavelength. [m]
 	"""
 
-	c = speed_of_light(
-		rel_permittivity = rel_permittivity,
-		rel_permeability = rel_permeability,
-	)
-	return c / freq
+	# Error checking
+	if not speed is None:
+		if not rel_permittivity is None \
+		or not rel_permeability is None:
+			raise ValueError('Can not specify permittivity or permeability if speed is also specified speed.')
+
+	# Default values for permittivity and permeability
+	rel_permittivity = 1 if rel_permittivity is None else rel_permittivity
+	rel_permeability = 1 if rel_permeability is None else rel_permeability
+
+	# Calculate speed based on permittivity and permeability
+	if speed is None:
+		speed = speed_of_light(
+			rel_permittivity = rel_permittivity,
+			rel_permeability = rel_permeability,
+		)
+
+	# Return wavelength
+	return speed / freq
 
 def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
 	"""
