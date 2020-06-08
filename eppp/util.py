@@ -580,7 +580,7 @@ if cmd == 'wavelength':
 		'-reps',
 		'--relative-permittivity',
 		type    = float,
-		default = 1,
+		default = None,
 		nargs   = '?',
 		help    = 'Relative permittivity of the medium.'
 	)
@@ -588,9 +588,17 @@ if cmd == 'wavelength':
 		'-rmu',
 		'--relative-permeability',
 		type    = float,
-		default = 1,
+		default = None,
 		nargs   = '?',
 		help    = 'Relative permeability of the medium.'
+	)
+	parser.add_argument(
+		'-s',
+		'--speed',
+		type    = float,
+		default = None,
+		nargs   = '?',
+		help    = 'Speed of the wave in medium. [m/s]'
 	)
 	args = parser.parse_args()
 
@@ -599,6 +607,7 @@ if cmd == 'wavelength':
 		args.frequency,
 		rel_permittivity = args.relative_permittivity,
 		rel_permeability = args.relative_permeability,
+		speed            = args.speed
 	)
 
 	# Print the result
