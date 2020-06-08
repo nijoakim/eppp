@@ -22,19 +22,6 @@
 # TODO: Possibility to omit unit.
 # TODO: Usage string omits sub-command.
 
-#==============
-# Bash hacking
-#==============
-
-UNUSED_VAR=0
-UNUSED_VAR=0 \
-<< UNUSED_VAR
-# Running 'source epppu' or 'bash epppu' executes the below bash code
-'''UNUSED_VAR
-echo 123
-return
-'''
-
 #=========
 # Imports
 #=========
