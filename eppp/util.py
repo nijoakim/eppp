@@ -269,7 +269,7 @@ if cmd == 'make-resistance':
 		type    = int,
 		nargs   = '?',
 		default = -1,
-		help    = 'Maximum number of components for the resulting network. Negative values yield no limit. (default: -1)',
+		help    = 'Maximum number of components for the resulting network. Negative values yield no limit. (default: %(default)s)',
 	)
 	parser.add_argument(
 		'-s',
@@ -283,14 +283,14 @@ if cmd == 'make-resistance':
 		'--min-resistance',
 		type    = float,
 		default = 10,
-		help    = 'Minimum resistance used when generating the series (default: %(default)s)',
+		help    = 'Minimum resistance used when generating the series. [Ω] (default: %(default)s)',
 	)
 	parser.add_argument(
 		'-Mr',
 		'--max-resistance',
 		type    = float,
 		default = 10e6,
-		help    = 'Maximum resistance used when generating the series (default: %(default)s)',
+		help    = 'Maximum resistance used when generating the series. [Ω] (default: %(default)s)',
 	)
 	parser.add_argument(
 		'--configuration',
@@ -354,7 +354,7 @@ if cmd == 'parallel':
 		'values',
 		type  = complex,
 		nargs = '+',
-		help = 'List of parallel impedances.'
+		help = 'List of parallel impedances. [Ω]'
 	)
 	vals = parser.parse_args().values
 
@@ -381,12 +381,12 @@ if cmd == 'reactance':
 	parser.add_argument(
 		'value',
 		type = float,
-		help = 'Component value. (Henry or Farad)',
+		help = 'Component value. [H or F]',
 	)
 	parser.add_argument(
 		'frequency',
 		type = float,
-		help = 'Frequency. (Hertz)',
+		help = 'Frequency. [Hz]',
 	)
 	args = parser.parse_args()
 
@@ -418,12 +418,12 @@ if cmd == 'susceptance':
 	parser.add_argument(
 		'value',
 		type = float,
-		help = 'Component value. (Henry or Farad)',
+		help = 'Component value. [H or F]',
 	)
 	parser.add_argument(
 		'frequency',
 		type = float,
-		help = 'Frequency. (Hertz)',
+		help = 'Frequency. [Ω]',
 	)
 	args = parser.parse_args()
 
@@ -450,18 +450,18 @@ if cmd == 'voltage-division':
 	parser.add_argument(
 		'voltage',
 		type = complex,
-		help = 'Source voltage.',
+		help = 'Source voltage. [V]',
 	)
 	parser.add_argument(
 		'main_impedance',
 		type = complex,
-		help = 'Main impedance.',
+		help = 'Main impedance. [Ω]',
 	)
 	parser.add_argument(
 		'impedances',
 		type  = complex,
 		nargs = '*',
-		help = 'List of other series-connected impedances.'
+		help = 'List of other series-connected impedances. [Ω]'
 	)
 	args = parser.parse_args()
 	main_imp = parser.parse_args().main_impedance
@@ -489,18 +489,18 @@ if cmd == 'current-division':
 	parser.add_argument(
 		'current',
 		type = complex,
-		help = 'Source current.',
+		help = 'Source current. [A]',
 	)
 	parser.add_argument(
 		'main_impedance',
 		type = complex,
-		help = 'Main impedance.',
+		help = 'Main impedance. [Ω]',
 	)
 	parser.add_argument(
 		'impedances',
 		type  = complex,
 		nargs = '*',
-		help = 'List of other parallel-connected impedances.'
+		help = 'List of other parallel-connected impedances. [Ω]'
 	)
 	args = parser.parse_args()
 
@@ -539,7 +539,7 @@ if cmd == 'skin-depth':
 		type    = float,
 		default = 1,
 		nargs   = '?',
-		help    = 'Relative permittivity of the conductor.'
+		help    = 'Relative permittivity of the conductor. (default: %(default)s)'
 	)
 	parser.add_argument(
 		'-rmu',
@@ -547,7 +547,7 @@ if cmd == 'skin-depth':
 		type    = float,
 		default = 1,
 		nargs   = '?',
-		help    = 'Relative permeability of the conductor.'
+		help    = 'Relative permeability of the conductor. (default: %(default)s)'
 	)
 	args = parser.parse_args()
 
@@ -582,7 +582,7 @@ if cmd == 'wavelength':
 		type    = float,
 		default = None,
 		nargs   = '?',
-		help    = 'Relative permittivity of the medium.'
+		help    = 'Relative permittivity of the medium. (default: 1)'
 	)
 	parser.add_argument(
 		'-rmu',
@@ -590,7 +590,7 @@ if cmd == 'wavelength':
 		type    = float,
 		default = None,
 		nargs   = '?',
-		help    = 'Relative permeability of the medium.'
+		help    = 'Relative permeability of the medium. (default: 1)'
 	)
 	parser.add_argument(
 		'-s',
