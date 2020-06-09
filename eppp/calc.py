@@ -129,15 +129,20 @@ def wavelength(
 	# Return wavelength
 	return speed / freq
 
-def skin_depth(resistivity, freq, rel_permittivity=1, rel_permeability=1):
+def skin_depth(
+		resistivity,
+		freq,
+		rel_permittivity = 1,
+		rel_permeability = 1,
+	):
 	"""
-	Calculates the skin depth.
+	Calculates the skin depth of a wire.
 
 	Args:
 		resistivity (number):      Resistivity of the conductor [Ω/m].
 		freq (number):             Frequency [Hz].
-		rel_permittivity (number): Relative permittivity of the conductor.
-		rel_permeability (number): Relative permeability of the conductor.
+		rel_permittivity (number): (Default: 1) Relative permittivity of the conductor.
+		rel_permeability (number): (Default: 1) Relative permeability of the conductor.
 
 	Returns:
 		float. Skin depth. [m]
