@@ -159,7 +159,7 @@ def inductor_impedance(ind, freq):
 		freq (number): Frequency  [Hz]
 
 	Returns:
-		The impedance for an inductor with the specified inductance at the specified frequency.
+		The impedance for an inductor with the specified inductance at the specified frequency. [Ω]
 	"""
 	return ind * 1j * 2 * _np.pi * freq
 
@@ -172,7 +172,7 @@ def capacitor_impedance(cap, freq):
 		freq (number): Frequency   [Hz]
 
 	Returns:
-		The impedance for a capacitor with the specified capacitance at the specified frequency.
+		The impedance for a capacitor with the specified capacitance at the specified frequency. [Ω]
 	"""
 	if cap == 0 or freq == 0:
 		return -1j * inf
@@ -188,7 +188,7 @@ def inductor_admittance(ind, freq):
 		freq (number): Frequency  [Hz]
 
 	Returns:
-		The admittance for an inductor with the specified inductance at the specified frequency.
+		The admittance for an inductor with the specified inductance at the specified frequency. [S]
 	"""
 	if ind == 0 or freq == 0:
 		return -1j * inf
@@ -204,7 +204,7 @@ def capacitor_admittance(cap, freq):
 		freq (number): Frequency   [Hz]
 
 	Returns:
-		The admittance for a capacitor with the specified capacitance at the specified frequency.
+		The admittance for a capacitor with the specified capacitance at the specified frequency. [S]
 	"""
 
 	return cap * 1j * 2 * _np.pi * freq
@@ -274,7 +274,7 @@ def parallel_impedance(*vals):
 		*vals (number): Parallel connected impedances. [Ω]
 
 	Returns:
-		The equivalent impedance for all '*vals' impedances connected in parallel.
+		The equivalent impedance for all '*vals' impedances connected in parallel. [Ω]
 	"""
 
 	# Sum admittances
@@ -310,10 +310,10 @@ def series_admittance(*vals):
 	Calculates the equivalent admittance of a set of series connected components.
 
 	Args:
-		*vals (number): Series connected admittances.
+		*vals (number): Series connected admittances. [S]
 
 	Returns:
-		The equivalent admittance for all '*vals' admittances connected in series.
+		The equivalent admittance for all '*vals' admittances connected in series. [S]
 	"""
 	return parallel_impedance(*vals)
 
@@ -388,7 +388,7 @@ def get_avail_vals(
 		raise Exception("'freq' must be specified if '%s' is chosen as component type." % comp_type)
 
 	# Derives an E-series from a higher one
-	def _derive_series(series_num, orig_series):
+	def derive_series(series_num, orig_series):
 		skip = len(orig_series) / series_num
 		return [el for i, el in enumerate(orig_series) if i % skip == 0]
 
@@ -422,11 +422,11 @@ def get_avail_vals(
 	]
 
 	# Derived series
-	avail_vals_dict['E3']  = _derive_series( 3, avail_vals_dict['E24'])
-	avail_vals_dict['E6']  = _derive_series( 6, avail_vals_dict['E24'])
-	avail_vals_dict['E12'] = _derive_series(12, avail_vals_dict['E24'])
-	avail_vals_dict['E48'] = _derive_series(48, avail_vals_dict['E192'])
-	avail_vals_dict['E96'] = _derive_series(96, avail_vals_dict['E192'])
+	avail_vals_dict['E3']  = derive_series( 3, avail_vals_dict['E24'])
+	avail_vals_dict['E6']  = derive_series( 6, avail_vals_dict['E24'])
+	avail_vals_dict['E12'] = derive_series(12, avail_vals_dict['E24'])
+	avail_vals_dict['E48'] = derive_series(48, avail_vals_dict['E192'])
+	avail_vals_dict['E96'] = derive_series(96, avail_vals_dict['E192'])
 
 	# Get basic available values
 	if type(series) is str:
@@ -552,12 +552,12 @@ def make_resistance(
 	Finds a network of resistances approximating a target value.
 
 	Args:
-		target (number): Target resistance for the network.
+		target (number): Target resistance for the network. [Ω]
 
 	Kwargs:
 		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
 		tolerance (float):               (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
-		avail_vals ([float]):            (Default: get_avail_vals('E6')) List of available values of the resistances used in the network.
+		avail_vals ([float]):            (Default: get_avail_vals('E6')) List of available values of the resistances used in the network. [Ω]
 		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting resistance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
 		num_comps_full_search (int):     (Default: 3) Maximum number of components to do a full search on. Affects performance only. A higher value consumes more memory but may be faster.
 		num_comps_full_search_lag (int): (Default: 3) How many components should be search for before starting with the full searches. Affects performance only. A higher value increases performance for small number of components with the trade-off that the performance for large number of components is slightly reduced (assuming that 'num_comps_full_search' is configured for a efficient searches).
