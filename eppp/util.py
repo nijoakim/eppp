@@ -171,20 +171,22 @@ sys.argv = [sys.argv[0]] + vars(global_args)['command-arguments']
 #===================
 
 if cmd == 'from-db':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = "Converts a number from its decibel form.",
 	)
+
 	parser.add_argument(
 		"x",
 		type = float,
 		help = "Decibel value to convert from.",
 	)
+
 	parser.add_argument(
 		'type',
 		type = str,
 		help  = "Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'."
 	)
+
 	args = parser.parse_args()
 
 	# Print the result
@@ -195,20 +197,22 @@ if cmd == 'from-db':
 #=================
 
 if cmd == 'to-db':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = "Converts a number to its decibel form.",
 	)
+
 	parser.add_argument(
 		"x",
 		type = float,
 		help = "Number to be converted.",
 	)
+
 	parser.add_argument(
 		'type',
 		type = str,
 		help  = "Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'."
 	)
+
 	args = parser.parse_args()
 
 	# Print the result
@@ -219,16 +223,17 @@ if cmd == 'to-db':
 #======================
 
 if cmd == 'expression':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = "Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. The mathematical constant, 'pi', is also supported.",
 	)
+
 	parser.add_argument(
 		'expression',
 		type  = str,
 		nargs = '+',
 		help  = "Expression to evaluate.",
 	)
+
 	args = parser.parse_args()
 
 	# Make string from arguments
@@ -240,22 +245,23 @@ if cmd == 'expression':
 	# Print the result
 	eppp.inout.print_sci(eppp.electronic_eval(expr_str))
 
-#==========================
+#===========================
 # 'make-resistance' command
-#==========================
+#===========================
 # TODO: Add frequency and support for inductors and capacitors?
 # TODO: Switches for what to print
 
 if cmd == 'make-resistance':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Finds a network of passive components matching a specified (possibly complex) value.'
 	)
+
 	parser.add_argument(
 		'target',
 		type = float, # TODO: Change to complex when supported
 		help = 'Target resistance.',
 	)
+
 	parser.add_argument(
 		'-t',
 		'--tolerance',
@@ -264,6 +270,7 @@ if cmd == 'make-resistance':
 		default = 0.01,
 		help    = 'Maximum relative error for the resulting network. (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-n',
 		'--num_components',
@@ -272,6 +279,7 @@ if cmd == 'make-resistance':
 		default = -1,
 		help    = 'Maximum number of components for the resulting network. Negative values yield no limit. (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-s',
 		'--series',
@@ -279,6 +287,7 @@ if cmd == 'make-resistance':
 		default = 'E6',
 		help    = 'E-series from which to get available components. (E3, E6, E12, E24, E48, E96 or E192) (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-mr',
 		'--min-resistance',
@@ -286,6 +295,7 @@ if cmd == 'make-resistance':
 		default = 10,
 		help    = 'Minimum resistance used when generating the series. [Ω] (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-Mr',
 		'--max-resistance',
@@ -293,24 +303,28 @@ if cmd == 'make-resistance':
 		default = 10e6,
 		help    = 'Maximum resistance used when generating the series. [Ω] (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'--configuration',
 		type    = str,
 		default = 'any',
 		help    = 'Valid configurations in the resulting network. (series, parallel or any) (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-pe',
 		'--print-error',
 		action = 'store_true',
 		help   = 'Prints the relative error by which the resulting network deviates from the target.',
 	)
+
 	parser.add_argument(
 		'-or',
 		'--omit-result',
 		action = 'store_false',
 		help   = 'Omits printing the value of the network',
 	)
+
 	args = parser.parse_args()
 
 	# Generate list of operations
@@ -347,16 +361,17 @@ if cmd == 'make-resistance':
 #====================
 
 if cmd == 'parallel':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the equivalent impedance of a set of parallel connected components.'
 	)
+
 	parser.add_argument(
 		'values',
 		type  = complex,
 		nargs = '+',
 		help = 'List of parallel impedances. [Ω]'
 	)
+
 	vals = parser.parse_args().values
 
 	# Do the calculation
@@ -370,25 +385,28 @@ if cmd == 'parallel':
 #=====================
 
 if cmd == 'reactance':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = '', # TODO
 	)
+
 	parser.add_argument(
 		'type',
 		type = str,
 		help = "Type of component. ('inductor or capacitor')",
 	)
+
 	parser.add_argument(
 		'value',
 		type = float,
 		help = 'Component value. [H or F]',
 	)
+
 	parser.add_argument(
 		'frequency',
 		type = float,
 		help = 'Frequency. [Hz]',
 	)
+
 	args = parser.parse_args()
 
 	# Determine type of reactive component
@@ -407,25 +425,28 @@ if cmd == 'reactance':
 #=======================
 
 if cmd == 'susceptance':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = '', # TODO
 	)
+
 	parser.add_argument(
 		'type',
 		type = str,
 		help = "Type of component. ('inductor or capacitor')",
 	)
+
 	parser.add_argument(
 		'value',
 		type = float,
 		help = 'Component value. [H or F]',
 	)
+
 	parser.add_argument(
 		'frequency',
 		type = float,
 		help = 'Frequency. [Ω]',
 	)
+
 	args = parser.parse_args()
 
 	# Determine type of reactive component
@@ -444,26 +465,29 @@ if cmd == 'susceptance':
 #============================
 
 if cmd == 'voltage-division':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the voltage divided over series-connected impedances.'
 	)
+
 	parser.add_argument(
 		'voltage',
 		type = complex,
 		help = 'Source voltage. [V]',
 	)
+
 	parser.add_argument(
 		'main_impedance',
 		type = complex,
 		help = 'Main impedance. [Ω]',
 	)
+
 	parser.add_argument(
 		'impedances',
 		type  = complex,
 		nargs = '*',
 		help = 'List of other series-connected impedances. [Ω]'
 	)
+
 	args = parser.parse_args()
 	main_imp = parser.parse_args().main_impedance
 	imps     = parser.parse_args().impedances
@@ -483,26 +507,29 @@ if cmd == 'voltage-division':
 #============================
 
 if cmd == 'current-division':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the current divided between parallel-connected impedances.'
 	)
+
 	parser.add_argument(
 		'current',
 		type = complex,
 		help = 'Source current. [A]',
 	)
+
 	parser.add_argument(
 		'main_impedance',
 		type = complex,
 		help = 'Main impedance. [Ω]',
 	)
+
 	parser.add_argument(
 		'impedances',
 		type  = complex,
 		nargs = '*',
 		help = 'List of other parallel-connected impedances. [Ω]'
 	)
+
 	args = parser.parse_args()
 
 	# Do the calculation
@@ -520,20 +547,22 @@ if cmd == 'current-division':
 #======================
 
 if cmd == 'skin-depth':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the skin depth.'
 	)
+
 	parser.add_argument(
 		'resistivity',
 		type = float,
 		help = 'Resistivity of the conductor. [Ω/m]',
 	)
+
 	parser.add_argument(
 		'frequency',
 		type = float,
 		help = 'Frequency. [Hz]',
 	)
+
 	parser.add_argument(
 		'-reps',
 		'--relative-permittivity',
@@ -542,6 +571,7 @@ if cmd == 'skin-depth':
 		nargs   = '?',
 		help    = 'Relative permittivity of the conductor. (default: %(default)s)'
 	)
+
 	parser.add_argument(
 		'-rmu',
 		'--relative-permeability',
@@ -550,6 +580,7 @@ if cmd == 'skin-depth':
 		nargs   = '?',
 		help    = 'Relative permeability of the conductor. (default: %(default)s)'
 	)
+
 	args = parser.parse_args()
 
 	# Do the calculation
@@ -568,15 +599,16 @@ if cmd == 'skin-depth':
 #======================
 
 if cmd == 'wavelength':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the wavelength of an electromagnetic wave.'
 	)
+
 	parser.add_argument(
 		'frequency',
 		type = float,
 		help = 'Frequency. [Hz]',
 	)
+
 	parser.add_argument(
 		'-reps',
 		'--relative-permittivity',
@@ -585,6 +617,7 @@ if cmd == 'wavelength':
 		nargs   = '?',
 		help    = 'Relative permittivity of the medium. (default: 1)'
 	)
+
 	parser.add_argument(
 		'-rmu',
 		'--relative-permeability',
@@ -593,6 +626,7 @@ if cmd == 'wavelength':
 		nargs   = '?',
 		help    = 'Relative permeability of the medium. (default: 1)'
 	)
+
 	parser.add_argument(
 		'-s',
 		'--speed',
@@ -601,6 +635,7 @@ if cmd == 'wavelength':
 		nargs   = '?',
 		help    = 'Speed of the wave in medium. [m/s]'
 	)
+
 	args = parser.parse_args()
 
 	# Do the calculation
@@ -619,25 +654,28 @@ if cmd == 'wavelength':
 #===========================
 
 if cmd == 'wire-resistance':
-	# Parse
 	parser = ap.ArgumentParser(
 		description = 'Calculates the resistance of a wire. Takes the skin effect into account, but uses the approximation that either radius >> skin depth or skin depth >> radius.'
 	)
+
 	parser.add_argument(
 		'resistivity',
 		type = float,
 		help = 'Resistivity of the wire. [Ω/m]'
 	)
+
 	parser.add_argument(
 		'radius',
 		type = float,
 		help = 'Radius of the wire. [m]',
 	)
+
 	parser.add_argument(
 		'length',
 		type = float,
 		help = 'Length of the wire. [m]',
 	)
+
 	parser.add_argument(
 		'frequency',
 		type    = float,
@@ -645,6 +683,7 @@ if cmd == 'wire-resistance':
 		nargs   = '?',
 		help    = 'Frequency. [Hz] (default: %(default)s)',
 	)
+
 	parser.add_argument(
 		'-reps',
 		'--relative-permittivity',
@@ -653,6 +692,7 @@ if cmd == 'wire-resistance':
 		nargs   = '?',
 		help    = 'Relative permittivity of the medium. (default: %(default)s)'
 	)
+
 	parser.add_argument(
 		'-rmu',
 		'--relative-permeability',
@@ -661,6 +701,7 @@ if cmd == 'wire-resistance':
 		nargs   = '?',
 		help    = 'Relative permeability of the medium. (default: %(default)s)'
 	)
+
 	args = parser.parse_args()
 
 	# Do the calculation
