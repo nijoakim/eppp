@@ -258,31 +258,30 @@ def solve_q_relation(freq=None, q=None, res=None, cap=None, ind=None):
 # Bandwidth
 #===========
 
-# TODO: mag -> mag_data and the like?
-def _breakFreq(freq, mag, di, decibel=3, is_stop_filter=False):
+def _breakFreq(freqs, mags, di, decibel=3, is_stop_filter=False):
 	# Size check
-	if freq.size != mag.size:
-		raise ValueError("'freq' and 'mag' must be of the same size.")
+	if freqs.size != mags.size:
+		raise ValueError("'freqs' and 'mags' must be of the same size.")
 
 	# Return negated if stop filter
 	if is_stop_filter:
-		return _breakFreq(freq, -mag, di, decibel=decibel, is_stop_filter=False)
+		return _breakFreq(freqs, -mags, di, decibel=decibel, is_stop_filter=False)
 
 	# Find out peak and break magnitude
-	peak_index = mag.argmax()
-	break_mag  = mag[peak_index]*db(-decibel, from_db = True)
+	peak_index = mags.argmax()
+	break_mags  = mags[peak_index]*db(-decibel, from_db = True)
 
 	# Search
 	i = peak_index
-	while 0 <= i < mag.size:
-		if mag[i] < break_mag:
-			return freq[i]
+	while 0 <= i < mags.size:
+		if mags[i] < break_mag:
+			return freqs[i]
 		i += di
 
 	# Out of bounds
 	if i < 0:
 		return 0.
-	elif i >= mag.size:
+	elif i >= mags.size:
 		raise ValueError("High break frequency is not in interval.") # TODO: Only high?
 
 # Docstring decorator for 'lo_break_freq', 'hi_break_freq' and 'bandwidth'.
@@ -292,8 +291,8 @@ def _doc_bandwidth(what_str):
 			Calculates the %s of a filter.
 
 			Args:
-				freq (numpy.ndarray): Frequency data.
-				mag (numpy.ndarray):  Magnitude data.
+				freqs (numpy.ndarray): Frequency data.
+				mags (numpy.ndarray):  Magnitude data.
 
 			Kwargs:
 				decibel (number):      Deviation from min/max value required to qualify as break frequency, given in amplitude decibels.
@@ -306,16 +305,16 @@ def _doc_bandwidth(what_str):
 	return decorator
 
 @_doc_bandwidth('low break frequency')
-def lo_break_freq(freq, mag, decibel=3, is_stop_filter=False):
-	return _breakFreq(freq, mag, -1, decibel, is_stop_filter)
+def lo_break_freq(freqs, mags, decibel=3, is_stop_filter=False):
+	return _breakFreq(freqs, mags, -1, decibel, is_stop_filter)
 
 @_doc_bandwidth('high break frequency')
-def hi_break_freq(freq, mag, decibel=3, is_stop_filter=False):
-	return _breakFreq(freq, mag, 1, decibel, is_stop_filter)
+def hi_break_freq(freqs, mags, decibel=3, is_stop_filter=False):
+	return _breakFreq(freqs, mags, 1, decibel, is_stop_filter)
 
 @_doc_bandwidth('bandwidth')
-def bandwidth(freq, mag, decibel=3, is_stop_filter=False):
-	return hi_break_freq(freq, mag, decibel, is_stop_filter) - lo_break_freq(freq, mag, decibel, is_stop_filter)
+def bandwidth(freqs, mags, decibel=3, is_stop_filter=False):
+	return hi_break_freq(freqs, mags, decibel, is_stop_filter) - lo_break_freq(freqs, mag, decibel, is_stop_filter)
 
 #=========
 # Margins
@@ -338,7 +337,7 @@ def intersects(x, y, target):
 	if target != 0:
 		return intersects(x, y - target, 0)
 
-	# Negate if below zero, return first if already intersets
+	# Negate if below zero, return first if already intersects
 	if y[0] < 0:
 		return intersects(x, -y, 0)
 	elif y[0] == 0:
@@ -358,75 +357,80 @@ def intersects(x, y, target):
 	# Never reached target
 	raise ValueError("Data never intersects target.")
 
-def unity_gain_freq(freq, mag):
+def unity_gain_freq(freqs, mags):
 	"""
 	Calculates unity gain frequency from magnitude data as function of frequency.
 
 	Args:
-		freq (numpy.ndarray): Frequency data.
-		mag (numpy.ndarray):  Magnitude data.
+		freqs (numpy.ndarray): Frequency data.
+		mags (numpy.ndarray):  Magnitude data.
 
 	Returns:
 		float. Unity gain frequency.
 	"""
 
-	return intersects(freq, mag, 1)
+	try:
+		return intersects(freqs, mags, 1)
+	except ValueError:
+		raise ValueError("Data never intersects zero.")
 
-def phase_180_freq(freq, phase):
+# TODO: Radian is the SI unit. Allow the use of radians or have radians as the default even?
+
+def phase_180_freq(freqs, phases):
 	"""
 	Calculates frequency of 180 degree phase shift from magnitude data as function of frequency.
 	
 	Args:
-		freq (numpy.ndarray):  Frequency data.
-		phase (numpy.ndarray): Phase data.
+		freqs (numpy.ndarray):  Frequency data.
+		phases (numpy.ndarray): Phase data.
 	
 	Returns:
 		float. Frequency of 180 degrees phase shift.
 	"""
 
-	freqs = []
+	_180_freqs = [] # TODO: Better name
 
 	# Loop through all necessary phase 360-offsets
-	for phase_offset in range( (int(_np.floor(min(phase))) / 360) * 360, (int(_np.ceil(max(phase))) / 360) * 360, 360): # TODO: Is int(...) necessary?
+	for phase_offset in range( (int(_np.floor(min(phases))) / 360) * 360, (int(_np.ceil(max(phases))) / 360) * 360, 360): # TODO: Is int(...) necessary?
 		# Error means no intersection for given phase and can therefore be ignored
 		try:
-			freqs.append(intersects(freq, phase - phase_offset, 180))
-		except:
+			_180_freqs.append(intersects(freqs, phases - phase_offset, 180))
+		except ValueError:
 			pass
 
-	if freqs:
+	if _180_freqs:
 		# First intersection is the important one
-		return min(freqs)
+		return min(_180_freqs)
 	else:
 		# There were no 180 frequency
-		return Exception("Phase never intersects 180 + 360*n.")
+		return ValueError("Phase never intersects 180 + 360*n.")
 
-def gain_margin(freq, mag, phase, db_type='power'):
+def gain_margin(freqs, mags, phases, db_type):
 	"""
 	Calculates gain margin from magnitude and phase data, both as functions of frequency.
 
 	Args:
-		freq (numpy.ndarray):  Frequency data.
-		mag (numpy.ndarray):   Magnitude data.
-		phase (numpy.ndarray): Phase data.
-		db_type (string):      (Default: 'power') Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
+		freqs (numpy.ndarray):  Frequency data.
+		mags (numpy.ndarray):   Magnitude data.
+		phases (numpy.ndarray): Phase data.
+		db_type (string):       Whether to use the power decibel or amplitude decibel definition. Valid values are 'power' and 'amplitude'.
 
 	Returns:
-		float. Gain margin in decibel.
+		float. Gain margin. [dB]
 	"""
 
-	return -db(mag[abs(freq - phase_180_freq(freq, phase)).argmin()], db_type=db_type)
+	return -to_db(mags[abs(freqs - phase_180_freq(freqs, phases)).argmin()], db_type)
 
-def phase_margin(freq, mag, phase):
+def phase_margin(freqs, mags, phases):
 	"""
 	Calculates phase margin from magnitude and phase data, both as functions of frequency.
 
 	Args:
-		freq (numpy.ndarray):  Frequency data.
-		mag (numpy.ndarray):   Magnitude data.
-		phase (numpy.ndarray): Phase data.
+		freqs (numpy.ndarray):  Frequency data.
+		mags (numpy.ndarray):   Magnitude data.
+		phases (numpy.ndarray): Phase data.
 
 	Returns:
-		float. Phase margin.
+		float. Phase margin. [degrees]
 	"""
-	return 180 + phase[abs(freq - unity_gain_freq(freq, mag)).argmin()]
+	return 180 + phases[abs(freqs - unity_gain_freq(freqs, mags)).argmin()]
