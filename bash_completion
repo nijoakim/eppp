@@ -19,6 +19,7 @@ _epppu()
 		current-division \
 		skin-depth \
 			wavelength \
+		wire-resistance \
 	"
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

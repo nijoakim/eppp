@@ -86,6 +86,7 @@ CMDS = [
 		'current-division',
 	'skin-depth',
 	'wavelength',
+	'wire-resistance',
 ]
 
 # Description
@@ -531,7 +532,7 @@ if cmd == 'skin-depth':
 	parser.add_argument(
 		'frequency',
 		type = float,
-		help = 'Frequency [Hz].',
+		help = 'Frequency. [Hz]',
 	)
 	parser.add_argument(
 		'-reps',
@@ -574,7 +575,7 @@ if cmd == 'wavelength':
 	parser.add_argument(
 		'frequency',
 		type = float,
-		help = 'Frequency [Hz].',
+		help = 'Frequency. [Hz]',
 	)
 	parser.add_argument(
 		'-reps',
@@ -612,3 +613,65 @@ if cmd == 'wavelength':
 
 	# Print the result
 	eppp.print_sci(length, unit='m')
+
+#===========================
+# 'wire-resistance' command
+#===========================
+
+if cmd == 'wire-resistance':
+	# Parse
+	parser = ap.ArgumentParser(
+		description = 'Calculates the resistance of a wire. Takes the skin effect into account, but uses the approximation that either radius >> skin depth or skin depth >> radius.'
+	)
+	parser.add_argument(
+		'resistivity',
+		type = float,
+		help = 'Resistivity of the wire. [Ω/m]'
+	)
+	parser.add_argument(
+		'radius',
+		type = float,
+		help = 'Radius of the wire. [m]',
+	)
+	parser.add_argument(
+		'length',
+		type = float,
+		help = 'Length of the wire. [m]',
+	)
+	parser.add_argument(
+		'frequency',
+		type    = float,
+		default = 0,
+		nargs   = '?',
+		help    = 'Frequency. [Hz] (default: %(default)s)',
+	)
+	parser.add_argument(
+		'-reps',
+		'--relative-permittivity',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permittivity of the medium. (default: %(default)s)'
+	)
+	parser.add_argument(
+		'-rmu',
+		'--relative-permeability',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permeability of the medium. (default: %(default)s)'
+	)
+	args = parser.parse_args()
+
+	# Do the calculation
+	resistance = eppp.wire_resistance(
+		args.resistivity,
+		args.radius,
+		args.length,
+		freq             = args.frequency,
+		rel_permittivity = args.relative_permittivity,
+		rel_permeability = args.relative_permeability,
+	)
+
+	# Print the result
+	eppp.print_sci(resistance, unit='Ω')

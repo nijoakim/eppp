@@ -25,6 +25,7 @@
 # External
 import numpy           as _np
 import scipy.constants as _sp_c
+from math import inf
 
 #=====================
 # Decibel conversions
@@ -100,7 +101,7 @@ def wavelength(
 	Calculates the wavelength of an electromagnetic wave in a medium with given permittivity and permeability. Alternatively, the speed of the wave in the medium can be specified.
 
 	Args:
-		freq (number):             Frequency [Hz].
+		freq (number):             Frequency. [Hz]
 		rel_permittivity (number): (default: 1) Relative permittivity of the medium.
 		rel_permeability (number): (default: 1) Relative permeability of the medium.
 		speed (number):            Speed of the wave in medium. [m/s]
@@ -136,13 +137,13 @@ def skin_depth(
 		rel_permeability = 1,
 	):
 	"""
-	Calculates the skin depth of a wire.
+	Calculates the skin depth in a material.
 
 	Args:
-		resistivity (number):      Resistivity of the conductor [Ω/m].
-		freq (number):             Frequency [Hz].
-		rel_permittivity (number): (Default: 1) Relative permittivity of the conductor.
-		rel_permeability (number): (Default: 1) Relative permeability of the conductor.
+		resistivity (number):      Resistivity of the material. [Ω/m]
+		freq (number):             Frequency. [Hz]
+		rel_permittivity (number): (Default: 1) Relative permittivity of the material.
+		rel_permeability (number): (Default: 1) Relative permeability of the material.
 
 	Returns:
 		float. Skin depth. [m]
@@ -153,7 +154,57 @@ def skin_depth(
 	permeability = rel_permeability * _sp_c.mu_0
 	a            = resistivity * ang_freq * permittivity
 
-	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a*a) + a)
+	return _np.sqrt(2 * resistivity / (ang_freq * permeability)) * _np.sqrt(_np.sqrt(1 + a**2) + a)
+
+def wire_resistance(
+		resistivity,
+		radius,
+		length,
+		freq             = 0,
+		rel_permittivity = 1,
+		rel_permeability = 1,
+	):
+	"""
+	Calculates the resistance of a wire. Takes the skin effect into account, but uses the approximation that either radius >> skin depth or skin depth >> radius.
+
+	Args:
+		resistivity (number):      Resistivity of the wire. [Ω/m]
+		radius (number):           Radius of the wire. [m]
+		length (number):           Length of the wire. [m]
+		freq (number):             (Default: 0) Frequency. [Hz]
+		rel_permittivity (number): (Default: 1) Relative permittivity of the wire.
+		rel_permeability (number): (Default: 1) Relative permeability of the wire.
+
+	Returns:
+		float. Wire resistance. [Ω]
+	"""
+	# Zero radius yields infinite resistance
+	if radius == 0:
+		return inf
+
+	# Require positive radius
+	elif radius < 0:
+		raise ValueError("'radius' must be positive'.")
+
+	# DC resistance
+	if freq == 0:
+		area = _np.pi * radius**2
+		return resistivity * length / area
+
+	# AC resistance
+	else:
+		depth = skin_depth(
+			resistivity      = resistivity,
+			freq             = freq,
+			rel_permittivity = rel_permittivity,
+			rel_permeability = rel_permeability,
+		)
+
+		conductance = \
+			1 / wire_resistance(resistivity, radius,               length) - \
+			1 / wire_resistance(resistivity, max(radius-depth, 0), length)
+
+		return 1 / conductance
 
 #==============================
 # Empirical physical phenomena
