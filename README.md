@@ -41,6 +41,8 @@ Everything provided by the sub-modules are also imported into the root module.
 - `epppu current-division`
 - `epppu skin-depth`
 - `epppu wavelength`
+- `epppu wire-resistance`
+- `epppu plates-capacitance`
 
 For documentation on the different commands use
 `epppu <command> -h`.
