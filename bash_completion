@@ -20,6 +20,7 @@ _epppu()
 		skin-depth \
 			wavelength \
 		wire-resistance \
+			plates-capacitance \
 	"
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

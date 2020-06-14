@@ -87,6 +87,7 @@ CMDS = [
 	'skin-depth',
 	'wavelength',
 	'wire-resistance',
+		'plates-capacitance',
 ]
 
 # Description
@@ -716,3 +717,45 @@ if cmd == 'wire-resistance':
 
 	# Print the result
 	eppp.print_sci(resistance, unit='Ω')
+
+#==============================
+# 'plates-capacitance' command
+#==============================
+
+if cmd == 'plates-capacitance':
+	parser = ap.ArgumentParser(
+		description = 'Calculates the capacitance of two aligned parallel plates of equal area. Assumes plate dimension >> place separation and hence ignores fringe capacitance.'
+	)
+
+	parser.add_argument(
+		'area',
+		type = float,
+		help = 'Area of the plates. [m²]'
+	)
+
+	parser.add_argument(
+		'separation',
+		type = float,
+		help = 'Distance between the two plates. [m]'
+	)
+
+	parser.add_argument(
+		'-reps',
+		'--relative-permittivity',
+		type    = float,
+		default = 1,
+		nargs   = '?',
+		help    = 'Relative permittivity of the medium. (default: %(default)s)'
+	)
+
+	args = parser.parse_args()
+
+	# Do the calculation
+	cap = eppp.plates_capacitance(
+		args.area,
+		args.separation,
+		rel_permittivity = args.relative_permittivity,
+	)
+
+	# Print the result
+	eppp.print_sci(cap, unit='F')

@@ -206,6 +206,24 @@ def wire_resistance(
 
 		return 1 / conductance
 
+def plates_capacitance(
+		area,
+		sep,
+		rel_permittivity = 1,
+	):
+	"""
+	Calculates the capacitance of two aligned parallel plates of equal area. Assumes plate dimension >> place separation and hence ignores fringe capacitance.
+
+	Args:
+		area (number):             Area of the plates. [m²]
+		sep (number):              Distance between the two plates. [m]
+		rel_permittivity (number): (Default: 1) Relative permittivity of the wire of the medium between the plates.
+
+	Returns:
+		float. Parallel plates capacitance. [F]
+	"""
+	return rel_permittivity * _sp_c.epsilon_0 * area / sep
+
 #==============================
 # Empirical physical phenomena
 #==============================
