@@ -274,7 +274,7 @@ if cmd == 'make-resistance':
 
 	parser.add_argument(
 		'-n',
-		'--num_components',
+		'--num-components',
 		type    = int,
 		nargs   = '?',
 		default = -1,
