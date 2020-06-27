@@ -28,9 +28,10 @@
 
 # External
 import argparse as ap
-import re
-import sys
 import operator as op
+import re
+import readline
+import sys
 from math import inf
 
 # Internal
@@ -229,22 +230,89 @@ if cmd == 'expression':
 	)
 
 	parser.add_argument(
+		'-i',
+		'--interactive',
+		action = 'store_true',
+		help   = 'Runs command in interactive mode.',
+	)
+
+	parser.add_argument(
+		'-p',
+		'--plain',
+		action = 'store_true',
+		help   = 'In interactive mode, do not modify the font.',
+	)
+
+	parser.add_argument(
 		'expression',
 		type  = str,
-		nargs = '+',
+		nargs = '*', # TODO: '+' if -i is given?
 		help  = "Expression to evaluate.",
 	)
 
 	args = parser.parse_args()
 
-	# Make string from arguments
-	expr_str = ' '.join(args.expression)
+	# Interactive mode
+	if args.interactive:
+		# Print intro message
+		print(f'EPPP utilities expression interpreter version {eppp.__version__}. Press CTRL+D to exit.')
 
-	# Expand prefixes again (since additional spaces where introduced)
-	expr_str = expand_metric_prefixes(expr_str)
+		while True:
+			# Font escape sequences
+			if args.plain:
+				font_escape_start = ''
+				font_escape_end   = ''
+			else:
+				font_escape_start = '\033[1m'
+				font_escape_end   = '\033[0m'
 
-	# Print the result
-	eppp.inout.print_sci(eppp.electronic_eval(expr_str))
+			# Prompt
+			try:
+				expr_str = input(f'{font_escape_start}epppu expression>{font_escape_end} ')
+
+			# Abort command
+			except KeyboardInterrupt:
+				print()
+				continue
+
+			# Exit
+			except EOFError:
+				print()
+				break
+
+			# Do nothing for empty command
+			if expr_str.strip() == '':
+				continue
+
+			# Exit
+			if expr_str.strip() == 'exit':
+				break
+
+			# Expand prefixes
+			expr_str = expand_metric_prefixes(expr_str)
+
+			# Evaluate expression
+			try:
+				result = eppp.electronic_eval(expr_str)
+				if result is None:
+					raise SyntaxError('Invalid expression.')
+			except SyntaxError as e:
+				print('Syntax error:', e)
+				continue
+
+			# Print result
+			eppp.inout.print_sci(result)
+
+	# Non-interactive mode
+	else:
+		# Make string from arguments
+		expr_str = ' '.join(args.expression)
+
+		# Expand prefixes again (since additional spaces where introduced)
+		expr_str = expand_metric_prefixes(expr_str)
+
+		# Print result
+		eppp.inout.print_sci(eppp.electronic_eval(expr_str))
 
 #===========================
 # 'make-resistance' command
