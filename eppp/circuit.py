@@ -452,7 +452,7 @@ def get_avail_vals(
 	# Append higher order series
 	multiplier = 10
 	while avail_vals[-1] <= max_val:
-		avail_vals  += map(lambda x: x*multiplier, basic_avail_vals)
+		avail_vals += map(lambda x: x*multiplier, basic_avail_vals)
 		multiplier *= 10
 
 	# Reverse for more efficient list operations
