@@ -347,29 +347,39 @@ def electronic_eval(expr):
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
-		# Number
-		if isinstance(node, _ast.Num):
-			return node.n
+		try:
+			# Number
+			if isinstance(node, _ast.Num):
+				return node.n
 
-		# Identifier
-		elif isinstance(node, _ast.Name):
-			return(getattr(_sp_c, node.id))
+			# Identifier
+			elif isinstance(node, _ast.Name):
+				return(getattr(_sp_c, node.id))
 
-		# Identifier
-		elif isinstance(node, _ast.Call):
-			if hasattr(_np, node.func.id):
-				func = getattr(_np, node.func.id)
-				args = node.args
-				args = map(eval_ast, args)
-				return func(*args)
+			# Identifier
+			elif isinstance(node, _ast.Call):
+				if hasattr(_np, node.func.id):
+					func = getattr(_np, node.func.id)
+					args = node.args
+					args = map(eval_ast, args)
+					return func(*args)
 
-		# Binary operator
-		elif isinstance(node, _ast.BinOp):
-			return OPERATORS[type(node.op)](eval_ast(node.left), eval_ast(node.right))
+			# Binary operator
+			elif isinstance(node, _ast.BinOp):
+				return OPERATORS[type(node.op)](eval_ast(node.left), eval_ast(node.right))
 
-		# Unary operator
-		elif isinstance(node, _ast.UnaryOp):
-			return OPERATORS[type(node.op)](eval_ast(node.operand))
+			# Unary operator
+			elif isinstance(node, _ast.UnaryOp):
+				return OPERATORS[type(node.op)](eval_ast(node.operand))
+
+			# Syntax error
+			else:
+				raise SyntaxError('Unrecognized token.')
+
+		# Operator not found in 'OPERATORS'
+		except KeyError:
+			raise SyntaxError('Unrecognized operator.')
+
 
 	# Evaluate and return
 	return eval_ast(_ast.parse(expr, mode='eval').body)

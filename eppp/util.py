@@ -264,8 +264,8 @@ if cmd == 'expression':
 				font_escape_start = ''
 				font_escape_end   = ''
 			else:
-				font_escape_start = '\033[1m'
-				font_escape_end   = '\033[0m'
+				font_escape_start = '\033[1m' # Boldface
+				font_escape_end   = '\033[0m' # Normal
 
 			# Prompt
 			try:
@@ -298,7 +298,18 @@ if cmd == 'expression':
 				if result is None:
 					raise SyntaxError('Invalid expression.')
 			except Exception as e:
-				traceback.print_exc()
+				# Font escape sequences
+				if args.plain:
+					font_escape_start = ''
+					font_escape_end   = ''
+				else:
+					font_escape_start = '\033[31;1m' # Boldface red
+					font_escape_end   = '\033[37;0m' # Normal white
+
+				msg_lines = traceback.format_exc().splitlines()
+				for msg_line in msg_lines[0:-1]:
+					print(msg_line)
+				print(f'{font_escape_start}{msg_lines[-1]}{font_escape_end}')
 				continue
 
 			# Print result
