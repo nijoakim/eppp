@@ -32,6 +32,7 @@ import operator as op
 import re
 import readline
 import sys
+import traceback
 from math import inf
 
 # Internal
@@ -296,8 +297,8 @@ if cmd == 'expression':
 				result = eppp.electronic_eval(expr_str)
 				if result is None:
 					raise SyntaxError('Invalid expression.')
-			except SyntaxError as e:
-				print('Syntax error:', e)
+			except Exception as e:
+				traceback.print_exc()
 				continue
 
 			# Print result
