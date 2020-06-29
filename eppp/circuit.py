@@ -320,7 +320,7 @@ def series_admittance(*vals):
 
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. Constants defined in scipy.constants are also supported.
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported.
 
 	Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^' or '**'.
 	Args:
@@ -342,8 +342,8 @@ def electronic_eval(expr):
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
 
-	expr = expr.replace('||', '//')        # Accept both kinds of parallel connection symbols
-	expr = expr.replace('^', '**')         # Allow '^' for exponentiation
+	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
+	expr = expr.replace('^', '**')  # Allow '^' for exponentiation
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
@@ -354,6 +354,14 @@ def electronic_eval(expr):
 		# Identifier
 		elif isinstance(node, _ast.Name):
 			return(getattr(_sp_c, node.id))
+
+		# Identifier
+		elif isinstance(node, _ast.Call):
+			if hasattr(_np, node.func.id):
+				func = getattr(_np, node.func.id)
+				args = node.args
+				args = map(eval_ast, args)
+				return func(*args)
 
 		# Binary operator
 		elif isinstance(node, _ast.BinOp):
