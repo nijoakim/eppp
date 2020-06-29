@@ -21,11 +21,12 @@
 #=========
 
 # External
-import ast       as _ast
-import functools as _ft
-import itertools as _it
-import operator  as _op
-import numpy     as _np
+import ast             as _ast
+import functools       as _ft
+import itertools       as _it
+import operator        as _op
+import numpy           as _np
+import scipy.constants as _sp_c
 from bisect import bisect, insort
 from math   import inf, nan
 
@@ -319,7 +320,7 @@ def series_admittance(*vals):
 
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. The mathematical constant, 'pi', is also supported.
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. Constants defined in scipy.constants are also supported.
 
 	Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^' or '**'.
 	Args:
@@ -341,16 +342,24 @@ def electronic_eval(expr):
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
 
-	expr = expr.replace('pi', str(_np.pi)) # Evaluate pi
 	expr = expr.replace('||', '//')        # Accept both kinds of parallel connection symbols
 	expr = expr.replace('^', '**')         # Allow '^' for exponentiation
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
+		# Number
 		if isinstance(node, _ast.Num):
 			return node.n
+
+		# Identifier
+		elif isinstance(node, _ast.Name):
+			return(getattr(_sp_c, node.id))
+
+		# Binary operator
 		elif isinstance(node, _ast.BinOp):
 			return OPERATORS[type(node.op)](eval_ast(node.left), eval_ast(node.right))
+
+		# Unary operator
 		elif isinstance(node, _ast.UnaryOp):
 			return OPERATORS[type(node.op)](eval_ast(node.operand))
 
@@ -359,6 +368,7 @@ def electronic_eval(expr):
 		return eval_ast(_ast.parse(expr, mode='eval').body)
 	except:
 		raise SyntaxError('Invalid expression.')
+
 
 def get_avail_vals(
 		series    = 'E6',
