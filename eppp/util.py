@@ -29,6 +29,7 @@
 # External
 import argparse as ap
 import operator as op
+import os
 import re
 import readline
 import sys
@@ -288,6 +289,11 @@ if cmd == 'expression':
 			# Exit
 			if expr_str.strip() == 'exit':
 				break
+
+			# Clear terminal
+			if expr_str.strip() == 'clear':
+				os.system('cls' if os.name == 'nt' else 'clear')
+				continue
 
 			# Expand prefixes
 			expr_str = expand_metric_prefixes(expr_str)
