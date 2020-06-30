@@ -303,6 +303,8 @@ if cmd == 'expression':
 				result = eppp.electronic_eval(expr_str)
 				if result is None:
 					raise SyntaxError('Invalid expression.')
+
+			# Print error and continue
 			except Exception as e:
 				# Font escape sequences
 				if args.plain:
@@ -312,10 +314,12 @@ if cmd == 'expression':
 					font_escape_start = '\033[31;1m' # Boldface red
 					font_escape_end   = '\033[37;0m' # Normal white
 
+				# Print error message
 				msg_lines = traceback.format_exc().splitlines()
 				for msg_line in msg_lines[0:-1]:
 					print(msg_line)
 				print(f'{font_escape_start}{msg_lines[-1]}{font_escape_end}')
+
 				continue
 
 			# Print result
