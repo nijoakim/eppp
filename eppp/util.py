@@ -249,7 +249,7 @@ if cmd == 'expression':
 		'expression',
 		type  = str,
 		nargs = '*', # TODO: '+' if -i is given?
-		help  = "Expression to evaluate.",
+		help  = "Expression to evaluate. Valid operators are: '=', '||' or '//', '+', '-', '*', '/' and '^' or '**'."
 	)
 
 	args = parser.parse_args()
