@@ -328,7 +328,7 @@ def clear_electronic_eval_state():
 
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported.
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3).
 
 	Expression. Valid operators are: '=', '||' or '//', '+', '-', '*', '/' and '^' or '**'.
 	Args:
@@ -350,6 +350,19 @@ def electronic_eval(expr):
 
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
+
+	# Expand single-digit superscripts
+	expr = expr.replace('⁰', '**(0)')
+	expr = expr.replace('¹', '**(1)')
+	expr = expr.replace('²', '**(2)')
+	expr = expr.replace('³', '**(3)')
+	expr = expr.replace('⁴', '**(4)')
+	expr = expr.replace('⁵', '**(5)')
+	expr = expr.replace('⁶', '**(6)')
+	expr = expr.replace('⁷', '**(7)')
+	expr = expr.replace('⁸', '**(8)')
+	expr = expr.replace('⁹', '**(9)')
+	expr = expr.replace('ⁱ', '**(1j)')
 
 	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
 	expr = expr.replace('^', '**')  # Allow '^' for exponentiation

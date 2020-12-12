@@ -228,7 +228,7 @@ if cmd == 'to-db':
 
 if cmd == 'expression':
 	parser = ap.ArgumentParser(
-		description = "Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**') and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in numpy as well as constants defined in scipy.constants are also supported.",
+		description = "Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**') and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in numpy as well as constants defined in scipy.constants are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3).",
 	)
 
 	parser.add_argument(
