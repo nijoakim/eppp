@@ -318,6 +318,8 @@ def series_admittance(*vals):
 	"""
 	return parallel_impedance(*vals)
 
+_electronic_eval_identifiers = {}
+
 def electronic_eval(expr):
 	"""
 	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported.
@@ -329,6 +331,7 @@ def electronic_eval(expr):
 	Returns:
 		[number]. The result of the evaluation.
 	"""
+
 	OPERATORS = {
 		_ast.Add:      _op.add,
 		_ast.Sub:      _op.sub,
@@ -349,14 +352,14 @@ def electronic_eval(expr):
 	def eval_ast(node):
 		try:
 			# Number
-			if isinstance(node, _ast.Num):
+			if isinstance(node, _ast.Constant):
 				return node.n
 
-			# Identifier
+			# Name identifier
 			elif isinstance(node, _ast.Name):
 				return(getattr(_sp_c, node.id))
 
-			# Identifier
+			# Function identifier
 			elif isinstance(node, _ast.Call):
 				if hasattr(_np, node.func.id):
 					func = getattr(_np, node.func.id)
@@ -379,7 +382,6 @@ def electronic_eval(expr):
 		# Operator not found in 'OPERATORS'
 		except KeyError:
 			raise SyntaxError('Unrecognized operator.')
-
 
 	# Evaluate and return
 	return eval_ast(_ast.parse(expr, mode='eval').body)
