@@ -318,13 +318,19 @@ def series_admittance(*vals):
 	"""
 	return parallel_impedance(*vals)
 
-_electronic_eval_identifiers = {}
+_electronic_eval_idents = {}
+
+def clear_electronic_eval_state():
+	"""
+	Clears all identifiers stored in memory for 'electronic_eval'.
+	"""
+	_electronic_eval_idents = {}
 
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/') and exponentiation ('^' or '**'), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported.
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported.
 
-	Expression. Valid operators are: '||' or '//', '+', '-', '*', '/' and '^' or '**'.
+	Expression. Valid operators are: '=', '||' or '//', '+', '-', '*', '/' and '^' or '**'.
 	Args:
 		expr (string): Expression to evaluate.
 
@@ -347,6 +353,7 @@ def electronic_eval(expr):
 
 	expr = expr.replace('||', '//') # Accept both kinds of parallel connection symbols
 	expr = expr.replace('^', '**')  # Allow '^' for exponentiation
+	expr = expr.replace('=', '==')  # Hijack '==' for assignment
 
 	# Evaluates the parsed abstract syntax tree
 	def eval_ast(node):
@@ -357,7 +364,10 @@ def electronic_eval(expr):
 
 			# Name identifier
 			elif isinstance(node, _ast.Name):
-				return(getattr(_sp_c, node.id))
+				if node.id in _electronic_eval_idents:
+					return _electronic_eval_idents[node.id]
+				else:
+					return(getattr(_sp_c, node.id))
 
 			# Function identifier
 			elif isinstance(node, _ast.Call):
@@ -367,6 +377,16 @@ def electronic_eval(expr):
 					args = map(eval_ast, args)
 					return func(*args)
 
+			# Assignment
+			elif isinstance(node, _ast.Compare):
+				if len(node.ops) == 1 \
+				and isinstance(node.ops[0], _ast.Eq):
+					res = eval_ast(node.comparators[0])
+					_electronic_eval_idents[node.left.id] = res
+					return res
+				else:
+					raise SyntaxError('Syntax error.')
+
 			# Binary operator
 			elif isinstance(node, _ast.BinOp):
 				return OPERATORS[type(node.op)](eval_ast(node.left), eval_ast(node.right))
@@ -375,7 +395,7 @@ def electronic_eval(expr):
 			elif isinstance(node, _ast.UnaryOp):
 				return OPERATORS[type(node.op)](eval_ast(node.operand))
 
-			# Syntax error
+			# Unrecognized token error
 			else:
 				raise SyntaxError('Unrecognized token.')
 
