@@ -328,7 +328,7 @@ def clear_electronic_eval_state():
 
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3).
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3). The result of the evaluation value is both returned assigned to the variable 'ans'.
 
 	Args:
 		expr (string): Expression. Valid operators are: '=', '||' or '//', '+', '-', '*', '/' and '^' or '**'.
@@ -393,6 +393,8 @@ def electronic_eval(expr):
 			elif isinstance(node, _ast.Compare):
 				if len(node.ops) == 1 \
 				and isinstance(node.ops[0], _ast.Eq):
+					if node.left.id == 'ans':
+						raise SyntaxError("Can not assign to reserved variable 'ans'")
 					res = eval_ast(node.comparators[0])
 					_electronic_eval_idents[node.left.id] = res
 					return res
@@ -416,7 +418,9 @@ def electronic_eval(expr):
 			raise SyntaxError('Unrecognized operator.')
 
 	# Evaluate and return
-	return eval_ast(_ast.parse(expr, mode='eval').body)
+	res = eval_ast(_ast.parse(expr, mode='eval').body)
+	_electronic_eval_idents['ans'] = res
+	return res
 
 def get_avail_vals(
 		series    = 'E6',
