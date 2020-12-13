@@ -350,6 +350,9 @@ def electronic_eval(expr):
 	# Remove whitespace at beginning and end
 	expr = expr.strip()
 
+	# Replace degree-sign with conversion factor from degrees to radians
+	expr = expr.replace('°', '*(pi/180)')
+
 	# Expand single-digit superscripts
 	expr = expr.replace('⁰', '**(0)')
 	expr = expr.replace('¹', '**(1)')
