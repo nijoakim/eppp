@@ -49,7 +49,6 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'(^|\s+)'                                                   # Start of line or whitespace
 	match_str += r'-?(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
 	match_str += r'\s*'                                                       # Optional whitespace
 	match_str += '['+ ''.join(PREFIXES.keys()) +']'                           # Metric prefix
