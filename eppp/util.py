@@ -49,16 +49,26 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'-?(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
-	match_str += r'\s*'                                                       # Optional whitespace
-	match_str += '['+ ''.join(PREFIXES.keys()) +']'                           # Metric prefix
+	match_str += r'(^|\s|\()'                                               # Start of line, whitespace or parenthesis
+	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
+	match_str += r'\s*'                                                     # Optional whitespace
+	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefixes
 
 	# Substitute numbers with metric prefixes with pure floats
 	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
 	while re.search(match_str, string):
-		match      = re.search(match_str, string)
-		num        = complex(string[match.start() : match.end()-1]) # Parse into complex
-		multiplier = PREFIXES[string[match.end()-1]]                # Look up prefix
+		# Match number
+		match = re.search(match_str, string)
+		start = match.start()
+		end   = match.end()
+
+		# Advance start index if parenthesis was matched in beginning of string
+		if string[start] == '(':
+			start += 1
+
+		# Parse
+		num        = complex(string[start : end-1]) # Parse complex
+		multiplier = PREFIXES[string[end-1]]        # Parse prefix
 
 		# Convert to float if imaginary part is zero
 		if num.imag == 0:
@@ -66,9 +76,9 @@ def expand_metric_prefixes(string):
 
 		# Expand string
 		string = \
-			string[:match.start()] + \
+			string[:start] + \
 			str(num*multiplier) +' '+ \
-			string[match.end():]
+			string[end:]
 	return string
 
 #========
@@ -297,6 +307,7 @@ if cmd == 'expression':
 
 			# Expand prefixes
 			expr_str = expand_metric_prefixes(expr_str)
+			print(expr_str)
 
 			# Evaluate expression
 			try:
