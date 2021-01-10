@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2020 Joakim Nilsson
+# Copyright 2014-2021 Joakim Nilsson
 #
 # This file is part of EPPP.
 #

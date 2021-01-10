@@ -1,4 +1,4 @@
-# Copyright 2015-2020 Joakim Nilsson
+# Copyright 2015-2021 Joakim Nilsson
 # Copyright 2016-2017 Jimmy Nyström
 #
 # This file is part of EPPP.
