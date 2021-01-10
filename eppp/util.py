@@ -307,7 +307,6 @@ if cmd == 'expression':
 
 			# Expand prefixes
 			expr_str = expand_metric_prefixes(expr_str)
-			print(expr_str)
 
 			# Evaluate expression
 			try:
