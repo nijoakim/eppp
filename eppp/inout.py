@@ -70,7 +70,6 @@ def print_sci(
 	"""
 
 	# Allow specifying 'x' as variable name string
-	# This must be done here even if it is done inside 'str_sci' since the local local scope is not visible to callees
 	if isinstance(x, str):
 		if not name is None:
 			raise ValueError("'name' must be None if 'x' is string.")
@@ -82,22 +81,24 @@ def print_sci(
 		else:
 			raise ValueError(f"Variable '{x}' does not exist.")
 
-	print(
-		str_sci(
-			x,
-			name           = name,
-			unit           = unit,
-			num_sig_figs   = num_sig_figs,
-			notation_style = notation_style,
-			strict_style   = strict_style,
-		)
+	string = str_sci(
+		x,
+		unit           = unit,
+		num_sig_figs   = num_sig_figs,
+		notation_style = notation_style,
+		strict_style   = strict_style,
 	)
+
+	# Add quantity name
+	if not name is None:
+		string = f'{name} =\n\t{ret}'
+
+	print(string)
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
 def str_sci(
 	x,
 	unit           = '',
-	name           = None,
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 	strict_style   = None,
@@ -107,27 +108,14 @@ def str_sci(
 	Convert a number to scientific notation.
 
 	Args:
-		x (number/str): Number to convert. If a string is given, the variable represented by the string will be used and 'name' will be assigned that string.
+		x (number): Number to convert.
 
 	Kwargs:
-		name (str): Name of quantity to be added to resulting string.
 		unit (str): Unit of number to be converted.
 
 	Returns:
 		str. String representation of the converted number.
 	"""
-
-	# Allow specifying 'x' as variable name string
-	if isinstance(x, str):
-		if not name is None:
-			raise ValueError("'name' must be None if 'x' is string.")
-
-		context = dict(list(globals().items()) + list(_currentframe().f_back.f_locals.items()))
-		if x in context:
-			name = x
-			x    = context[x]
-		else:
-			raise ValueError(f"Variable '{x}' does not exist.")
 
 	# Non-prefixable values
 	if _np.isinf(x) \
@@ -286,7 +274,6 @@ def str_sci(
 						notation_style = 'engineering',
 						strict_style   = strict_style,
 						unit           = unit,
-						name           = name,
 					)
 
 				# Add prefix to unit
@@ -324,10 +311,6 @@ def str_sci(
 	# Add unit
 	if unit != '':
 		ret += ' '+ unit
-
-	# Add quantity name
-	if not name is None:
-		ret = f'{name} =\n\t{ret}'
 
 	return ret
 
