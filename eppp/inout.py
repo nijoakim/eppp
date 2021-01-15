@@ -94,7 +94,8 @@ def print_sci(
 	)
 
 # TODO: Special case for percent, permille, ppm, ppb, ppt and ppq?
-def str_sci(x,
+def str_sci(
+	x,
 	unit           = '',
 	name           = None,
 	num_sig_figs   = None,
@@ -129,9 +130,8 @@ def str_sci(x,
 			raise ValueError(f"Variable '{x}' does not exist.")
 
 	# Non-prefixable values
-	if x ==  inf \
-	or x == -inf \
-	or x ==  nan:
+	if _np.isinf(x) \
+	or _np.isnan(x):
 		return str(x)
 
 	# Round a number to a set number of significant figures
