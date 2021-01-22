@@ -49,7 +49,7 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'(^|\s|\()'                                               # Start of line, whitespace or parenthesis
+	match_str += r'(^|\W|_)'                                                # Start of line, non-alphanumeric or underscore
 	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
 	match_str += r'\s*'                                                     # Optional whitespace
 	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefixes
@@ -62,8 +62,9 @@ def expand_metric_prefixes(string):
 		start = match.start()
 		end   = match.end()
 
-		# Advance start index if parenthesis was matched in beginning of string
-		if string[start] == '(':
+		# Advance start index if not right at number
+		if  not '0' <= string[start] <= '9' \
+		and not string[start] == '.':
 			start += 1
 
 		# Parse
