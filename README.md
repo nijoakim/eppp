@@ -59,7 +59,7 @@ For documentation on the different commands use
 
 On Debian-based systems,
 
-	$ sudo aptitude install python3 python3-numpy python3-matplotlib libpython3-dev
+	$ sudo aptitude install python3 python3-distutils python3-numpy python3-scipy python3-matplotlib libpython3-dev
 
 should install all the dependencies.
 
