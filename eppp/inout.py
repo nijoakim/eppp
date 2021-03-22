@@ -91,7 +91,7 @@ def print_sci(
 
 	# Add quantity name
 	if not name is None:
-		string = f'{name} =\n\t{ret}'
+		string = f'{name} =\n\t{string}'
 
 	print(string)
 
