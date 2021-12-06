@@ -611,7 +611,7 @@ def make_resistance(
 		max_num_comps             = -1,
 		tolerance                 = 0.01,
 		avail_vals                = get_avail_vals('E6'),
-		avail_ops                 = None, # TODO: Not used; Remove or rework
+		configuration             = 'any',
 		num_comps_full_search     = 3,
 		num_comps_full_search_lag = 3,
 	):
@@ -625,13 +625,17 @@ def make_resistance(
 		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
 		tolerance (float):               (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		avail_vals ([float]):            (Default: get_avail_vals('E6')) List of available values of the resistances used in the network. [Ω]
-		avail_ops ([operator]):          (Default: [eppp.calc.parallel_impedance, operator.add]) List of operators used for calculating the resulting resistance. The operators are represented by a function that takes two arguments. The operators must be associative and commutative.
+		configuration (string):          (Default: 'any') Configuration to generate a network in. Valid values are 'any', 'series', and 'parallel', .
 		num_comps_full_search (int):     (Default: 3) Maximum number of components to do a full search on. Affects performance only. A higher value consumes more memory but may be faster.
 		num_comps_full_search_lag (int): (Default: 3) How many components should be search for before starting with the full searches. Affects performance only. A higher value increases performance for small number of components with the trade-off that the performance for large number of components is slightly reduced (assuming that 'num_comps_full_search' is configured for a efficient searches).
 
 	Returns:
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
+
+	# Assert 'configuration' has a valid value
+	if not configuration in ('any', 'series', 'parallel'):
+		raise ValueError("'configuration' must be either 'any', 'series', or 'parallel'.")
 
 	# Dynamic programming dictionary
 	results = {}
@@ -655,16 +659,18 @@ def make_resistance(
 					expr = results[old_val]
 
 					# Store series result
-					new_val = val + old_val
-					if not new_val in results:
-						results[new_val] = [_add, val, *expr]
-						insort(results_keyss[num_comps_fully_searched-1], new_val)
+					if configuration != 'parallel':
+						new_val = val + old_val
+						if not new_val in results:
+							results[new_val] = [_add, val, *expr]
+							insort(results_keyss[num_comps_fully_searched-1], new_val)
 
 					# Store parallel result
-					new_val = (val * old_val) / (val + old_val)
-					if not new_val in results:
-						results[new_val] = [parallel_impedance, val, *expr]
-						insort(results_keyss[num_comps_fully_searched-1], new_val)
+					if configuration != 'series':
+						new_val = (val * old_val) / (val + old_val)
+						if not new_val in results:
+							results[new_val] = [parallel_impedance, val, *expr]
+							insort(results_keyss[num_comps_fully_searched-1], new_val)
 
 		# When not doing more full searches, limit 'num_comps_fully_searched'
 		num_comps_fully_searched = min(num_comps_fully_searched, num_comps_full_search)
@@ -676,6 +682,7 @@ def make_resistance(
 			num_comps,
 			max(num_comps_fully_searched, 1),
 			tolerance,
+			configuration,
 			results,
 			results_keyss,
 		)
@@ -693,6 +700,7 @@ def _make_resistance_helper(
 		num_comps,
 		num_comps_fully_searched,
 		tolerance,
+		configuration,
 		results,
 		results_keyss,
 	):
@@ -737,7 +745,7 @@ def _make_resistance_helper(
 	# Include an additional resistance
 	for val in avail_vals:
 		# Recursively add series resistance if undershooting target
-		if val < target:
+		if val < target and configuration != 'parallel':
 			# Needed series resistance to hit target
 			needed = target - val
 
@@ -748,27 +756,15 @@ def _make_resistance_helper(
 				num_comps-1,
 				num_comps_fully_searched,
 				tolerance, # TODO: New tolerance?
+				configuration,
 				results,
 				results_keyss,
 			)
 			new_expr = [_add, val, *rec_expr]
 			new_val  = rec_val + val
 
-			# Save new expression if truly new
-			if not new_val in results:
-				results[new_val] = new_expr
-				new_num_comps = len(new_expr) // 2 + 1
-				insort(results_keyss[new_num_comps-1], new_val)
-
-			# Update if better
-			error = abs(target - new_val)
-			if error < best_error:
-				best_error = error
-				best_val   = new_val
-				best_expr  = new_expr
-
 		# Recursively add parallel resistance if overshooting target
-		else:
+		elif val > target and configuration != 'series':
 			# Needed parallel resistance to hit target
 			needed = (val * target) / (val - target)
 
@@ -779,23 +775,28 @@ def _make_resistance_helper(
 				num_comps-1,
 				num_comps_fully_searched,
 				tolerance, # TODO: New tolerance?
+				configuration,
 				results,
 				results_keyss,
 			)
 			new_expr = [parallel_impedance, val, *rec_expr]
 			new_val  = rec_val * val / (rec_val + val)
 
-			# Save new expression if truly new
-			if not new_val in results:
-				results[new_val] = new_expr
-				new_num_comps = len(new_expr) // 2 + 1
-				insort(results_keyss[new_num_comps-1], new_val)
+		# Continue if no new value was found
+		else:
+			continue
 
-			# Update if better
-			error = abs(target - new_val)
-			if error < best_error:
-				best_error = error
-				best_val   = new_val
-				best_expr  = new_expr
+		# Save new expression if truly new
+		if not new_val in results:
+			results[new_val] = new_expr
+			new_num_comps = len(new_expr) // 2 + 1
+			insort(results_keyss[new_num_comps-1], new_val)
+
+		# Update if better
+		error = abs(target - new_val)
+		if error < best_error:
+			best_error = error
+			best_val   = new_val
+			best_expr  = new_expr
 
 	return best_expr, best_val

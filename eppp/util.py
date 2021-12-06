@@ -429,24 +429,13 @@ if cmd == 'make-resistance':
 
 	args = parser.parse_args()
 
-	# Generate list of operations
-	if args.configuration == 'any':
-		ops = [eppp.parallel_impedance, op.add]
-	elif args.configuration == 'series':
-		ops = [op.add]
-	elif args.configuration == 'parallel':
-		ops = [eppp.parallel_impedance]
-	else:
-		pass
-		# TODO: Error
-
 	# Get the expression
 	expr = eppp.make_resistance(
 		args.target,
 		avail_vals    = eppp.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		tolerance     = args.tolerance,
 		max_num_comps = args.num_components,
-		avail_ops     = ops,
+		configuration = args.configuration,
 	)
 	res = expr.evaluate()
 
