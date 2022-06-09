@@ -386,9 +386,9 @@ def electronic_eval(expr):
 				elif hasattr(_sp_c, node.id):
 					return(getattr(_sp_c, node.id))
 				elif node.id.replace('_', ' ') in _sp_c.physical_constants:
-				 	return _sp_c.physical_constants[node.id.replace('_', ' ')][0]
+					return _sp_c.physical_constants[node.id.replace('_', ' ')][0]
 				else:
-					ValueError('Variable or constant undefined')
+					raise ValueError('Variable or constant undefined')
 
 			# Function identifier
 			elif isinstance(node, _ast.Call):
