@@ -388,7 +388,7 @@ def electronic_eval(expr):
 				elif node.id.replace('_', ' ') in _sp_c.physical_constants:
 					return _sp_c.physical_constants[node.id.replace('_', ' ')][0]
 				else:
-					raise ValueError('Variable or constant undefined')
+					raise ValueError('Variable or constant undefined: ' + node.id)
 
 			# Function identifier
 			elif isinstance(node, _ast.Call):
