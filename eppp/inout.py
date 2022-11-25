@@ -1,4 +1,4 @@
-# Copyright 2014-2020 Joakim Nilsson
+# Copyright 2014-2022 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -36,6 +36,8 @@ from .debug import *
 _default_str_sci_args = {
 	'num_sig_figs'   : 4,
 	'notation_style' : 'metric',
+	'polar_form'     : True,
+	'angle_unit'     : '°',
 	'strict_style'   : False,
 }
 
@@ -55,6 +57,8 @@ def print_sci(
 		name           = None,
 		num_sig_figs   = None,
 		notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
+		polar_form     = None,
+		angle_unit     = None,
 		strict_style   = None,
 	):
 	# TODO: Document all arguments
@@ -102,6 +106,8 @@ def str_sci(
 	num_sig_figs   = None,
 	notation_style = None, # Valid values: 'metric', 'scientific', 'engineering'
 	strict_style   = None,
+	polar_form     = None,
+	angle_unit     = None,
 ):
 	# TODO: Document all arguments
 	"""
@@ -169,8 +175,31 @@ def str_sci(
 		num_sig_figs = _default_str_sci_args['num_sig_figs']
 	if notation_style is None:
 		notation_style = _default_str_sci_args['notation_style']
+	if polar_form is None:
+		polar_form = _default_str_sci_args['polar_form']
+	if angle_unit is None:
+		angle_unit = _default_str_sci_args['angle_unit']
 	if strict_style is None:
 		strict_style = _default_str_sci_args['strict_style']
+
+	# Polar form
+	# TODO: Handle units with spaces (split causes error)
+	if polar_form:
+		# Split value and unit
+		polar_str = str_sci(abs(x), polar_form=False).split()
+		if len(polar_str) == 1:
+			polar_str.append('')
+
+		# Get angle
+		if angle_unit == 'degree':
+			angle_unit = '°'
+		angle = _np.angle(x)
+		if angle_unit == 'radian':
+			angle_unit = ''
+		elif angle_unit == '°':
+			angle *= 180 / _np.pi
+
+		return polar_str[0] +'∠'+ str(angle) + angle_unit +' '+ polar_str[1]
 
 	# Determine the larger of the real and imaginary parts if metric style
 	if notation_style == 'metric':
