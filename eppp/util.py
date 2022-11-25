@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2021 Joakim Nilsson
+# Copyright 2014-2022 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -137,7 +137,7 @@ parser.add_argument('command')
 parser.add_argument(
 	'-sf',
 	'--significant-figures',
-	type=int,
+	type    = int,
 	default = 4,
 	nargs   = '?',
 	help    = 'Number of significant figures to print with. (default: %(default)s)',
@@ -145,10 +145,24 @@ parser.add_argument(
 parser.add_argument(
 	'-ns',
 	'--notation-style',
-	type=str,
+	type    = str,
 	default = 'metric',
 	nargs   = '?',
 	help    = 'Style used for numbers that are printed. (metric, engineering or scientific) (default: %(default)s)',
+)
+parser.add_argument(
+	'-pf',
+	'--polar-form',
+	action  = 'store_true',
+	help    = 'TODO',
+)
+parser.add_argument(
+	'-au',
+	'--angle-unit',
+	type    = str,
+	default = '',
+	nargs   = '?',
+	help    = 'TODO',
 )
 parser.add_argument('command-arguments', nargs=ap.REMAINDER)
 global_args = parser.parse_args()
@@ -157,6 +171,8 @@ global_args = parser.parse_args()
 eppp.set_default_str_sci_args(
 	num_sig_figs   = global_args.significant_figures,
 	notation_style = global_args.notation_style,
+	polar_form     = global_args.polar_form,
+	angle_unit     = global_args.angle_unit,
 )
 
 # Match input command with available command
