@@ -186,7 +186,12 @@ def str_sci(
 	# TODO: Handle units with spaces (split causes error)
 	if polar_form:
 		# Split value and unit
-		polar_str = str_sci(abs(x), polar_form=False).split()
+		polar_str = str_sci(
+			abs(x),
+			notation_style = notation_style,
+			num_sig_figs   = num_sig_figs,
+			polar_form     = False,
+		).split()
 		if len(polar_str) == 1:
 			polar_str.append('')
 
@@ -199,7 +204,18 @@ def str_sci(
 		elif angle_unit == '°':
 			angle *= 180 / _np.pi
 
-		return polar_str[0] +'∠'+ str(angle) + angle_unit +' '+ polar_str[1]
+		return \
+			polar_str[0] + \
+			'∠'+ \
+			str_sci(
+				angle,
+				notation_style = 'engineering',
+				num_sig_figs   = num_sig_figs,
+				polar_form     = False,
+			) + \
+			angle_unit + \
+			' ' + \
+			polar_str[1]
 
 	# Determine the larger of the real and imaginary parts if metric style
 	if notation_style == 'metric':
