@@ -50,7 +50,7 @@ def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
 	match_str += r'(^|\W|_)'                                                # Start of line, non-alphanumeric or underscore
-	match_str += r'(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
+	match_str += r'(([[0-9]+\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
 	match_str += r'\s*'                                                     # Optional whitespace
 	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefixes
 
@@ -64,8 +64,10 @@ def expand_metric_prefixes(string):
 		if  not '0' <= string[start] <= '9' \
 		and not string[start] == '.':
 			start += 1
+			print('advance')
 
 		# Parse
+		print(string[start : end-1])
 		num        = complex(string[start : end-1]) # Parse complex
 		multiplier = PREFIXES[string[end-1]]        # Parse prefix
 
