@@ -64,10 +64,8 @@ def expand_metric_prefixes(string):
 		if  not '0' <= string[start] <= '9' \
 		and not string[start] == '.':
 			start += 1
-			print('advance')
 
 		# Parse
-		print(string[start : end-1])
 		num        = complex(string[start : end-1]) # Parse complex
 		multiplier = PREFIXES[string[end-1]]        # Parse prefix
 
