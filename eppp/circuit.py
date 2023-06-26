@@ -330,7 +330,7 @@ def clear_electronic_eval_state():
 # TODO: Allow to specify special units for variables. For example phi[°] = arcsin(1) prints in degrees instead of radians
 def electronic_eval(expr):
 	"""
-	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3). The result of the evaluation value is both returned assigned to the variable 'ans'.
+	Evaluates an expression. In addition to the normal arithmetic operators, addition ('+'), subtraction ('-'), multiplication ('*'), division ('/'), exponentiation ('^' or '**'), and assignment ('='), the parallel operator, '||' or '//', is supported. Functions defined in 'numpy' as well as constants defined in 'scipy.constants' are also supported. Superscript digits are expanded, which means that 2³ would expand to 2**(3). The result of the evaluation value is both returned and assigned to the variable 'ans'.
 
 	Args:
 		expr (string): Expression. Valid operators are: '=', '||' or '//', '+', '-', '*', '/' and '^' or '**'.
