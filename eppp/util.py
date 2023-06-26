@@ -55,10 +55,8 @@ def expand_metric_prefixes(string):
 	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefixes
 
 	# Substitute numbers with metric prefixes with pure floats
-	# TODO: Use assignment expression in while loop when Python 3.8 becomes standard
-	while re.search(match_str, string):
+	while (match := re.search(match_str, string)):
 		# Match number
-		match = re.search(match_str, string)
 		start = match.start()
 		end   = match.end()
 
