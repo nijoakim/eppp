@@ -49,10 +49,10 @@ def make_cmds_str(cmds):
 def expand_metric_prefixes(string):
 	# String to match on
 	match_str = ''
-	match_str += r'(^|\W|_)'                                                # Start of line, non-alphanumeric or underscore
-	match_str += r'(([[0-9]+\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?j?' # Real or imaginary number
-	match_str += r'\s*'                                                     # Optional whitespace
-	match_str += '['+ ''.join(PREFIXES.keys()) +']'                         # Metric prefixes
+	match_str += r'(^|\W|_)'                                                         # Start of line, non-alphanumeric or underscore
+	match_str += r'((\[\[0-9\]+\.?\[0-9\]*)|(\.\[0-9\]+))(\[Ee\]\[+-\]?\[0-9\]+)?j?' # Real or imaginary number
+	match_str += r'\s*'                                                              # Optional whitespace
+	match_str += '['+ ''.join(PREFIXES.keys()) +']'                                  # Metric prefixes
 
 	# Substitute numbers with metric prefixes with pure floats
 	while (match := re.search(match_str, string)):
