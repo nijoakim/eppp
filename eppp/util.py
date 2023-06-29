@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2022 Joakim Nilsson
+# Copyright 2014-2023 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -421,10 +421,11 @@ if cmd == 'make-resistance':
 	)
 
 	parser.add_argument(
-		'--configuration',
+		'-T',
+		'--topology',
 		type    = str,
-		default = 'any',
-		help    = 'Valid configurations in the resulting network. (series, parallel or any) (default: %(default)s)',
+		default = 'mixed',
+		help    = 'Valid topologies for the generated network. (mixed, parallel or any) (default: %(default)s)',
 	)
 
 	parser.add_argument(
@@ -449,7 +450,7 @@ if cmd == 'make-resistance':
 		avail_vals    = eppp.get_avail_vals(args.series, min_val=args.min_resistance, max_val=args.max_resistance),
 		tolerance     = args.tolerance,
 		max_num_comps = args.num_components,
-		configuration = args.configuration,
+		topology = args.topology,
 	)
 	res = expr.evaluate()
 

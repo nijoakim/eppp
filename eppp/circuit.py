@@ -1,4 +1,4 @@
-# Copyright 2015-2021 Joakim Nilsson
+# Copyright 2015-2023 Joakim Nilsson
 # Copyright 2016-2017 Jimmy Nyström
 #
 # This file is part of EPPP.
@@ -615,7 +615,7 @@ def make_resistance(
 		max_num_comps             = -1,
 		tolerance                 = 0.01,
 		avail_vals                = get_avail_vals('E6'),
-		configuration             = 'any',
+		topology                  = 'mixed',
 		num_comps_full_search     = 3,
 		num_comps_full_search_lag = 3,
 	):
@@ -629,7 +629,7 @@ def make_resistance(
 		max_num_comps (int):             Maximum number of components in the network. The function will return a network with no more components than this value. A negative value sets the limit to infinity.
 		tolerance (float):               (Default 0.01) Maximum tolerable relative error. The relative error of the resulting network will be less than this value if that is possible given 'max_num_comps'.
 		avail_vals ([float]):            (Default: get_avail_vals('E6')) List of available values of the resistances used in the network. [Ω]
-		configuration (string):          (Default: 'any') Configuration to generate a network in. Valid values are 'any', 'series', and 'parallel', .
+		topology (string):               (Default: 'mixded') Topology for the generated network. Valid values are 'mixed', 'series', and 'parallel', .
 		num_comps_full_search (int):     (Default: 3) Maximum number of components to do a full search on. Affects performance only. A higher value consumes more memory but may be faster.
 		num_comps_full_search_lag (int): (Default: 3) How many components should be search for before starting with the full searches. Affects performance only. A higher value increases performance for small number of components with the trade-off that the performance for large number of components is slightly reduced (assuming that 'num_comps_full_search' is configured for a efficient searches).
 
@@ -637,9 +637,9 @@ def make_resistance(
 		ExprTree. Expression tree of the resulting network. Use ExprTree.evaluate() to get it's value.
 	"""
 
-	# Assert 'configuration' has a valid value
-	if not configuration in ('any', 'series', 'parallel'):
-		raise ValueError("'configuration' must be either 'any', 'series', or 'parallel'.")
+	# Assert 'topology' has a valid value
+	if not topology in ('mixed', 'series', 'parallel'):
+		raise ValueError("'topology' must be either 'mixed', 'series', or 'parallel'.")
 
 	# Dynamic programming dictionary
 	results = {}
@@ -663,14 +663,14 @@ def make_resistance(
 					expr = results[old_val]
 
 					# Store series result
-					if configuration != 'parallel':
+					if topology != 'parallel':
 						new_val = val + old_val
 						if not new_val in results:
 							results[new_val] = [_add, val, *expr]
 							insort(results_keyss[num_comps_fully_searched-1], new_val)
 
 					# Store parallel result
-					if configuration != 'series':
+					if topology != 'series':
 						new_val = (val * old_val) / (val + old_val)
 						if not new_val in results:
 							results[new_val] = [parallel_impedance, val, *expr]
@@ -686,7 +686,7 @@ def make_resistance(
 			num_comps,
 			max(num_comps_fully_searched, 1),
 			tolerance,
-			configuration,
+			topology,
 			results,
 			results_keyss,
 		)
@@ -704,7 +704,7 @@ def _make_resistance_helper(
 		num_comps,
 		num_comps_fully_searched,
 		tolerance,
-		configuration,
+		topology,
 		results,
 		results_keyss,
 	):
@@ -749,7 +749,7 @@ def _make_resistance_helper(
 	# Include an additional resistance
 	for val in avail_vals:
 		# Recursively add series resistance if undershooting target
-		if val < target and configuration != 'parallel':
+		if val < target and topology != 'parallel':
 			# Needed series resistance to hit target
 			needed = target - val
 
@@ -760,7 +760,7 @@ def _make_resistance_helper(
 				num_comps-1,
 				num_comps_fully_searched,
 				tolerance, # TODO: New tolerance?
-				configuration,
+				topology,
 				results,
 				results_keyss,
 			)
@@ -768,7 +768,7 @@ def _make_resistance_helper(
 			new_val  = rec_val + val
 
 		# Recursively add parallel resistance if overshooting target
-		elif val > target and configuration != 'series':
+		elif val > target and topology != 'series':
 			# Needed parallel resistance to hit target
 			needed = (val * target) / (val - target)
 
@@ -779,7 +779,7 @@ def _make_resistance_helper(
 				num_comps-1,
 				num_comps_fully_searched,
 				tolerance, # TODO: New tolerance?
-				configuration,
+				topology,
 				results,
 				results_keyss,
 			)
