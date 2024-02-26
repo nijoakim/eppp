@@ -294,9 +294,9 @@ def str_sci(
 		elif notation_style == 'metric':
 			# Metric prefixes
 			PREFIXES = [
-				'y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm',
+				'q', 'r', 'y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm',
 				'',
-				'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y',
+				'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', 'R', 'Q',
 			]
 
 			# Append to return string list
@@ -305,7 +305,7 @@ def str_sci(
 			# Adjust prefix
 			if not has_prefix:
 				try:
-					index = (exponent + 24) // 3 # (yocto is 1e-24)
+					index = (exponent + 30) // 3 # (quecto is 1e-24)
 					prefix = PREFIXES[index]
 
 					# Treat negative indices as out of bounds
