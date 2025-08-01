@@ -876,7 +876,7 @@ def transmission_line_matrix(matrix_type, length, char_imp=1, prop_const=1j*2*_n
 			matrix_type (chr):   2-port parameter type.
 			length (number):     Length of the transmission line.
 			char_imp (number):   Characteristic impedance of the transmission line.
-			prop_const (number): Propagation constant of the transmission line.
+			prop_const (number): Complex propagation constant of the transmission line.
 
 		Returns:
 			(numpy.ndarray): Transmission line cascade matrix.
