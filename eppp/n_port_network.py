@@ -868,15 +868,15 @@ class NPortNetwork:
 # Functions for generation of various types of matrices
 #=======================================================
 
-def transmission_line_matrix(matrix_type, char_imp, prop_const, length):
+def transmission_line_matrix(matrix_type, length, char_imp=1, prop_const=1j*2*_np.pi):
 	"""
 		Yields a transmission line matrix.
 
 		Args:
 			matrix_type (chr):   2-port parameter type.
+			length (number):     Length of the transmission line.
 			char_imp (number):   Characteristic impedance of the transmission line.
 			prop_const (number): Propagation constant of the transmission line.
-			length (number):     Length of the transmission line.
 
 		Returns:
 			(numpy.ndarray): Transmission line cascade matrix.
