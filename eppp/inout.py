@@ -36,7 +36,7 @@ from .debug import *
 _default_str_sci_args = {
 	'num_sig_figs'   : 4,
 	'notation_style' : 'metric',
-	'polar_form'     : True,
+	'polar_form'     : False,
 	'angle_unit'     : '°',
 	'strict_style'   : False,
 }
