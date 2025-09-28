@@ -123,6 +123,9 @@ def str_sci(
 		str. String representation of the converted number.
 	"""
 
+	# Ensure complex as large ints may make numpy raise errors
+	x = complex(x)
+
 	# Non-prefixable values
 	if _np.isinf(x) \
 	or _np.isnan(x):
