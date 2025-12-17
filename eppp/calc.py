@@ -1,4 +1,4 @@
-# Copyright 2014-2020 Joakim Nilsson
+# Copyright 2014-2025 Joakim Nilsson
 #
 # This file is part of EPPP.
 #
@@ -338,7 +338,7 @@ def _breakFreq(freqs, mags, di, decibel=3, is_stop_filter=False):
 
 	# Find out peak and break magnitude
 	peak_index = mags.argmax()
-	break_mags  = mags[peak_index]*db(-decibel, from_db = True)
+	break_mags = mags[peak_index]*db(-decibel, from_db = True)
 
 	# Search
 	i = peak_index
